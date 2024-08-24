@@ -1,20 +1,21 @@
 import Layout from "./Components/Layouts/Layout";
 import LoginPage from "./Pages/Login/LoginPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { HOME, LOGIN } from "./utils/routes";
 
 function App() {
   const router = createBrowserRouter([
     {
-      path: "/",
+      path: HOME,
       element: <Layout />,
       // errorElement: <ErrorPage />,
       children: [
         {
-          path: "/",
+          path: HOME,
           element: <LoginPage />
         },
         {
-          path: "/login",
+          path: LOGIN,
           element: <LoginPage />
         }
       ],
