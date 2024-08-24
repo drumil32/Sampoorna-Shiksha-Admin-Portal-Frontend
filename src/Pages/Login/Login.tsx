@@ -7,7 +7,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import { SIGN_IN } from "../../utils/restEndPoints";
 import { HOME } from "../../utils/routes";
 
-const LoginPage: React.FC = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
@@ -118,4 +118,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
