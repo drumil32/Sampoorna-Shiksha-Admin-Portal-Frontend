@@ -4,13 +4,18 @@ import { toast } from 'react-toastify';
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
-import { SIGN_IN } from "../../utils/restEndPoints";
+import { SIGNIN } from "../../utils/restEndPoints";
 import { HOME } from "../../utils/routes";
+import { useDispatch } from "react-redux";
+import { setError } from "../../redux/slices/statusSlice";
+import { Action } from "../../types/error";
+import Error from "../../Components/ErrorHandler/Error";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -29,12 +34,22 @@ const Login: React.FC = () => {
       return
     }
     try {
-      const response = await axiosInstance.post(SIGN_IN, { email, password });
+      const response = await axiosInstance.post(SIGNIN, { email, password });
       toast.success(response.data.message);
       Cookies.set("token", response.data.token);
       navigate(HOME);
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.SIGNIN,
+          })
+        );
+      } else {
+        alert("Server is Down");
+      }
     }
 
     // toast.success("Login Successful",{
@@ -47,7 +62,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <>
+    <Error>
       <div className="flex justify-center items-center h-screen w-screen ">
         <section className="rounded-md bg-black/70 p-2 min-w-1/2 scale-110 xl:scale-125 2xl:scale-150">
           <div className="flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
@@ -113,7 +128,7 @@ const Login: React.FC = () => {
         </section>
       </div>
 
-    </>
+    </Error>
 
   );
 };

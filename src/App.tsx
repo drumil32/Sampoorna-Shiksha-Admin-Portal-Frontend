@@ -1,6 +1,6 @@
 import Layout from "./Components/Layouts/Layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HOME, LOGIN, SCHOOL } from "./utils/routes";
+import { HOME, SIGNIN, SCHOOL } from "./utils/routes";
 import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
 
@@ -16,7 +16,7 @@ function App() {
           element: <Login />
         },
         {
-          path: LOGIN,
+          path: SIGNIN,
           element: <Login />
         },
         {
