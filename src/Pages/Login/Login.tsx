@@ -49,7 +49,6 @@ const Login: React.FC = () => {
 
     try {
       const { email, password } = formData;
-      toast.info("Logging in..."); // for trial only
       const response = await axiosInstance.post(SIGNIN, { email, password });
       toast.success(response.data.message);
       Cookies.set("token", response.data.token);

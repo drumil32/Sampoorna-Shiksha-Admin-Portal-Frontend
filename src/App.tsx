@@ -13,7 +13,7 @@ function App() {
       children: [
         {
           path: HOME,
-          element: <Login />
+          element: <School />
         },
         {
           path: SIGNIN,

@@ -28,9 +28,13 @@ const School: React.FC = () => {
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get(`${SCHOOL}?code=12&nameOfSchoolInstitution=no&sortBy=asc`);
-      console.log(response.data);
-      setSchoolList(response.data);
-
+      console.log("API Response:", response.data); // Inspect the response data
+      if (Array.isArray(response.data.schools)) {
+        setSchoolList(response.data.schools);
+      } else {
+        console.error("Expected an array but got:", typeof response.data);
+        setSchoolList([]);
+      }
     } catch (error: any) {
       console.log(error.response.data.error);
       console.log(error.response.status);
@@ -48,6 +52,7 @@ const School: React.FC = () => {
       }
     }
   };
+  
 
   useEffect(() => {
     fetchData();
@@ -132,12 +137,12 @@ const School: React.FC = () => {
               id="table body"
               className="w-full flex items-center border-r-[1px] border-b-[1px] border-l-[1px] border-black hover:cursor-pointer hover:shadow-lg h-[50px] 2xl:h-[100px]"
             >
-              <div className="w-1/6 pl-5">{data.Code || "01"}</div>
+              <div className="w-1/6 pl-5">{data["code"]}</div>
               <div style={style} className="w-2/6 pl-5">
-                {data["Name of the school/Institution"]}
+                {data["nameOfSchoolInstitution"]}
               </div>
               <div style={style} className="w-3/6 px-5">
-                {data["Full address with pin code"]}
+                {data["fullAddressWithPinCode"]}
               </div>
             </div>
           ))}
