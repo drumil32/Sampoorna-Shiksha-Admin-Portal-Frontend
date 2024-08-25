@@ -5,13 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
-import { SIGN_IN } from "../../utils/restEndPoints";
+import { SIGNIN } from "../../utils/restEndPoints";
 import { HOME } from "../../utils/routes";
-import { ISignInForm } from "../../utils/types/form";
-import {
-  validateEmail,
-  validatePassword,
-} from "../../utils/validation/loginFormValidation";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<ISignInForm>({
@@ -20,6 +15,7 @@ const Login: React.FC = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevFormData) => ({ ...prevFormData, email: e.target.value }));
@@ -49,22 +45,19 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await axiosInstance.post(SIGN_IN, {
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await axiosInstance.post(SIGN_IN, { email, password });
       toast.success(response.data.message);
       Cookies.set("token", response.data.token);
       setFormData({ email: "", password: "" });
       navigate(HOME);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response.data.message);
     }
   };
 
   return (
     <>
-      <div className="flex justify-center items-center h-screen w-screen relative">
+      <div className="flex justify-center items-center h-screen w-screen ">
         <section className="rounded-md bg-black/70 p-2 min-w-1/2 scale-110 xl:scale-125 2xl:scale-150">
           <div className="flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
             <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
@@ -142,7 +135,9 @@ const Login: React.FC = () => {
           theme="colored"
         />
       </div>
+
     </>
+
   );
 };
 
