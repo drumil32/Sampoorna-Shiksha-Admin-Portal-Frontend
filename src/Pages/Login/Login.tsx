@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { SIGNIN } from "../../utils/restEndPoints";
 import { HOME } from "../../utils/routes";
+import { useDispatch } from "react-redux";
+import { ISignInForm } from "../../utils/types/form";
+import { validateEmail, validatePassword } from "../../utils/validation/loginFormValidation";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<ISignInForm>({
@@ -45,6 +48,7 @@ const Login: React.FC = () => {
     }
 
     try {
+      const { email, password } = formData;
       const response = await axiosInstance.post(SIGN_IN, { email, password });
       toast.success(response.data.message);
       Cookies.set("token", response.data.token);
