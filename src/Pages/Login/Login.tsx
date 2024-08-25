@@ -1,54 +1,70 @@
 import React, { useState } from "react";
 import Input from "../../Components/atoms/Input/Input";
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { SIGN_IN } from "../../utils/restEndPoints";
 import { HOME } from "../../utils/routes";
+import { ISignInForm } from "../../utils/types/form";
+import {
+  validateEmail,
+  validatePassword,
+} from "../../utils/validation/loginFormValidation";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [formData, setFormData] = useState<ISignInForm>({
+    email: "",
+    password: "",
+  });
+
   const navigate = useNavigate();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+    setFormData((prevFormData) => ({ ...prevFormData, email: e.target.value }));
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      password: e.target.value,
+    }));
   };
 
-  const handleSiginClick = async () => {
-
-    // Verify password and email
-
-    if (email === "" || password === "") {
-      alert("Please enter email and password")
-      return
+  const handleSignInClick = async () => {
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill all the fields");
+      return;
     }
+
+    if (!validateEmail(formData.email)) {
+      toast.error("Invalid Email");
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      toast.error("Invalid Password");
+      return;
+    }
+
     try {
-      const response = await axiosInstance.post(SIGN_IN, { email, password });
+      const response = await axiosInstance.post(SIGN_IN, {
+        email: formData.email,
+        password: formData.password,
+      });
       toast.success(response.data.message);
       Cookies.set("token", response.data.token);
+      setFormData({ email: "", password: "" });
       navigate(HOME);
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
-
-    // toast.success("Login Successful",{
-    //   position: "bottom-right",
-    //   autoClose: 1800,
-    //   closeOnClick: true,
-    //   progress: undefined,
-    //   theme: "dark"
-    //   });
   };
 
   return (
     <>
-      <div className="flex justify-center items-center h-screen w-screen ">
+      <div className="flex justify-center items-center h-screen w-screen relative">
         <section className="rounded-md bg-black/70 p-2 min-w-1/2 scale-110 xl:scale-125 2xl:scale-150">
           <div className="flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
             <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
@@ -67,8 +83,9 @@ const Login: React.FC = () => {
                     <Input
                       type="email"
                       placeholder="Email"
-                      value={email}
+                      value={formData.email}
                       onChange={handleEmailChange}
+                      name="email"
                     />
                   </div>
                 </div>
@@ -92,16 +109,16 @@ const Login: React.FC = () => {
                     <Input
                       type="password"
                       placeholder="Password"
-                      value={password}
+                      value={formData.password}
                       onChange={handlePasswordChange}
-                      className=""
+                      name="password"
                     />
                   </div>
                 </div>
                 <div>
                   <button
                     type="button"
-                    onClick={handleSiginClick}
+                    onClick={handleSignInClick}
                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                   >
                     Sign in
@@ -111,10 +128,21 @@ const Login: React.FC = () => {
             </div>
           </div>
         </section>
+
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </div>
-
     </>
-
   );
 };
 
