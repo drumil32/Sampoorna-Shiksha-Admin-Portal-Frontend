@@ -5,30 +5,29 @@ import { useDispatch } from "react-redux";
 import { setError } from "../../redux/slices/statusSlice";
 import { Action } from "../../types/error";
 import Error from "../../Components/ErrorHandler/Error";
-import { school } from "../../Constants/schoolData"; // for getting temp data
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FcGenericSortingDesc } from "react-icons/fc";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
+import { style } from "../../Constants/ellipsisStyle";
+// import { school } from "../../Constants/schoolData";
 
 const School: React.FC = () => {
   const dispatch = useDispatch();
   const [isSortButtonClicked, setIsSortButtonClicked] = useState<boolean>(false);
+  const [isAscending, setIsAscending] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [schoolsPerPage] = useState<number>(9); // Items per page
   const [schoolList, setSchoolList] = useState([]);
 
-  const style = {
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  }; // for ellipsis
 
-  const fetchData = async () => {
+  const fetchData = async (search = "", sortAsc = isAscending) => {
     try {
-      const response = await axiosInstance.get(`${SCHOOL}?code=12&nameOfSchoolInstitution=no&sortBy=asc`);
-      console.log("API Response:", response.data); // Inspect the response data
+      const response = await axiosInstance.get(
+        `${SCHOOL}?code=${search}&nameOfSchoolInstitution=${search}&sortByAsc=${sortAsc}`
+      );
+      console.log("API Response:", response.data.schools); // Inspect the response data
       if (Array.isArray(response.data.schools)) {
         setSchoolList(response.data.schools);
       } else {
@@ -52,25 +51,19 @@ const School: React.FC = () => {
       }
     }
   };
-  
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [isAscending]);
 
   const handleSubmitSearch = () => {
-    try {
-        if(searchTerm.trim() == "") {
-            toast.error("Please Enter Search Term");
-            return;
-        }
-      console.log(searchTerm);
-      toast.success("Data Fetched Successfully");
-      setSearchTerm("");
-    } catch (error) {
-      console.log(error);
-      toast.error("Server is Down");
-    }
+    // if (searchTerm.trim() === "") {
+    //   toast.error("Please Enter Search Term");
+    //   return;
+    // }
+    fetchData(searchTerm);
+    setSearchTerm("");
+    toast.success("Data Fetched Successfully");
   };
 
   // Pagination logic
@@ -84,7 +77,16 @@ const School: React.FC = () => {
 
   return (
     <Error>
-      <ToastContainer />
+      <ToastContainer position="bottom-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored" />
       <div className="w-full flex flex-col items-center p-8 bg-[#f5f5f5]">
         <div id="table" className="w-full p-5 shadow-lg rounded-2xl bg-white overflow-hidden 2xl:text-2xl min-h-[90vh]">
           <div id="" className="mb-5 bg-[#e8e6e6] rounded-lg flex gap-5 items-center justify-between py-2 px-5 w-full">
@@ -111,14 +113,18 @@ const School: React.FC = () => {
                 onClick={() => setIsSortButtonClicked(!isSortButtonClicked)}
               >
                 <FcGenericSortingDesc className="text-lg cursor-pointer" />
-                sort
+                Sort
               </div>
               {isSortButtonClicked && (
                 <div className="absolute shadow-xl -bottom-25 right-0 flex flex-col rounded-lg overflow-hidden w-[240px] bg-white py-2">
-                  <div className="hover:cursor-pointer hover:bg-[#e6e7e9] duration-500 px-5 py-2 border-b border-black">
+                  <div 
+                    onClick={() => {setIsAscending(false); setIsSortButtonClicked(false); fetchData(searchTerm, false); toast.success("Normal Order")}}
+                    className="hover:cursor-pointer hover:bg-[#e6e7e9] duration-500 px-5 py-2 border-b border-black">
                     Normal
                   </div>
-                  <div className="hover:cursor-pointer hover:bg-[#e6e7e9] duration-500 px-5 py-2">
+                  <div 
+                    onClick={() => {setIsAscending(true); setIsSortButtonClicked(false); fetchData(searchTerm, true); toast.success("Ascending Order")}}
+                    className="hover:cursor-pointer hover:bg-[#e6e7e9] duration-500 px-5 py-2">
                     Ascending Order
                   </div>
                 </div>
@@ -146,7 +152,9 @@ const School: React.FC = () => {
               </div>
             </div>
           ))}
-            {currentSchools.length == 0 && <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px]">No Data Found</div>}
+          {currentSchools.length === 0 && (
+            <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px]">No Data Found</div>
+          )}
           {/* table body end */}
 
           {/* pagination */}
