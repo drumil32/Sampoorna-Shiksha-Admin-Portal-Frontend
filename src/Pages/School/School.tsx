@@ -7,29 +7,41 @@ import { Action } from "../../types/error";
 import Error from "../../Components/ErrorHandler/Error";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FcGenericSortingDesc } from "react-icons/fc";
-import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
-import { style } from "../../Constants/ellipsisStyle";
-// import { school } from "../../Constants/schoolData";
+import { FcGenericSortingAsc } from "react-icons/fc";
+import Select from "../../Components/atoms/Select/Select";
+import Pagination from "../../Components/atoms/Pagination/Pagination"; 
+import ToggleSwitch from "../../Components/atoms/ToggleSwitch/ToggleSwitch";
+import SearchBox from "../../Components/atoms/SearchBox/SearchBox";
+import { useNavigate } from "react-router-dom";
+
 
 const School: React.FC = () => {
   const dispatch = useDispatch();
-  const [isSortButtonClicked, setIsSortButtonClicked] = useState<boolean>(false);
-  const [isAscending, setIsAscending] = useState<boolean>(true);
+  const [isAscending, setIsAscending] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [schoolsPerPage] = useState<number>(9); // Items per page
+  const [schoolsPerPage] = useState<number>(9);
   const [schoolList, setSchoolList] = useState([]);
+  const [searchType, setSearchType] = useState<string>("School Name");
 
+  const navigate = useNavigate();
 
-  const fetchData = async (search = "", sortAsc = isAscending) => {
+  const fetchData = async (search = "", sortAsc = isAscending, page = 1) => {
     try {
-      const response = await axiosInstance.get(
-        `${SCHOOL}?code=${search}&nameOfSchoolInstitution=${search}&sortByAsc=${sortAsc}`
-      );
-      console.log("API Response:", response.data.schools); // Inspect the response data
+      let queryParams = `${SCHOOL}?sortByAsc=${sortAsc}&page=${page}`;
+      
+      if (searchType === "School Name") {
+        queryParams += `&nameOfSchoolInstitution=${search}`;
+      } else if (searchType === "School Code") {
+        queryParams += `&code=${search}`;
+      }
+  
+      const response = await axiosInstance.get(queryParams);
+      console.log("API Response:", response.data.schools);
+      
       if (Array.isArray(response.data.schools)) {
         setSchoolList(response.data.schools);
+        setCurrentPage(1);
       } else {
         console.error("Expected an array but got:", typeof response.data);
         setSchoolList([]);
@@ -57,12 +69,7 @@ const School: React.FC = () => {
   }, [isAscending]);
 
   const handleSubmitSearch = () => {
-    // if (searchTerm.trim() === "") {
-    //   toast.error("Please Enter Search Term");
-    //   return;
-    // }
-    fetchData(searchTerm);
-    setSearchTerm("");
+    fetchData(searchTerm, isAscending, 1);
     toast.success("Data Fetched Successfully");
   };
 
@@ -89,112 +96,53 @@ const School: React.FC = () => {
           theme="colored" />
       <div className="w-full flex flex-col items-center p-8 bg-[#f5f5f5]">
         <div id="table" className="w-full p-5 shadow-lg rounded-2xl bg-white overflow-hidden 2xl:text-2xl min-h-[90vh]">
-          <div id="" className="mb-5 bg-[#e8e6e6] rounded-lg flex gap-5 items-center justify-between py-2 px-5 w-full">
-            <div id="searchBox" className="border-black border overflow-hidden rounded-lg flex items-center bg-white">
-              <input
-                onChange={(e) => setSearchTerm(e.target.value)}
-                value={searchTerm}
-                name="search"
-                type="text"
-                placeholder="School Name or Code"
-                className="w-[250px] px-2 py-1 outline-none font-normal"
-              />
-              <button
-                onClick={handleSubmitSearch}
-                type="submit"
-                className="h-[33px] text-xl bg-blue-500 text-white font-semibold px-4"
-              >
-                Search
-              </button>
+          <div id="tableFunctionalityBox" className="mb-5 bg-[#e8e6e6] rounded-lg flex gap-5 items-center justify-between py-2 px-5 w-full">
+            
+            <div className="flex gap-6">
+            <SearchBox 
+                searchTerm={searchTerm}
+                searchType={searchType}
+                setSearchTerm={setSearchTerm}
+                handleSubmitSearch={handleSubmitSearch} 
+                />
+            <Select options={[{ value: "School Name", label: "School Name" }, { value: "School Code", label: "School Code" }]} defaultValue={searchType} onChange={setSearchType} />
             </div>
+
             <div id="sort" className="relative cursor-pointer">
               <div
-                className="flex items-center bg-white hover:bg-[#bbbec5] duration-500 rounded-lg px-2 py-1"
-                onClick={() => setIsSortButtonClicked(!isSortButtonClicked)}
-              >
-                <FcGenericSortingDesc className="text-lg cursor-pointer" />
-                Sort
-              </div>
-              {isSortButtonClicked && (
-                <div className="absolute shadow-xl -bottom-25 right-0 flex flex-col rounded-lg overflow-hidden w-[240px] bg-white py-2">
-                  <div 
-                    onClick={() => {setIsAscending(false); setIsSortButtonClicked(false); fetchData(searchTerm, false); toast.success("Normal Order")}}
-                    className="hover:cursor-pointer hover:bg-[#e6e7e9] duration-500 px-5 py-2 border-b border-black">
-                    Normal
-                  </div>
-                  <div 
-                    onClick={() => {setIsAscending(true); setIsSortButtonClicked(false); fetchData(searchTerm, true); toast.success("Ascending Order")}}
-                    className="hover:cursor-pointer hover:bg-[#e6e7e9] duration-500 px-5 py-2">
-                    Ascending Order
-                  </div>
+                className="flex gap-3 items-center bg-white duration-500 rounded-lg px-2 py-1"
+              > 
+                <div className="flex gap-1 items-center">
+                    <FcGenericSortingAsc className="text-lg cursor-pointer" />
+                    Sort
                 </div>
-              )}
+                <ToggleSwitch isChecked={isAscending} onChange={() => {setIsAscending(!isAscending)}} />
+              </div>
             </div>
           </div>
-          <div id="tableHead" className="w-full flex items-center text-lg 2xl:text-2xl font-bold border border-black py-2 2xl:py-7 px-1 bg-[#e6e7e9]">
+          <div id="tableHead" className="w-full flex items-center text-lg 2xl:text-2xl font-bold border border-black py-2 2xl:py-7 px-1 bg-[#1E487C] text-white">
             <div className="w-1/6 pl-5">School Code</div>
             <div className="w-2/6 pl-5">School Name</div>
             <div className="w-3/6 pl-5">Address</div>
           </div>
+
           {/* table body */}
           {currentSchools.length > 0 && currentSchools.map((data, index) => (
             <div
               key={index}
+              onClick={() => navigate(`/school/${data["code"]}`)}
               id="table body"
-              className="w-full flex items-center border-r-[1px] border-b-[1px] border-l-[1px] border-black hover:cursor-pointer hover:shadow-lg h-[50px] 2xl:h-[100px]"
+              className={`w-full flex items-center border-r-[1px] border-b-[1px] border-l-[1px] border-black py-2 2xl:py-7 px-1 hover:bg-[#e6e7e9] hover:cursor-pointer text-sm 2xl:text-2xl ${index % 2 === 0 ? "bg-white" : "bg-[#DAE2F4]"}`}
             >
               <div className="w-1/6 pl-5">{data["code"]}</div>
-              <div style={style} className="w-2/6 pl-5">
-                {data["nameOfSchoolInstitution"]}
-              </div>
-              <div style={style} className="w-3/6 px-5">
-                {data["fullAddressWithPinCode"]}
-              </div>
+              <div className="w-2/6 pl-5">{data["nameOfSchoolInstitution"]}</div>
+              <div className="w-3/6 pl-5">{data["address"]}</div>
             </div>
           ))}
-          {currentSchools.length === 0 && (
-            <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px]">No Data Found</div>
-          )}
-          {/* table body end */}
+          {currentSchools.length === 0 && <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px">No Data Found</div>}
 
-          {/* pagination */}
-          <div className="mt-6 flex items-center justify-between">
-            <button
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 ${
-                currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-              }`}
-            >
-              <FaArrowLeftLong />
-              <span>Previous</span>
-            </button>
-
-            <div className="hidden items-center gap-x-3 md:flex">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-                <button
-                  key={number}
-                  onClick={() => paginate(number)}
-                  className={`rounded-md px-2 py-1 text-sm  ${
-                    currentPage === number ? "bg-gray-100 font-bold" : "text-gray-500 hover:bg-gray-100"
-                  }`}
-                >
-                  {number}
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => paginate(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`flex items-center gap-x-2 rounded-md border bg-white px-5 py-2 text-sm capitalize text-gray-700 transition-colors duration-200 hover:bg-gray-100 ${
-                currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
-              }`}
-            >
-              <span>Next</span>
-              <FaArrowRightLong />
-            </button>
-          </div>
+          {/* Pagination */}
+          <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
         </div>
       </div>
     </Error>
