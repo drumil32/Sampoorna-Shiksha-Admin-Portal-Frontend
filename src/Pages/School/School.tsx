@@ -136,7 +136,7 @@ const School: React.FC = () => {
             >
               <div className="w-1/6 pl-5">{data["code"]}</div>
               <div className="w-2/6 pl-5">{data["nameOfSchoolInstitution"]}</div>
-              <div className="w-3/6 pl-5">{data["address"]}</div>
+              <div className="w-3/6 pl-5">{data["fullAddressWithPinCode"]}</div>
             </div>
           ))}
           {currentSchools.length === 0 && <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px">No Data Found</div>}

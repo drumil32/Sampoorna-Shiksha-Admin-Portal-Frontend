@@ -4,6 +4,7 @@ import { HOME, SIGNIN, SCHOOL } from "./utils/routes";
 import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
 import SchoolDetail from "./Pages/School Detail/SchoolDetail";
+import ProtectedRoute from "./Components/ProtectedRouter";
 
 function App() {
   const router = createBrowserRouter([
@@ -22,15 +23,14 @@ function App() {
         },
         {
           path: SCHOOL,
-          element: <School />,
-          children : [
+          element: <ProtectedRoute><School /></ProtectedRoute>,
+          children: [
             {
-              path: SCHOOL,
               element: <School />
             },
             {
               path: `${SCHOOL}/:id`,
-              element: <SchoolDetail />
+              element: <ProtectedRoute><SchoolDetail /></ProtectedRoute>,
             }
           ]
         }
