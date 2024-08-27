@@ -24,15 +24,10 @@ function App() {
         {
           path: SCHOOL,
           element: <ProtectedRoute><School /></ProtectedRoute>,
-          children: [
-            {
-              element: <School />
-            },
-            {
-              path: `${SCHOOL}/:id`,
-              element: <ProtectedRoute><SchoolDetail /></ProtectedRoute>,
-            }
-          ]
+        },
+        {
+          path: `${SCHOOL}/:id`,
+          element: <ProtectedRoute><SchoolDetail /></ProtectedRoute>,
         }
       ],
     }

@@ -13,6 +13,7 @@ import Pagination from "../../Components/atoms/Pagination/Pagination";
 import ToggleSwitch from "../../Components/atoms/ToggleSwitch/ToggleSwitch";
 import SearchBox from "../../Components/atoms/SearchBox/SearchBox";
 import { useNavigate } from "react-router-dom";
+import './School.css'
 
 
 const School: React.FC = () => {
@@ -26,9 +27,9 @@ const School: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const fetchData = async (search = "", sortAsc = isAscending, page = 1) => {
+  const fetchData = async (search = "", sortAsc = isAscending) => {
     try {
-      let queryParams = `${SCHOOL}?sortByAsc=${sortAsc}&page=${page}`;
+      let queryParams = `${SCHOOL}?sortByAsc=${sortAsc}`;
       
       if (searchType === "School Name") {
         queryParams += `&nameOfSchoolInstitution=${search}`;
@@ -130,13 +131,13 @@ const School: React.FC = () => {
           {currentSchools.length > 0 && currentSchools.map((data, index) => (
             <div
               key={index}
-              onClick={() => navigate(`/school/${data["code"]}`)}
+              onClick={() => navigate(`/school/${data["_id"]}`)}
               id="table body"
               className={`w-full flex items-center border-r-[1px] border-b-[1px] border-l-[1px] border-black py-2 2xl:py-7 px-1 hover:bg-[#e6e7e9] hover:cursor-pointer text-sm 2xl:text-2xl ${index % 2 === 0 ? "bg-white" : "bg-[#DAE2F4]"}`}
             >
-              <div className="w-1/6 pl-5">{data["code"]}</div>
-              <div className="w-2/6 pl-5">{data["nameOfSchoolInstitution"]}</div>
-              <div className="w-3/6 pl-5">{data["fullAddressWithPinCode"]}</div>
+              <div className="w-1/6 pl-5 ellipsisStyle">{data["code"]}</div>
+              <div className="w-2/6 pl-5 ellipsisStyle">{data["nameOfSchoolInstitution"]}</div>
+              <div className="w-3/6 pl-5 ellipsisStyle ">{data["fullAddressWithPinCode"]}</div>
             </div>
           ))}
           {currentSchools.length === 0 && <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px">No Data Found</div>}
