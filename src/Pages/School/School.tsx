@@ -70,7 +70,7 @@ const School: React.FC = () => {
   }, [isAscending]);
 
   const handleSubmitSearch = () => {
-    fetchData(searchTerm, isAscending, 1);
+    fetchData(searchTerm, isAscending);
     toast.success("Data Fetched Successfully");
   };
 
