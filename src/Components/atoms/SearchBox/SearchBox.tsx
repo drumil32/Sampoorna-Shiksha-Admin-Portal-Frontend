@@ -22,6 +22,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ searchTerm, searchType, setSearch
             placeholder={searchType}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmitSearch()} // 
           />
           <input
             type="button"

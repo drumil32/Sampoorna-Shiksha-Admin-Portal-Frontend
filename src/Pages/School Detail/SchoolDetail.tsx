@@ -46,6 +46,7 @@ const SchoolDetail: React.FC<SchoolProfileProps> = ({ schoolDetails }) => {
     if (schoolDetails) {
       setSchoolData(schoolDetails);
     } else if (id) {
+      console.log(id)
       const fetchData = async () => {
         try {
           const response = await axiosInstance.get(`${SCHOOL}/${id}`);
@@ -159,6 +160,9 @@ const SchoolDetail: React.FC<SchoolProfileProps> = ({ schoolDetails }) => {
         </div>
         <div className="bg-white p-6 rounded-lg shadow-lg  ">
           <h2 className="text-lg font-bold mb-4">Order Details</h2>
+          <div>
+
+          </div>
         </div>
         <div></div>
       </div>
