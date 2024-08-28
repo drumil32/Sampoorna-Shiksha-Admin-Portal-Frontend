@@ -5,6 +5,8 @@ import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
 import SchoolDetail from "./Pages/School Detail/SchoolDetail";
 import ProtectedRoute from "./Components/ProtectedRouter";
+import { ToastContainer } from "react-toastify";
+import Home from "./Pages/Home/Home";
 
 function App() {
   const router = createBrowserRouter([
@@ -15,7 +17,7 @@ function App() {
       children: [
         {
           path: HOME,
-          element: <School />
+          element: <ProtectedRoute><Home /></ProtectedRoute>
         },
         {
           path: SIGNIN,
@@ -36,6 +38,16 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
+      <ToastContainer position="bottom-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored" />
     </>
   )
 }

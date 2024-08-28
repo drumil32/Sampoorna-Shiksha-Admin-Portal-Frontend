@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { IBackEndError } from '../../types/error';
+import { Action, IBackEndError } from '../../types/error';
 import { clearError } from '../../redux/slices/statusSlice';
 import { SIGNIN } from '../../utils/routes';
 
@@ -20,6 +20,10 @@ const Error: React.FC<ErrorProps> = ({ children }) => {
             toast.error(error.message);
             if (401 == error.statusCode) {
                 navigate(SIGNIN)
+            }else if ( error.action==Action.SCHOOL_DETILS ){
+                if( error.statusCode == 404 ){
+                    toast.error('School with given id not found.');
+                }
             }
             dispatch(clearError());
         }
