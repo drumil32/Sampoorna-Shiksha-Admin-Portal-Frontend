@@ -39,7 +39,7 @@ const School: React.FC = () => {
       }
       dispatch(setLoading(true));
       const response = await axiosInstance.get(queryParams);
-      console.log("API Response:", response.data.schools);
+      // console.log("API Response:", response.data.schools);
 
       if (Array.isArray(response.data.schools)) {
         setSchoolList(response.data.schools);

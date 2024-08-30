@@ -5,20 +5,20 @@ export interface ISchoolDetails {
     contactNumberOfPrincipalManagement?: string; // done
     createdAtIST?: string;
     cupboardPictures?: string;
-    district?: string; // done
-    fullAddressWithPinCode?: string; // done
+    district?: string;                      // done
+    fullAddressWithPinCode?: string;        // done
     id?: string;
-    isThereCupboardForSafekeeping?: string; // done
-    isThereRoomForLibrary?: string; // done
-    nameOfCoordinatorForLibrary?: string; // done
-    nameOfPrincipalAndManagement?: string; // done
+    isThereCupboardForSafekeeping?: string;  // done
+    isThereRoomForLibrary?: string;          // done
+    nameOfCoordinatorForLibrary?: string;    // done
+    nameOfPrincipalAndManagement?: string;   // done
     nameOfSchoolInstitution?: string;
-    numberOfStudentsBalwadiClass1?: string; // done
-    numberOfStudentsClass2To4?: string; // done
+    numberOfStudentsBalwadiClass1?: string;  // done
+    numberOfStudentsClass2To4?: string;      // done
     numberOfStudentsClass5AndAbove?: string; // done
     picturesOfLibraryRoomAndCupboard?: string;
     referredBy?: string; // done
-    state?: string; // done
+    state?: string;     // done
     timestamp?: string; // done
     typeOfInstitutionSchool?: string; // done
     updatedAtIST?: string;
@@ -40,6 +40,7 @@ export interface ISchoolOrder {
     trackingDetails?: string;
     dateOfDelivery?: string;
     photosVideosLink?: string;
+    createdAtIST?: string;
 }
 
 export interface IToy {
@@ -65,3 +66,13 @@ export enum Level {
     MIX = 'MIX',
     ALL = 'ALL'
 };
+
+export interface InfoItem {
+    label: string;
+    value: string | number | undefined;
+  }
+  
+export interface InfoSectionProps {
+    title: string;
+    info: InfoItem[];
+  }
