@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import axiosInstance from '../../utils/axiosInstance';
 import { setLoading , setError } from '../../redux/slices/statusSlice';
 import { setItemUpdateQty } from '../../redux/slices/cartSlice';
+import { CiTrash } from "react-icons/ci";
+
 
 const Cart : React.FC = () => {
     // const cartItems = useSelector((state: RootState) => state.cart.cartItems);
@@ -54,8 +56,9 @@ const Cart : React.FC = () => {
         {items?.map((item) => {
           return (
             <div className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'>
-              <h1 className='font-[400] text-sm text-center'>
-                Bugatti Car{item.name}
+              <h1 className='font-medium text-sm text-center flex items-center justify-between'>
+                {item.name}
+                <CiTrash className='cursor-pointer text-lg text-red-400'/>
               </h1>
 
               <div className='flex flex-col mt-4 text-sm'>
@@ -113,16 +116,7 @@ const Cart : React.FC = () => {
                   <td className='border p-2'>{item.name}</td>
                   <td className='border p-2'>{item.price}</td>
                   <td className='border p-2'>
-                    <select
-                      name=''
-                      id=''
-                      className='border'
-                      onChange={(e) => dispatch(setItemUpdateQty({ id: item.id, value: Number(e.target.value)}))}
-                    >
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <option value={index + 1}>{index + 1}</option>
-                      ))}
-                    </select>
+                    <input type="number"  placeholder='Qty' className='border p-1 outline-none' min={1}/>
                   </td>
                 </tr>
               );
@@ -146,6 +140,7 @@ const Cart : React.FC = () => {
             className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
             onChange={(e) => setOrderType(e.target.value)}
           >
+            <option value="" selected>--Vendor type--</option>
             {Object.keys(VendorOrderType).map((orderType) => (
               <option value={orderType}>{orderType}</option>
             ))}
