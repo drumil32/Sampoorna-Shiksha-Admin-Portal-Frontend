@@ -1,11 +1,16 @@
 import React from "react";
+import { ISchoolOrder } from "../../types/School";
+
 
 interface ModalProps {
-  setShowModal: () => void;
+  setShowModal:React.Dispatch<React.SetStateAction<boolean>> ;
+  currentOrder : ISchoolOrder;
+  product : IProduct;
 }
 
 const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
   console.log(currentOrder, "currentOrder");
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 ">
       <div className="bg-white p-6 rounded-lg shadow-lg relative h-3/4 w-5/6">
@@ -33,24 +38,24 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
               <div className="w-[10%]">Brand</div>
               <div className="w-[15%]">Sub-Brand</div>
               <div className="w-[11%]">Name</div>
-              <div className="w-[10%]">Link</div>
               <div className="w-[10%]">Level</div>
               <div className="w-[7%]">Quantity</div>
-              <div className="w-[20%]">Learn width double</div>
+              <div className="w-[20%]">Learn</div>
+              <div className="w-[10%]">Link</div>
 
             </div>
             <div id="body">
-              {currentOrder.listOfToysSentLink.map((toy, index) => 
-              <div key={toy.id} id="row" className={`flex w-full items-center ${index % 2==0 ? 'bg-[#fce99e]' : 'bg-[#bef9b9]'}`}>
-                <div className="w-[5%]">{toy.toy.srNo}</div>
-                <div className="w-[10%]">{toy.toy.category}</div>
-                <div className="w-[10%]">{toy.toy.brand}</div>
-                <div className="w-[15%]">{toy.toy.subBrand}</div>
-                <div className="w-[11%]">{toy.toy.name}</div>
-                <div className="w-[10%]"><a href={toy.toy.link}>Link</a></div>
-                <div className="w-[10%]">Level</div>
-                <div className="w-[7%]">{toy.quantity}</div>
-                <div className="w-[20%]">{toy.toy.learn.map(learn => <span>{learn}{", "}</span>)}</div>
+              {currentOrder?.listOfToysSentLink?.map((product, index) => 
+              <div key={product.id} id="row" className={`flex w-full items-center py-2 ${index % 2==0 ? 'bg-[#fce99e]' : 'bg-[#bef9b9]'}`}>
+                <div className="w-[5%]">{product.toy.srNo}</div>
+                <div className="w-[10%]">{product.toy.category}</div>
+                <div className="w-[10%]">{product.toy.brand}</div>
+                <div className="w-[15%]">{product.toy.subBrand}</div>
+                <div className="w-[11%]">{product.toy.name}</div>
+                <div className="w-[10%]">{product.toy.level}</div>
+                <div className="w-[7%]">{product.quantity}</div>
+                <div className="w-[20%]">{product.toy.?learn.map(learn => <span>{learn}{", "}</span>)}</div>
+                <div className="w-[10%]"><a href={product.link}>Youtube</a></div> 
               </div>)}
             </div>
           </div>
@@ -66,7 +71,7 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
             </span>
             <span className="flex flex-col bg-[#f3f3f3] rounded-lg py-2 px-4">
               <span>Updated At :</span>
-              <span>{currentOrder.updatedAtIST}</span>
+              {/* <span>{currentOrder.updatedAtIST}</span> */}
             </span>
           </div>
         </div>

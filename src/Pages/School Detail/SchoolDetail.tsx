@@ -49,7 +49,7 @@ const SchoolDetail: React.FC = () => {
     }
   };
 
-  const handleModalClick = (order)=>{
+  const handleModalClick = (order:ISchoolOrder)=>{
     console.log(order)
     setCurrentOrder(order)
     setShowModal(!showModal)

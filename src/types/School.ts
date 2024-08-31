@@ -35,10 +35,10 @@ export interface ISchoolOrder {
         toy: string;
         quantity?: number;
     }[];
-    dateOfDispatch?: string;
-    modeOfDispatch?: string;
-    trackingDetails?: string;
-    dateOfDelivery?: string;
+    dateOfDispatch?: string; //
+    modeOfDispatch?: string; 
+    trackingDetails?: string; 
+    dateOfDelivery?: string; //
     photosVideosLink?: string;
     createdAtIST?: string;
 }
@@ -57,6 +57,10 @@ export interface IToy {
     link: string;
     createdAt: Date;
     updatedAt: Date;
+}
+
+export interface IProduct {
+    
 }
 
 export enum Level {
