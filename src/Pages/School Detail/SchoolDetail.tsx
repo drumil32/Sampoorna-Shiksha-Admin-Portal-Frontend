@@ -23,7 +23,6 @@ const SchoolDetail: React.FC = () => {
   const dispatch = useDispatch();
 
   const fetchData = async () => {
-    console.log("Fetch Called");
     try {
       dispatch(setLoading(true));
       const response = await axiosInstance.get(`${SCHOOL}/${id}`);
@@ -53,7 +52,6 @@ const SchoolDetail: React.FC = () => {
     console.log(order)
     setCurrentOrder(order)
     setShowModal(!showModal)
-    // console.log(showModal)
   }
 
   useEffect(() => {
@@ -123,7 +121,7 @@ const SchoolDetail: React.FC = () => {
           {schoolOrders.map((order, index) => <div
           key={order.id}
           className="flex gap-8">
-            <div id="order" className="shadow-xl rounded-lg flex justify-around gap-5 w-full min-h-[100px] p-6 bg-white">
+            <div id="order" className="shadow-xl rounded-lg flex items-center justify-around gap-5 w-full min-h-[100px] bg-white">
              <span>{index+1}</span>
              <span><span>Order Placed on: </span>{order.createdAtIST}</span>
               <span>Date of Dispatch : {order.dateOfDelivery}</span>
@@ -137,89 +135,4 @@ const SchoolDetail: React.FC = () => {
 };
 
 export default SchoolDetail;
-
-// Extra code hai baad mai delete kr sakte hai
-{/* <div className="pl-3 bg-[#f3f3f3] rounded-lg p-2">
-                  <h3 className="font-bold text-lg">School Person's</h3>
-                  <div>
-                    <p className="mb-2 ml-3">
-                      <span className="font-semibold">Principal:</span>{" "}
-                      {schoolData.nameOfPrincipalAndManagement}
-                    </p>
-                    <p className="mb-2 ml-3">
-                      <span className="font-semibold">Principal Contact:</span>{" "}
-                      {schoolData.contactNumberOfPrincipalManagement}
-                    </p>
-                    <p className="mb-2 ml-3">
-                      <span className="font-semibold">
-                        Library Coordinator:
-                      </span>{" "}
-                      {schoolData.nameOfCoordinatorForLibrary}
-                    </p>
-                    <p className="mb-2 ml-3">
-                      <span className="font-semibold">
-                        Coordinator Contact:
-                      </span>{" "}
-                      {schoolData.contactDetailsOfCoordinatorTeacher}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pl-3 bg-[#f3f3f3] rounded-lg p-2">
-                  <h3 className="font-bold text-lg">School Address</h3>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">District:</span>{" "}
-                    {schoolData.district}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">State:</span>{" "}
-                    {schoolData.state}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">Full Address:</span>{" "}
-                    {schoolData.fullAddressWithPinCode}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">Village Name:</span>{" "} {schoolData.villageNameIfAny}
-                  </p>
-                </div>
-
-                <div className="pl-3 bg-[#f3f3f3] rounded-lg p-2">
-                  <h3 className="font-bold text-lg">Class</h3>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">
-                      Students (Balwadi - class 1):
-                    </span>{" "}
-                    {schoolData.numberOfStudentsBalwadiClass1}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">
-                      Students (class 2 - class 4):
-                    </span>{" "}
-                    {schoolData.numberOfStudentsClass2To4}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">
-                      Students (class 5 and above):
-                    </span>{" "}
-                    {schoolData.numberOfStudentsClass5AndAbove}
-                  </p>
-                </div>
-
-                <div className="pl-3 bg-[#f3f3f3] rounded-lg p-2">
-                  <h3 className="font-bold text-lg">Other Details</h3>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">Safekeeping Cupboard:</span>{" "}
-                    {schoolData.isThereCupboardForSafekeeping}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">Library Room:</span>{" "}
-                    {schoolData.isThereRoomForLibrary}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">Referred by:</span> {schoolData.referredBy}
-                  </p>
-                  <p className="mb-2 ml-3">
-                    <span className="font-semibold">Timestamp:</span> {schoolData.createdAtIST}
-                  </p>
-                </div> */}
+ 

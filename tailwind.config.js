@@ -5,8 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      scrollbarWidth: {
+      'none': 'none',
+    },
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
   },
-  plugins: [],
-}
-
+},
+variants: {},
+plugins: [],
+};

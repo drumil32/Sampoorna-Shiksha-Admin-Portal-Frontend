@@ -60,8 +60,11 @@ export interface IToy {
 }
 
 export interface IProduct {
-    
-}
+    id: string;
+    toy: IToy;
+    quantity: number;
+    link: string;
+  }
 
 export enum Level {
     PRIMARY = 'PRIMARY',
