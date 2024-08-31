@@ -9,3 +9,4 @@ export interface VendorCartItem {
     brand: string;
     subBrand: string;
 };
+

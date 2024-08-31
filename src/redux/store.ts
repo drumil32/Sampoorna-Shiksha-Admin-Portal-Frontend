@@ -2,9 +2,12 @@
 import { configureStore, Store } from "@reduxjs/toolkit";
 import statusReducer from "./slices/statusSlice";
 
+import cartReducer from './slices/cartSlice'
+
 const store: Store = configureStore({
     reducer: {
-        status: statusReducer
+        status: statusReducer,
+        cart : cartReducer
     },
 });
 
