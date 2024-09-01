@@ -48,7 +48,7 @@ const SchoolDetail: React.FC = () => {
     }
   };
 
-  const handleModalClick = (order:ISchoolOrder)=>{
+  const handleModalClick = (order: ISchoolOrder) => {
     console.log(order)
     setCurrentOrder(order)
     setShowModal(!showModal)
@@ -91,8 +91,8 @@ const SchoolDetail: React.FC = () => {
   return (
     <Loading>
       <Error>
-        {showModal && <Modal setShowModal={setShowModal} currentOrder={currentOrder}   />}
-         <div className="p-8 bg-[#f5f5f5] h-[100vh] overflow-y-auto flex gap-8">
+        {showModal && <Modal setShowModal={setShowModal} currentOrder={currentOrder} setCurrentOrder={setCurrentOrder} />}
+        <div className="p-8 bg-[#f5f5f5] h-[100vh] overflow-y-auto flex gap-8">
           <div className="w-2/5 h-full flex items-center justify-center gap-8 bg-white">
             <img src={school} className="max-h-[80vh]" alt="" />
           </div>
@@ -113,19 +113,19 @@ const SchoolDetail: React.FC = () => {
           </div>
         </div>
 
-    {/* orders */}
+        {/* orders */}
         <div className="p-8 bg-[#f5f5f5] max-h-[100vh] my-[40px] mx-8 overflow-y-auto flex flex-col gap-6">
           <h2 className="text-2xl font-bold">Orders</h2>
 
           {/* particular order  */}
           {schoolOrders.map((order, index) => <div
-          key={order.id}
-          className="flex gap-8">
+            key={order.id}
+            className="flex gap-8">
             <div id="order" className="shadow-xl rounded-lg flex items-center justify-around gap-5 w-full min-h-[100px] bg-white">
-             <span>{index+1}</span>
-             <span><span>Order Placed on: </span>{order.createdAtIST}</span>
+              <span>{index + 1}</span>
+              <span><span>Order Placed on: </span>{order.createdAtIST}</span>
               <span>Date of Dispatch : {order.dateOfDelivery}</span>
-              <button onClick={()=>{handleModalClick(order)}} className="bg-[#2f77f4] text-white font-semibold w-[150px] h-[40px] rounded-xl shadow-lg">More Details</button>
+              <button onClick={() => { handleModalClick(order) }} className="bg-[#2f77f4] text-white font-semibold w-[150px] h-[40px] rounded-xl shadow-lg">More Details</button>
             </div>
           </div>)}
         </div>
@@ -135,4 +135,3 @@ const SchoolDetail: React.FC = () => {
 };
 
 export default SchoolDetail;
- 
