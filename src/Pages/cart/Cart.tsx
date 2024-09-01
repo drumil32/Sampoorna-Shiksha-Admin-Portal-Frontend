@@ -128,7 +128,7 @@ const Cart: React.FC = () => {
                   <td className='border p-2'>{item.toy.name}</td>
                   <td className='border p-2'>{item.toy.price}</td>
                   <td className='border p-2'>
-                    <input type="number" placeholder='Qty' className='border p-1 outline-none' min={1}
+                    <input type="text" placeholder='Qty' className='border p-1 outline-none' min={1}
                       onChange={(e) => dispatch(setUpdateQty({ toy:item.toy, quantity: parseInt(e.target.value) }))}
                       value={item.quantity}
                     />
