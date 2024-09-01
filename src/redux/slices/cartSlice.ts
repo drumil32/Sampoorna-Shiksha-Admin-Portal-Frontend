@@ -19,18 +19,11 @@ const cartSlice = createSlice({
     },
 
     removeItemToCart: (state, action: PayloadAction<string>) => {
-      // state.cartItems = state.cartItems.find(item => {
-      //   if(item.id == action.payload){
-      //     item.qty = 0
-      //   }
-      // })
       state.cartItems = state.cartItems.filter((item) => item.toy.id !== action.payload);
     },
 
     setUpdateQty: (state, action: PayloadAction<ShowVendorOrder>) => {
-      const index = state.cartItems.findIndex(
-        (item) => item.toy.id === action.payload.toy.id
-      );
+      const index = state.cartItems.findIndex((item) => item.toy.id === action.payload.toy.id);
       if (index !== -1) state.cartItems[index].quantity = action.payload.quantity;
     },
 

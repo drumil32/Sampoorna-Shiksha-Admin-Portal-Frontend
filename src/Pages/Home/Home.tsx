@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
-import { setItemToCart } from "../../redux/slices/cartSlice";
+import { removeItemToCart, setItemToCart } from "../../redux/slices/cartSlice";
 import { RootState } from "../../redux/store";
 import { ShowVendorOrder } from "../../types/VendorOrder";
 
@@ -57,7 +57,7 @@ const Home: React.FC = () => {
       <Error>
         <div className="gap-5  mt-3 flex sm:flex-row flex-col m-auto items-center justify-center sm:max-w-6xl">
           {toys?.map(toy => {
-            const { name, price, category, brand, learn, srNo, id, level } = toy;
+            const { name, price, category, brand, learn, srNo, id, level , subBrand } = toy;
             return (
               <div
                 className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'
@@ -65,39 +65,50 @@ const Home: React.FC = () => {
               >
                 <h1 className='font-[400] text-2xl text-center'>{name}</h1>
 
-                <div className='flex flex-col mt-4 '>
-                  <p className='font-[300] flex justify-around'>
-                    <span className=''>
-                      <strong>Price</strong> : {price}
-                    </span>
-                    <span className=''>
-                      <strong>Category</strong> : {category}
-                    </span>
-                  </p>
+                <div className='flex flex-col gap-1 p-2'>
+                    <p className='font-[300] flex justify-between'>
+                      <span className=''>
+                        <strong>Price</strong> : {price}
+                      </span>
+                      <span className=''>
+                        <strong>Category</strong> : {category}
+                      </span>
+                    </p>
 
-                  <p className='font-[300] flex justify-around'>
+                    <p className='font-[300] flex justify-between'>
+                      <span className=''>
+                        <strong>Serial Number</strong> : {srNo}
+                      </span>
+                      <span className=''>
+                        <strong>Level</strong> : {level}
+                      </span>
+                    </p>
+                  <p className='font-[300] flex justify-between'>
                     <span className=''>
                       <strong>Brand</strong> : {brand}
                     </span>
+                  </p>
+
+                  <p className='font-[300] flex justify-between'>
                     <span className='text-ellipsis'>
-                      <strong>Learn</strong> :{learn[0]}
+                      <strong>subBrand</strong> :{subBrand}
                     </span>
                   </p>
 
-                  <p className='font-[300] flex justify-around'>
+                  <p className='font-[300] flex '>
                     <span className=''>
-                      <strong>Serial Number</strong> : {srNo}
-                    </span>
-                    <span className=''>
-                      <strong>Level</strong> : {level}
+                      <strong>Learn</strong> : {learn.join(" ")}
                     </span>
                   </p>
                 </div>
 
                 <div className='w-[90%] m-auto flex justify-end pt-2 text-xs'>
                   {cartItems?.some((item) => item.toy.id == id) ? (
-                    <button className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'>
-                      Added
+                    <button
+                      onClick={() => dispatch(removeItemToCart(toy.id))}
+                      className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'
+                    >
+                      Remove From Cart
                     </button>
                   ) : (
                     <button

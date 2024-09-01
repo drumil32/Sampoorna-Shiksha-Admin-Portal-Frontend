@@ -26,7 +26,6 @@ const Cart: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log('runnig')
     setTotal(cartItems.reduce((acc, curr) => acc + (curr.toy.price * curr.quantity), 0));
   }, [cartItems]);
 
