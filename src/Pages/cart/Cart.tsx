@@ -10,6 +10,7 @@ import { CiTrash } from "react-icons/ci";
 import { CiShoppingCart } from "react-icons/ci";
 import { RootState } from '../../redux/store';
 import { Action } from '../../types/error';
+import validateVendorType from '../../utils/validation/validateOrder';
 
 
 const Cart: React.FC = () => {
@@ -31,6 +32,12 @@ const Cart: React.FC = () => {
 
   // place order function
   const placeOrder = async () => {
+
+    if(!validateVendorType(orderType)){
+      toast.error("Vendor type is required");
+      return;
+    }
+    
     try {
       dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
       const response = await axiosInstance.post(VENDOR_ORDER, {
@@ -155,7 +162,7 @@ const Cart: React.FC = () => {
             className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
             onChange={(e) => setOrderType(e.target.value)}
           >
-            <option value="" selected>--Vendor type--</option>
+            <option value="">--Vendor type--</option>
             {Object.keys(VendorOrderType).map((orderType) => (
               <option value={orderType}>{orderType}</option>
             ))}

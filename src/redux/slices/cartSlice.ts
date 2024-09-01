@@ -26,7 +26,6 @@ const cartSlice = createSlice({
       if (action.payload.quantity < 1) {
         return;
       }
-      console.log(action.payload.quantity)
       const index = state.cartItems.findIndex((item) => item.toy.id === action.payload.toy.id);
       if (index !== -1) state.cartItems[index].quantity = isNaN(action.payload.quantity) ? 0 : action.payload.quantity;
     },
