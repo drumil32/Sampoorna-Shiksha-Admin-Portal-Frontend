@@ -3,6 +3,7 @@ export interface IBackEndError {
     message: string;
     action: Action
 }
+
 export enum Action {
     SIGNUP = 'signup',
     SIGNIN = 'signin',

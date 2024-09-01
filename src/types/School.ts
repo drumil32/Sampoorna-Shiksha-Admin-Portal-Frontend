@@ -50,6 +50,7 @@ export interface SchoolOrderToyLink {
 }
 
 export interface IToy {
+    id: string;
     srNo: number;
     brand: string;
     subBrand: string;
