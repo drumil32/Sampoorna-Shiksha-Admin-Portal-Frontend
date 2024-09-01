@@ -59,7 +59,7 @@ const SchoolDetail: React.FC = () => {
     if (Object.keys(schoolData).length === 0) {
       fetchData();
     }
-  }, [id]);
+  }, []); 
 
   const schoolPersonInfo: InfoItem[] = [
     { label: "Principal", value: schoolData.nameOfPrincipalAndManagement },

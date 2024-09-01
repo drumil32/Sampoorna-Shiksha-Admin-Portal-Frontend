@@ -21,13 +21,14 @@ const Modal: React.FC<ModalProps> = ({
   const [isEdit, setisEdit] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const updateOrder = async () => {
+  const updateOrder = async (listOfToysSentLink: any) => {
     try {
       dispatch(setLoading(true));
       const response = await axiosInstance.put(`${UPDATE_SCHOOL_ORDER}`, {
-        order: currentOrder,
+        order: {...currentOrder, listOfToysSentLink},
       });
       console.log("Put response:", response.data);
+      console.log("ListOFToysSentLink", listOfToysSentLink)
       setCurrentOrder(response.data.order);
       toast.success(response.data.message);
     } catch (error: any) {
@@ -59,17 +60,20 @@ const Modal: React.FC<ModalProps> = ({
     setCurrentOrder((prevValue) => {
       const listOfToysSentLink = prevValue.listOfToysSentLink ?? [];
 
-      if (quantity == 0) {
-        listOfToysSentLink.splice(index, 1);
-      } else {
         listOfToysSentLink[index].quantity = quantity;
-      }
+  
       return { ...prevValue, listOfToysSentLink };
     });
   };
 
   const handleSave = () => {
-    updateOrder();
+    // updateOrder();
+    const listOfToysSentLink = (currentOrder.listOfToysSentLink ?? []).filter((item) => item.quantity && item.quantity  > 0);
+    
+    
+    updateOrder(listOfToysSentLink).then(() => {
+      console.log("Updated currentOrder:", currentOrder);
+    });  
     
     setisEdit(false);
   };
