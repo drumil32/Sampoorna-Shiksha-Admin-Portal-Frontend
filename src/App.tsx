@@ -42,7 +42,6 @@ function App() {
 
   return (
     <>
-      <Header/>
       <RouterProvider router={router} />
       <ToastContainer position="bottom-right"
         autoClose={2000}

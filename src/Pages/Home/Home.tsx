@@ -9,14 +9,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
-import { VendorCartItem } from "../../types/VendorOrder";
 import { setItemToCart } from "../../redux/slices/cartSlice";
-import { RootState } from "@reduxjs/toolkit/query";
+import { RootState } from "../../redux/store";
 
 const Home: React.FC = () => {
     const [toys, setToys] = useState<IToy[]>([]);
     
-    const cartItems = useSelector((store : RootState) => store.cart.cartItems);
+    const cartItems = useSelector((store :RootState ) => store.cart.cartItems);
 
 
     const dispatch = useDispatch();
@@ -28,10 +27,6 @@ const Home: React.FC = () => {
                 const response = await axiosInstance.get(TOYS);
                 console.log(response.data)
                 setToys(response.data.toys);
-                localStorage.setItem(
-                  "item",
-                  JSON.stringify(response.data.toys)
-                );
             } catch (error: any) {
                 if (error.response) {
                     dispatch(
@@ -57,8 +52,6 @@ const Home: React.FC = () => {
           dispatch(setItemToCart({...toy , qty : 1}));
         };
     }
-
-    console.log(cartItems);
     return (
         <Loading>
             <Error>

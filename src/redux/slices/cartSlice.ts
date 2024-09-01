@@ -18,12 +18,16 @@ const cartSlice = createSlice({
     },
 
     removeItemToCart: (state, action: PayloadAction<number>) => {
-      state.cartItems = state.cartItems.filter(
-        (item) => item.id !== action.payload
-      );
+      // state.cartItems = state.cartItems.find(item => {
+      //   if(item.id == action.payload){
+      //     item.qty = 0
+      //   }
+      // })
+      state.cartItems = state.cartItems.filter((item) => item.id !== action.payload);
+
     },
 
-    setItemUpdateQty: (state, action: PayloadAction<number>) => {
+    setUpdateQty: (state, action: PayloadAction<number>) => {
       const index = state.cartItems.findIndex(
         (item) => item.id === action.payload.id
       );
@@ -36,6 +40,7 @@ const cartSlice = createSlice({
   },
 });
 
-export const { setItemToCart, removeItemToCart, clearCart, setItemUpdateQty } = cartSlice.actions;
+export const { setItemToCart, removeItemToCart, clearCart, setUpdateQty } =
+  cartSlice.actions;
 
 export default cartSlice.reducer;

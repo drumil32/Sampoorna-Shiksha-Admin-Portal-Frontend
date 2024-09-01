@@ -6,30 +6,37 @@ import { VendorOrderType } from '../../types/VendorOrder';
 import { toast } from "react-toastify";
 import axiosInstance from '../../utils/axiosInstance';
 import { setLoading , setError } from '../../redux/slices/statusSlice';
-import { setItemUpdateQty } from '../../redux/slices/cartSlice';
+import { setUpdateQty , removeItemToCart } from '../../redux/slices/cartSlice';
 import { CiTrash } from "react-icons/ci";
+import { CiShoppingCart } from "react-icons/ci";
 
 
 const Cart : React.FC = () => {
-    // const cartItems = useSelector((state: RootState) => state.cart.cartItems);
-    const [items, setItem] = useState(JSON.parse(localStorage.getItem("item")));
+    const cartItems = useSelector((state: RootState) => state.cart.cartItems);
     const [orderType , setOrderType] = useState<string>("");
     const [address , setAddress] = useState<string>("");
     const [total , setTotal] = useState<number>(0);
-    const [vendorOrdercart, setVendorOrderCart] = useState<VendorCartItem[]>([]);
+    // const [vendorOrdercart, setVendorOrderCart] = useState<VendorCartItem[]>([]);
 
     const dispatch = useDispatch();
 
+    const orderItems = cartItems?.map(item => {
+      return {toyId : item.id , quantity : Number(item.qty) , brand : item.brand , subBrand : item.subBrand};
+    });
+
     useEffect(() => {
-      setTotal(items.reduce((acc:number , curr:any) => acc + curr.price , 0));
-    },[total])
+      console.log('runnig')
+      setTotal(cartItems.reduce((acc , curr) => acc + (curr.price * curr.qty) , 0));
+    },[cartItems])
 
     // place order function
     const placeOrder = async () => {
       try {
         dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
         const response = await axiosInstance.post(VENDOR_ORDER, {
-          cart: vendorOrdercart,
+          cart: orderItems,
+          orderType,
+          address,
         });
         toast.success(response.data.message);
       } catch (error: any) {
@@ -49,16 +56,22 @@ const Cart : React.FC = () => {
       }
     };
 
+    if(cartItems.length <= 0) return (
+      <div className='w-full flex calc-height items-center justify-center text-2xl font-[200]'>
+        Please add some toys <CiShoppingCart />
+      </div>
+    );
+
 
   return (
     <div className='container max-w-4xl m-auto mt-6  bg-white shadow-xl p-4 grid  sm:grid-cols-2 grid-cols-1'>
       <div className='item-details flex flex-col items-center gap-3'>
-        {items?.map((item) => {
+        {cartItems?.map((item) => {
           return (
             <div className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'>
               <h1 className='font-medium text-sm text-center flex items-center justify-between'>
                 {item.name}
-                <CiTrash className='cursor-pointer text-lg text-red-400'/>
+                <CiTrash className='cursor-pointer text-lg text-red-400' onClick={() => dispatch(removeItemToCart(item.id))}/>
               </h1>
 
               <div className='flex flex-col mt-4 text-sm'>
@@ -106,7 +119,7 @@ const Cart : React.FC = () => {
           </thead>
 
           <tbody>
-            {items.map((item, index) => {
+            {cartItems?.map((item, index) => {
               return (
                 <tr
                   className={`border text-center text-xs ${
@@ -116,7 +129,10 @@ const Cart : React.FC = () => {
                   <td className='border p-2'>{item.name}</td>
                   <td className='border p-2'>{item.price}</td>
                   <td className='border p-2'>
-                    <input type="number"  placeholder='Qty' className='border p-1 outline-none' min={1}/>
+                    <input type="number"  placeholder='Qty' className='border p-1 outline-none' min={1} 
+                    onChange={(e) => dispatch(setUpdateQty({id : item.id , value : e.target.value} ))}
+                    value={item.qty}
+                    />
                   </td>
                 </tr>
               );
@@ -128,7 +144,7 @@ const Cart : React.FC = () => {
               <td className='border text-center p-2' colSpan={2}>
                 Total
               </td>
-              <td className='border text-center p-2'>{total}</td>
+              <td className='border text-center p-2'>{total.toFixed(2)}</td>
             </tr>
           </tfoot>
         </table>
