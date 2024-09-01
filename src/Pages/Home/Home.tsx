@@ -1,72 +1,131 @@
 import { useEffect, useState } from "react";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
 import axiosInstance from "../../utils/axiosInstance";
-import { TOYS, VENDOR_ORDER } from "../../utils/restEndPoints";
+import { TOYS } from "../../utils/restEndPoints";
 import { IToy } from "../../types/School";
 import { Action } from "../../types/error";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
-import { VendorCartItem } from "../../types/VendorOrder";
+import { removeItemToCart, setItemToCart } from "../../redux/slices/cartSlice";
+import { RootState } from "../../redux/store";
+import { ShowVendorOrder } from "../../types/VendorOrder";
 
 const Home: React.FC = () => {
-    const [toys, setToys] = useState<IToy[]>([]);
-    const [vendorOrdercart, setVendorOrderCart] = useState<VendorCartItem[]>([]);
+  const [toys, setToys] = useState<IToy[]>([]);
 
-    const dispatch = useDispatch();
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                dispatch(setLoading(true));
-                const response = await axiosInstance.get(TOYS);
-                setToys(response.data);
-            } catch (error: any) {
-                if (error.response) {
-                    dispatch(
-                        setError({
-                            statusCode: error.response.status,
-                            message: error.response.data.error,
-                            action: Action.SCHOOL_DETILS,
-                        })
-                    );
-                } else {
-                    toast.error("Server is Down.");
-                }
-            } finally {
-                dispatch(setLoading(false));
-            }
+  const cartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.cartItems);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    console.log('inside useEffect')
+    const fetchData = async () => {
+      try {
+        dispatch(setLoading(true));
+        const response = await axiosInstance.get(TOYS);
+        console.log(response.data)
+        setToys(response.data.toys);
+      } catch (error: any) {
+        if (error.response) {
+          dispatch(
+            setError({
+              statusCode: error.response.status,
+              message: error.response.data.error,
+              action: Action.SCHOOL_DETILS,
+            })
+          );
+        } else {
+          toast.error("Server is Down.");
         }
-        fetchData();
-    }, []);
-    const placeOrder = async () => {
-        try {
-            dispatch(setLoading(true));  // loading should be there in btn for this will add loading on btn and have id for each btn
-            const response = await axiosInstance.post(VENDOR_ORDER, { cart: vendorOrdercart });
-            toast.success(response.data.message);
-        } catch (error: any) {
-            if (error.response) {
-                dispatch(
-                    setError({
-                        statusCode: error.response.status,
-                        message: error.response.data.error,
-                        action: Action.PLACE_VENDOR_ORDER,
-                    })
-                );
-            } else {
-                toast.error("Server is Down");
-            }
-        } finally {
-            dispatch(setLoading(false));
-        }
+      } finally {
+        dispatch(setLoading(false));
+      }
     }
-    return (
-        <Loading>
-            <Error>
-                <div>Home</div>
-            </Error>
-        </Loading>
-    )
+    fetchData();
+  }, []);
+
+  const addToCart = (toy: IToy) => {
+    const isExits = cartItems.find((item) => item.toy.id === toy.id);
+    if (!isExits) {
+      dispatch(setItemToCart({ toy, quantity: 1 }));
+    };
+  }
+  return (
+    <Loading>
+      <Error>
+        <div className="gap-5  mt-3 flex sm:flex-row flex-col m-auto items-center justify-center sm:max-w-6xl">
+          {toys?.map(toy => {
+            const { name, price, category, brand, learn, srNo, id, level , subBrand } = toy;
+            return (
+              <div
+                className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'
+                key={id}
+              >
+                <h1 className='font-[400] text-2xl text-center'>{name}</h1>
+
+                <div className='flex flex-col gap-1 p-2'>
+                    <p className='font-[300] flex justify-between'>
+                      <span className=''>
+                        <strong>Price</strong> : {price}
+                      </span>
+                      <span className=''>
+                        <strong>Category</strong> : {category}
+                      </span>
+                    </p>
+
+                    <p className='font-[300] flex justify-between'>
+                      <span className=''>
+                        <strong>Serial Number</strong> : {srNo}
+                      </span>
+                      <span className=''>
+                        <strong>Level</strong> : {level}
+                      </span>
+                    </p>
+                  <p className='font-[300] flex justify-between'>
+                    <span className=''>
+                      <strong>Brand</strong> : {brand}
+                    </span>
+                  </p>
+
+                  <p className='font-[300] flex justify-between'>
+                    <span className='text-ellipsis'>
+                      <strong>subBrand</strong> :{subBrand}
+                    </span>
+                  </p>
+
+                  <p className='font-[300] flex '>
+                    <span className=''>
+                      <strong>Learn</strong> : {learn.join(" ")}
+                    </span>
+                  </p>
+                </div>
+
+                <div className='w-[90%] m-auto flex justify-end pt-2 text-xs'>
+                  {cartItems?.some((item) => item.toy.id == id) ? (
+                    <button
+                      onClick={() => dispatch(removeItemToCart(toy.id))}
+                      className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'
+                    >
+                      Remove From Cart
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => addToCart(toy)}
+                      className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'
+                    >
+                      Add To cart
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Error>
+    </Loading>
+  )
 }
 
 export default Home;
