@@ -15,6 +15,7 @@ import SearchBox from "../../Components/atoms/SearchBox/SearchBox";
 import { useNavigate } from "react-router-dom";
 import './School.css'
 import Loading from "../../Components/Loading/Loading";
+import './School.css'
 
 
 const School: React.FC = () => {
