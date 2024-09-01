@@ -1,56 +1,69 @@
 import React, { useState } from "react";
 import { ISchoolOrder } from "../../types/School";
-import { IProduct } from "../../types/School"; 
 import axiosInstance from "../../utils/axiosInstance";
-import { SCHOOL_ORDER } from "../../utils/restEndPoints";
-
-
+import { UPDATE_SCHOOL_ORDER } from "../../utils/restEndPoints";
+import { useDispatch } from "react-redux";
+import { setError, setLoading } from "../../redux/slices/statusSlice";
+import { toast } from "react-toastify";
+import { Action } from "../../types/error";
 
 interface ModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   currentOrder: ISchoolOrder;
+  setCurrentOrder: React.Dispatch<React.SetStateAction<ISchoolOrder>>;
 }
 
-const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
+const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrder }) => {
   const [editRowIndex, setEditRowIndex] = useState<number | null>(null);
-  const [editedProducts, setEditedProducts] = useState(
-    currentOrder.listOfToysSentLink
-  );
-
-  const fetchData = async () => {
+  const dispatch = useDispatch();
+  
+  const updateOrder = async () => {
     try {
-      const id = currentOrder.id; 
-      const updateToyDataResponse = await axiosInstance.put(
-        `${SCHOOL_ORDER}/${id}`,
-        { listOfToysSentLink: editedProducts }
+      dispatch(setLoading(true));
+      const response = await axiosInstance.put(
+        `${UPDATE_SCHOOL_ORDER}`,
+        { order: currentOrder }
       );
-      console.log("Put response:", updateToyDataResponse.data);
+      console.log("Put response:", response.data);
+      setCurrentOrder(response.data.order);
+      toast.success(response.data.message);
     } catch (error: any) {
       if (error.response) {
         console.error("Error:", error.response.data.error);
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.UPDATE_SCHOOL_ORDER,
+          })
+        );
       } else {
         console.error("Server is Down.");
+        toast.error("Server is Down");
       }
+    }finally{
+      dispatch(setLoading(false));
     }
   };
 
-
-
-  const handleInputChange = (index: number, field: string, value: string) => {
-    const updatedProducts = [...editedProducts];
-    updatedProducts[index] = {
-      ...updatedProducts[index],
-      toy: {
-        ...updatedProducts[index].toy,
-        [field]: value,
-      },
-    };
-    setEditedProducts(updatedProducts);
-    console.log(editedProducts, "editedProducts")
-  };
+  const handleOtherChanges = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setCurrentOrder(prevValue => ({ ...prevValue, [name]: value }));
+  }
+  const handleToyArrayChanges = (index: number, quantity: number) => {
+    setCurrentOrder(prevValue => {
+      const listOfToysSentLink = prevValue.listOfToysSentLink ?? [];
+      if (quantity == 0) {
+        listOfToysSentLink.splice(index, 1);
+      } else {
+        listOfToysSentLink[index].quantity = quantity;
+      }
+      return { ...prevValue, listOfToysSentLink };
+    });
+  }
 
   const handleSave = () => {
-    fetchData();
+    updateOrder();
     setEditRowIndex(null);
   };
 
@@ -117,13 +130,12 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
             </div>
 
             <div id="body">
-              {editedProducts?.map((product, index) => (
+              {currentOrder.listOfToysSentLink?.map((toyObject, index) => (
                 <div
-                  key={product.id}
+                  key={toyObject.id}
                   id="row"
-                  className={`flex w-full items-center ${
-                    index % 2 == 0 ? "bg-[#fce99e]" : "bg-[#bef9b9]"
-                  }`}
+                  className={`flex w-full items-center ${index % 2 == 0 ? "bg-[#fce99e]" : "bg-[#bef9b9]"
+                    }`}
                 >
                   <div className="w-[5%] px-1 flex justify-center border-r border-black py-3">
                     {editRowIndex === index ? (
@@ -131,13 +143,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="srNo"
-                        value={product.toy.srNo}
+                        value={toyObject.toy.srNo}
                         onChange={(e) =>
                           handleInputChange(index, "srNo", e.target.value)
                         }
                       />
                     ) : (
-                      product.toy.srNo
+                      toyObject.toy.srNo
                     )}
                   </div>
                   <div
@@ -149,13 +161,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Category"
-                        value={product.toy.category}
-                        onChange={(e) =>
-                          handleInputChange(index, "category", e.target.value)
-                        }
+                        value={toyObject.toy.category}
+                      // onChange={(e) =>
+                      //   handleInputChange(index, "category", e.target.value)
+                      // }
                       />
                     ) : (
-                      product.toy.category
+                      toyObject.toy.category
                     )}
                   </div>
                   <div
@@ -167,13 +179,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Brand"
-                        value={product.toy.brand}
-                        onChange={(e) =>
-                          handleInputChange(index, "brand", e.target.value)
-                        }
+                        value={toyObject.toy.brand}
+                      // onChange={(e) =>
+                      //   handleInputChange(index, "brand", e.target.value)
+                      // }
                       />
                     ) : (
-                      product.toy.brand
+                      toyObject.toy.brand
                     )}
                   </div>
                   <div
@@ -190,12 +202,12 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Sub-Brand"
                         value={product.toy.subBrand}
-                        onChange={(e) =>
-                          handleInputChange(index, "subBrand", e.target.value)
-                        }
+                      // onChange={(e) =>
+                      //   handleInputChange(index, "subBrand", e.target.value)
+                      // }
                       />
                     ) : (
-                      product.toy.subBrand
+                      toyObject.toy.subBrand
                     )}
                   </div>
                   <div
@@ -207,13 +219,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Price"
-                        value={product.toy.price}
-                        onChange={(e) =>
-                          handleInputChange(index, "price", e.target.value)
-                        }
+                        value={toyObject.toy.price}
+                      // onChange={(e) =>
+                      //   handleInputChange(index, "price", e.target.value)
+                      // }
                       />
                     ) : (
-                      product.toy.price
+                      toyObject.toy.price
                     )}
                   </div>
                   <div
@@ -225,13 +237,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Name"
-                        value={product.toy.name}
-                        onChange={(e) =>
-                          handleInputChange(index, "name", e.target.value)
-                        }
+                        value={toyObject.toy.name}
+                      // onChange={(e) =>
+                      //   handleInputChange(index, "name", e.target.value)
+                      // }
                       />
                     ) : (
-                      product.toy.name
+                      toyObject.toy.name
                     )}
                   </div>
                   <div
@@ -243,13 +255,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Level"
-                        value={product.toy.level}
-                        onChange={(e) =>
-                          handleInputChange(index, "level", e.target.value)
-                        }
+                        value={toyObject.toy.level}
+                      // onChange={(e) =>
+                      //   handleInputChange(index, "level", e.target.value)
+                      // }
                       />
                     ) : (
-                      product.toy.level
+                      toyObject.toy.level
                     )}
                   </div>
                   <div className="w-[7%] px-1 flex justify-center border-r border-black py-3">
@@ -258,13 +270,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="number"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Quantity"
-                        value={product.quantity}
+                        value={toyObject.quantity}
                         onChange={(e) =>
-                          handleInputChange(index, "quantity", e.target.value)
+                          handleToyArrayChanges(index, parseInt(e.target.value))
                         }
                       />
                     ) : (
-                      product.quantity
+                      toyObject.quantity
                     )}
                   </div>
                   <div
@@ -276,20 +288,20 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Learn"
-                        value={product.toy.learn.join(", ")}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            "learn",
-                            e.target.value.split(", ").join(", ")
-                          )
-                        }
+                        value={toyObject.toy.learn.join(", ")}
+                      // onChange={(e) =>
+                      //   handleInputChange(
+                      //     index,
+                      //     "learn",
+                      //     e.target.value.split(", ").join(", ")
+                      //   )
+                      // }
                       />
                     ) : (
-                      product.toy.learn?.map((learn, learnIndex) => (
+                      toyObject.toy.learn?.map((learn, learnIndex) => (
                         <span key={learnIndex}>
                           {learn}
-                          {learnIndex < product.toy.learn.length - 1
+                          {learnIndex < toyObject.toy.learn.length - 1
                             ? ", "
                             : ""}
                         </span>
@@ -302,13 +314,13 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder }) => {
                         type="text"
                         className="w-full px-1 outline-none border-black border rounded-lg"
                         placeholder="Link"
-                        value={product.link}
-                        onChange={(e) =>
-                          handleInputChange(index, "link", e.target.value)
-                        }
+                        value={toyObject.toy.link}
+                      // onChange={(e) =>
+                      //   handleInputChange(index, "link", e.target.value)
+                      // }
                       />
                     ) : (
-                      <a href={product.link}>Youtube</a>
+                      <a href={toyObject.toy.link}>Youtube</a>
                     )}
                   </div>
                   <div className="w-[2%] px-1 flex justify-center">

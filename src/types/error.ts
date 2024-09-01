@@ -9,5 +9,6 @@ export enum Action {
     AUTH = 'auth',
     SCHOOL = 'school',
     SCHOOL_DETILS = 'school_details',
-    PLACE_VENDOR_ORDER = 'place_vendor_order'
+    PLACE_VENDOR_ORDER = 'place_vendor_order',
+    UPDATE_SCHOOL_ORDER = 'update_school_order'
 }

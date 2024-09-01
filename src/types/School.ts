@@ -32,15 +32,21 @@ export interface ISchoolOrder {
     timestamp?: string;
     school?: string;
     listOfToysSentLink?: {
-        toy: string;
+        toy: IToy;
+        id: string;
         quantity?: number;
     }[];
     dateOfDispatch?: string; //
-    modeOfDispatch?: string; 
-    trackingDetails?: string; 
+    modeOfDispatch?: string;
+    trackingDetails?: string;
     dateOfDelivery?: string; //
     photosVideosLink?: string;
     createdAtIST?: string;
+}
+
+export interface SchoolOrderToyLink {
+    toy: string;
+    quantity?: number;
 }
 
 export interface IToy {
@@ -64,7 +70,7 @@ export interface IProduct {
     toy: IToy;
     quantity: number;
     link: string;
-  }
+}
 
 export enum Level {
     PRIMARY = 'PRIMARY',
@@ -77,9 +83,9 @@ export enum Level {
 export interface InfoItem {
     label: string;
     value: string | number | undefined;
-  }
-  
+}
+
 export interface InfoSectionProps {
     title: string;
     info: InfoItem[];
-  }
+}
