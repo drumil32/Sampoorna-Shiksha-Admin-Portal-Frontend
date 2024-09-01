@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ShowVendorOrder } from "../../types/VendorOrder";
 
 interface CartState {
-  cartItems: CartItem[];
+  cartItems: ShowVendorOrder[];
 }
 
 const initialState: CartState = {
@@ -12,29 +13,28 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    setItemToCart: (state, action: PayloadAction<CartItem>) => {
+    setItemToCart: (state, action: PayloadAction<ShowVendorOrder>) => {
       // Append the new item to the existing cartItems
       state.cartItems.push(action.payload);
     },
 
-    removeItemToCart: (state, action: PayloadAction<number>) => {
+    removeItemToCart: (state, action: PayloadAction<string>) => {
       // state.cartItems = state.cartItems.find(item => {
       //   if(item.id == action.payload){
       //     item.qty = 0
       //   }
       // })
-      state.cartItems = state.cartItems.filter((item) => item.id !== action.payload);
-
+      state.cartItems = state.cartItems.filter((item) => item.toy.id !== action.payload);
     },
 
-    setUpdateQty: (state, action: PayloadAction<number>) => {
+    setUpdateQty: (state, action: PayloadAction<ShowVendorOrder>) => {
       const index = state.cartItems.findIndex(
-        (item) => item.id === action.payload.id
+        (item) => item.toy.id === action.payload.toy.id
       );
-      if (index !== -1) state.cartItems[index].qty = action.payload.value;
+      if (index !== -1) state.cartItems[index].quantity = action.payload.quantity;
     },
 
-    clearCart: (state, action) => {
+    clearCart: (state) => {
       state.cartItems = [];
     },
   },

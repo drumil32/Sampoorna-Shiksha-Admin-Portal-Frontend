@@ -1,66 +1,67 @@
 import React, { useEffect, useState } from 'react'
-import { RootState } from '@reduxjs/toolkit/query';
-import { useSelector ,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { VENDOR_ORDER } from '../../utils/restEndPoints';
-import { VendorOrderType } from '../../types/VendorOrder';
+import { ShowVendorOrder, VendorOrderType } from '../../types/VendorOrder';
 import { toast } from "react-toastify";
 import axiosInstance from '../../utils/axiosInstance';
-import { setLoading , setError } from '../../redux/slices/statusSlice';
-import { setUpdateQty , removeItemToCart } from '../../redux/slices/cartSlice';
+import { setLoading, setError } from '../../redux/slices/statusSlice';
+import { setUpdateQty, removeItemToCart } from '../../redux/slices/cartSlice';
 import { CiTrash } from "react-icons/ci";
 import { CiShoppingCart } from "react-icons/ci";
+import { RootState } from '../../redux/store';
+import { Action } from '../../types/error';
 
 
-const Cart : React.FC = () => {
-    const cartItems = useSelector((state: RootState) => state.cart.cartItems);
-    const [orderType , setOrderType] = useState<string>("");
-    const [address , setAddress] = useState<string>("");
-    const [total , setTotal] = useState<number>(0);
-    // const [vendorOrdercart, setVendorOrderCart] = useState<VendorCartItem[]>([]);
+const Cart: React.FC = () => {
+  const cartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
+  const [orderType, setOrderType] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [total, setTotal] = useState<number>(0);
+  // const [vendorOrdercart, setVendorOrderCart] = useState<VendorCartItem[]>([]);
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const orderItems = cartItems?.map(item => {
-      return {toyId : item.id , quantity : Number(item.qty) , brand : item.brand , subBrand : item.subBrand};
-    });
+  const orderItems = cartItems?.map(item => {
+    return { toyId: item.toy.id, price: item.toy.price, quantity: item.quantity, brand: item.toy.brand, subBrand: item.toy.subBrand };
+  });
 
-    useEffect(() => {
-      console.log('runnig')
-      setTotal(cartItems.reduce((acc , curr) => acc + (curr.price * curr.qty) , 0));
-    },[cartItems])
+  useEffect(() => {
+    console.log('runnig')
+    setTotal(cartItems.reduce((acc, curr) => acc + (curr.toy.price * curr.quantity), 0));
+  }, [cartItems]);
 
-    // place order function
-    const placeOrder = async () => {
-      try {
-        dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
-        const response = await axiosInstance.post(VENDOR_ORDER, {
-          cart: orderItems,
-          orderType,
-          address,
-        });
-        toast.success(response.data.message);
-      } catch (error: any) {
-        if (error.response) {
-          dispatch(
-            setError({
-              statusCode: error.response.status,
-              message: error.response.data.error,
-              action: Action.PLACE_VENDOR_ORDER,
-            })
-          );
-        } else {
-          toast.error("Server is Down");
-        }
-      } finally {
-        dispatch(setLoading(false));
+  // place order function
+  const placeOrder = async () => {
+    try {
+      dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
+      const response = await axiosInstance.post(VENDOR_ORDER, {
+        cart: orderItems,
+        orderType,
+        address,
+      });
+      toast.success(response.data.message);
+    } catch (error: any) {
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.PLACE_VENDOR_ORDER,
+          })
+        );
+      } else {
+        toast.error("Server is Down");
       }
-    };
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
-    if(cartItems.length <= 0) return (
-      <div className='w-full flex calc-height items-center justify-center text-2xl font-[200]'>
-        Please add some toys <CiShoppingCart />
-      </div>
-    );
+  if (cartItems.length <= 0) return (
+    <div className='w-full flex calc-height items-center justify-center text-2xl font-[200]'>
+      Please add some toys <CiShoppingCart />
+    </div>
+  );
 
 
   return (
@@ -70,35 +71,35 @@ const Cart : React.FC = () => {
           return (
             <div className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'>
               <h1 className='font-medium text-sm text-center flex items-center justify-between'>
-                {item.name}
-                <CiTrash className='cursor-pointer text-lg text-red-400' onClick={() => dispatch(removeItemToCart(item.id))}/>
+                {item.toy.name}
+                <CiTrash className='cursor-pointer text-lg text-red-400' onClick={() => dispatch(removeItemToCart(item.toy.id))} />
               </h1>
 
               <div className='flex flex-col mt-4 text-sm'>
                 <p className='font-[300] flex justify-around'>
                   <span className=''>
-                    <strong>Price</strong> : {item.price}
+                    <strong>Price</strong> : {item.toy.price}
                   </span>
                   <span className=''>
-                    <strong>Category</strong> : {item.category}
+                    <strong>Category</strong> : {item.toy.category}
                   </span>
                 </p>
 
                 <p className='font-[300] flex justify-around'>
                   <span className=''>
-                    <strong>Brand</strong> : {item.brand}
+                    <strong>Brand</strong> : {item.toy.brand}
                   </span>
                   <span className='text-ellipsis'>
-                    <strong>Learn</strong> {item.learn[0] + "..."}
+                    <strong>Learn</strong> {item.toy.learn[0] + "..."}
                   </span>
                 </p>
 
                 <p className='font-[300] flex justify-around'>
                   <span className=''>
-                    <strong>Serial Number</strong> : {item.srNo}
+                    <strong>Serial Number</strong> : {item.toy.srNo}
                   </span>
                   <span className=''>
-                    <strong>Level</strong> : {item.level}
+                    <strong>Level</strong> : {item.toy.level}
                   </span>
                 </p>
               </div>
@@ -122,16 +123,15 @@ const Cart : React.FC = () => {
             {cartItems?.map((item, index) => {
               return (
                 <tr
-                  className={`border text-center text-xs ${
-                    index % 2 !== 0 ? "bg-gray-100" : ""
-                  }`}
+                  className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
+                    }`}
                 >
-                  <td className='border p-2'>{item.name}</td>
-                  <td className='border p-2'>{item.price}</td>
+                  <td className='border p-2'>{item.toy.name}</td>
+                  <td className='border p-2'>{item.toy.price}</td>
                   <td className='border p-2'>
-                    <input type="number"  placeholder='Qty' className='border p-1 outline-none' min={1} 
-                    onChange={(e) => dispatch(setUpdateQty({id : item.id , value : e.target.value} ))}
-                    value={item.qty}
+                    <input type="number" placeholder='Qty' className='border p-1 outline-none' min={1}
+                      onChange={(e) => dispatch(setUpdateQty({ toy:item.toy, quantity: parseInt(e.target.value) }))}
+                      value={item.quantity}
                     />
                   </td>
                 </tr>
