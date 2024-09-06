@@ -20,10 +20,7 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrd
   const updateOrder = async () => {
     try {
       dispatch(setLoading(true));
-      const response = await axiosInstance.put(
-        `${UPDATE_SCHOOL_ORDER}`,
-        { order: currentOrder }
-      );
+      const response = await axiosInstance.put(`${UPDATE_SCHOOL_ORDER}`,{ order: currentOrder });
       console.log("Put response:", response.data);
       setCurrentOrder(response.data.order);
       toast.success(response.data.message);

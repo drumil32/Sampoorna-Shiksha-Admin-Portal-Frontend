@@ -1,14 +1,24 @@
 import Layout from "./Components/Layouts/Layout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HOME, SIGNIN, SCHOOL , CART } from "./utils/routes";
+import {
+  HOME,
+  SIGNIN,
+  SCHOOL,
+  CART,
+  ORDER_HISTORY,
+  ORDER_DETAILS,
+  ADD_TOY
+} from "./utils/routes";
 import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
 import SchoolDetail from "./Pages/School Detail/SchoolDetail";
 import ProtectedRoute from "./Components/ProtectedRouter";
 import { ToastContainer } from "react-toastify";
 import Home from "./Pages/Home/Home";
-import Header from "./Components/Header";
 import Cart from "./Pages/cart/Cart";
+import OrderHistory from "./Pages/Order History/OrderHistory";
+import OrderDetails from "./Pages/Order Details/OrderDetails";
+import AddToy from "./Pages/Add toy/AddToy";
 function App() {
   const router = createBrowserRouter([
     {
@@ -18,27 +28,69 @@ function App() {
       children: [
         {
           path: HOME,
-          element: <ProtectedRoute><Home /></ProtectedRoute>
+          element: (
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          ),
         },
         {
           path: SIGNIN,
-          element: <Login />
+          element: <Login />,
         },
         {
           path: SCHOOL,
-          element: <ProtectedRoute><School /></ProtectedRoute>,
+          element: (
+            <ProtectedRoute>
+              <School />
+            </ProtectedRoute>
+          ),
         },
         {
           path: `${SCHOOL}/:id`,
-          element: <ProtectedRoute><SchoolDetail /></ProtectedRoute>,
+          element: (
+            <ProtectedRoute>
+              <SchoolDetail />
+            </ProtectedRoute>
+          ),
         },
         {
           path: CART,
-          element: <ProtectedRoute><Cart/></ProtectedRoute>
+          element: (
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: ORDER_HISTORY,
+          element: (
+            <ProtectedRoute>
+              <OrderHistory />
+            </ProtectedRoute>
+          ),
+        },
+
+        {
+          path: ORDER_DETAILS,
+          element: (
+            <ProtectedRoute>
+              <OrderDetails />
+            </ProtectedRoute>
+          ),
+        },
+
+        {
+          path: ADD_TOY,
+          element: (
+            <ProtectedRoute>
+              <AddToy />
+            </ProtectedRoute>
+          ),
         },
       ],
-    }
-  ])
+    },
+  ]);
 
   return (
     <>

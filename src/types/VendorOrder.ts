@@ -45,5 +45,5 @@ export interface VendorOrder {
     address: string;
     type: VendorOrderType;
     description: string;
-    status: VendorOrderStatus[];
+    status: VendorOrderStatusInfo[];
 }

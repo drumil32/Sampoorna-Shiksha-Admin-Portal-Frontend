@@ -51,7 +51,7 @@ export interface SchoolOrderToyLink {
 
 export interface IToy {
     id: string;
-    srNo: number;
+    // srNo: number;
     brand: string;
     subBrand: string;
     name: string;

@@ -12,6 +12,8 @@ import { RootState } from '../../redux/store';
 import { Action } from '../../types/error';
 import validateVendorType from '../../utils/validation/validateOrder';
 
+import Error from '../../Components/ErrorHandler/Error';
+import Loading from '../../Components/Loading/Loading';
 
 const Cart: React.FC = () => {
   const cartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
@@ -71,6 +73,8 @@ const Cart: React.FC = () => {
 
 
   return (
+    <Error>
+    <Loading>
     <div className='container max-w-4xl m-auto mt-6  bg-white shadow-xl p-4 grid  sm:grid-cols-2 grid-cols-1'>
       <div className='item-details flex flex-col items-center gap-3'>
         {cartItems?.map((item) => {
@@ -181,6 +185,8 @@ const Cart: React.FC = () => {
         </div>
       </div>
     </div>
+    </Loading>
+    </Error>
   );
 }
 
