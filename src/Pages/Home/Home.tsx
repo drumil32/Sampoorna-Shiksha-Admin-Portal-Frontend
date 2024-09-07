@@ -16,12 +16,12 @@ import { ShowVendorOrder } from "../../types/VendorOrder";
 const Home: React.FC = () => {
   const [toys, setToys] = useState<IToy[]>([]);
 
-  const cartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.cartItems);
+  const vendorCartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.cartItems);
 
   const dispatch = useDispatch();
   useEffect(() => {
     console.log('inside useEffect')
-    const fetchData = async () => {
+    const fetchToys = async () => {
       try {
         dispatch(setLoading(true));
         const response = await axiosInstance.get(TOYS);
@@ -33,7 +33,7 @@ const Home: React.FC = () => {
             setError({
               statusCode: error.response.status,
               message: error.response.data.error,
-              action: Action.SCHOOL_DETILS,
+              action: Action.GET_VENDOR_ORDER,
             })
           );
         } else {
@@ -43,11 +43,11 @@ const Home: React.FC = () => {
         dispatch(setLoading(false));
       }
     }
-    fetchData();
+    fetchToys();
   }, []);
 
   const addToCart = (toy: IToy) => {
-    const isExits = cartItems.find((item) => item.toy.id === toy.id);
+    const isExits = vendorCartItems.find((item) => item.toy.id === toy.id);
     if (!isExits) {
       dispatch(setItemToCart({ toy, quantity: 1 }));
     };
@@ -57,7 +57,7 @@ const Home: React.FC = () => {
       <Error>
         <div className="gap-5  mt-3 flex sm:flex-row flex-col m-auto items-center justify-center sm:max-w-6xl">
           {toys?.map(toy => {
-            const { name, price, category, brand, learn, srNo, id, level , subBrand } = toy;
+            const { name, price, category, brand, learn , id, level , subBrand } = toy;
             return (
               <div
                 className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'
@@ -77,7 +77,7 @@ const Home: React.FC = () => {
 
                     <p className='font-[300] flex justify-between'>
                       <span className=''>
-                        <strong>Serial Number</strong> : {srNo}
+                        <strong>ID</strong> : {id}
                       </span>
                       <span className=''>
                         <strong>Level</strong> : {level}
@@ -103,7 +103,7 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className='w-[90%] m-auto flex justify-end pt-2 text-xs'>
-                  {cartItems?.some((item) => item.toy.id == id) ? (
+                  {vendorCartItems?.some((item) => item.toy.id == id) ? (
                     <button
                       onClick={() => dispatch(removeItemToCart(toy.id))}
                       className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'

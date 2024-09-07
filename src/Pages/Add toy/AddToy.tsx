@@ -194,12 +194,14 @@ const AddToy : React.FC = () =>{
                   />
                 </div>
 
+                <div className="flex w-full">
                 <button
-                  className='border p-2 bg-green-500 text-white rounded-md mt-3 cursor-pointer'
+                  className='border p-1 bg-green-500 text-white rounded-md mt-6 w-full cursor-pointer'
                   type='submit'
                 >
                   Add Toy
                 </button>
+                </div>
               </form>
             </div>
           </div>

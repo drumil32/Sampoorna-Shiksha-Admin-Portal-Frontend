@@ -22,6 +22,7 @@ const OrderHistory: React.FC = () => {
   const [orderStatus, setOrderStatus] = useState<VendorOrderStatus | undefined>(undefined);
   const [filterOrders, setFilterOrders] = useState<VendorOrder[]>([]);
 
+console.log(orders)
   const navigate = useNavigate();
 
   const matchOrderBrandOrSubBrand = (orderName: string) => {
@@ -130,7 +131,7 @@ const OrderHistory: React.FC = () => {
                     <td className='border p-2'>{item.subBrand}</td>
                     <td className='border p-2'>{item.type}</td>
                     <td className='border p-2 flex gap-2 items-center justify-center'>
-                      {item.status.length <= 0
+                      {item.status.length <= 0 
                         ? "Not Provided"
                         : item.status[item.status.length - 1].status}
                     </td>

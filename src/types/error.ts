@@ -9,7 +9,8 @@ export enum Action {
     SIGNIN = 'signin',
     AUTH = 'auth',
     SCHOOL = 'school',
-    SCHOOL_DETILS = 'school_details',
+    SCHOOL_DETAILS = 'school_details',
     PLACE_VENDOR_ORDER = 'place_vendor_order',
-    UPDATE_SCHOOL_ORDER = 'update_school_order'
+    UPDATE_SCHOOL_ORDER = 'update_school_order',
+    GET_VENDOR_ORDER = "get_vendor_orders"
 }

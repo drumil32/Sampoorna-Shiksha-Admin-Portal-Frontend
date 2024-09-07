@@ -16,7 +16,8 @@ import Error from '../../Components/ErrorHandler/Error';
 import Loading from '../../Components/Loading/Loading';
 
 const Cart: React.FC = () => {
-  const cartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
+  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
+
   const [orderType, setOrderType] = useState<VendorOrderType>(VendorOrderType.NGO);
   const [address, setAddress] = useState<string>("");
   const [total, setTotal] = useState<number>(0);
@@ -24,13 +25,20 @@ const Cart: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const orderItems = cartItems?.map(item => {
-    return { toyId: item.toy.id, price: item.toy.price, quantity: item.quantity, brand: item.toy.brand, subBrand: item.toy.subBrand };
+  const orderItems = vendorCartItems?.map((item) => {
+    return {
+      toyId: item.toy.id,
+      price: item.toy.price,
+      quantity: item.quantity,
+      brand: item.toy.brand,
+      subBrand: item.toy.subBrand,
+    };
   });
 
   useEffect(() => {
-    setTotal(cartItems.reduce((acc, curr) => acc + (curr.toy.price * curr.quantity), 0));
-  }, [cartItems]);
+    setTotal(vendorCartItems.reduce((acc, curr) => acc + curr.toy.price * curr.quantity,0)
+    );
+  }, [vendorCartItems]);
 
   // place order function
   const placeOrder = async () => {
@@ -65,7 +73,7 @@ const Cart: React.FC = () => {
     }
   };
 
-  if (cartItems.length <= 0) return (
+  if (vendorCartItems.length <= 0) return (
     <div className='w-full flex calc-height items-center justify-center text-2xl font-[200]'>
       Please add some toys <CiShoppingCart />
     </div>
@@ -77,7 +85,7 @@ const Cart: React.FC = () => {
       <Loading>
         <div className='container max-w-4xl m-auto mt-6  bg-white shadow-xl p-4 grid  sm:grid-cols-2 grid-cols-1'>
           <div className='item-details flex flex-col items-center gap-3'>
-            {cartItems?.map((item) => {
+            {vendorCartItems?.map((item) => {
               return (
                 <div className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'>
                   <h1 className='font-medium text-sm text-center flex items-center justify-between'>
@@ -130,7 +138,7 @@ const Cart: React.FC = () => {
               </thead>
 
               <tbody>
-                {cartItems?.map((item, index) => {
+                {vendorCartItems?.map((item, index) => {
                   return (
                     <tr
                       className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
