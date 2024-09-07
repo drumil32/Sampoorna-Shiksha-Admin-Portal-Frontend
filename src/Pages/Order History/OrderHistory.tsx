@@ -7,6 +7,8 @@ import { useDispatch } from "react-redux";
 import { setLoading, setError } from "../../redux/slices/statusSlice";
 import { toast } from "react-toastify";
 import { Action } from "../../types/error";
+import { FaFilter } from "react-icons/fa";
+
 import {
   VendorOrder,
   VendorOrderType,
@@ -53,7 +55,7 @@ console.log(orders)
             setError({
               statusCode: error.response.status,
               message: error.response.data.error,
-              action: Action.SCHOOL_DETILS,
+              action: Action.VENDOR_ORDER_HISTORY,
             })
           );
         } else {
@@ -69,42 +71,44 @@ console.log(orders)
   return (
     <Error>
       <Loading>
-        <div className='filters flex sm:flex-row flex-col mt-3 sm:max-w-5xl m-auto gap-2 w-[90%]'>
-          <div className='border pl-2 flex gap-2  rounded-md shadow-sm'>
+        <div className='filters flex sm:flex-row flex-col mt-3 sm:max-w-5xl m-auto gap-2 w-[90%] justify-between'>
+          <div className='pl-2 flex gap-2 '>
             <input
               type='text'
               placeholder='Brand or subBrand'
-              className='text-xs  outline-none'
+              className='text-xs  outline-none border p-2'
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button className='border bg-green-400 p-2 text-sm rounded-l-t-none rounded-l-b-none shadow-sm text-white' onClick={handleSearch}>
-              Search
-            </button>
-          </div>
-          <select
-            name=''
-            id=''
-            className='border rounded-sm shadow-sm block  text-[12px] outline-none'
-            onChange={(e) => setOrderType(e.target.value === "All" ? undefined : VendorOrderType[e.target.value as keyof typeof VendorOrderType])}
-          >
-            {["All", ...Object.keys(VendorOrderType)].map((orderType) => (
-              <option value={orderType}>{orderType}</option>
-            ))}
-          </select>
+            <select
+              className='border rounded-sm shadow-sm block  text-[12px] outline-none'
+              onChange={(e) => setOrderType(e.target.value === "All"? undefined: VendorOrderType[e.target.value as keyof typeof VendorOrderType])}
+            >
+              {["All", ...Object.keys(VendorOrderType)].map((orderType) => (
+                <option value={orderType}>{orderType}</option>
+              ))}
+            </select>
 
-          <select
-            name=''
-            id=''
-            className='border rounded-md shadow-sm block text-[12px] outline-none'
-            onChange={(e) => setOrderStatus(e.target.value === "All" ? undefined : VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus])}
+            <select
+              className='border rounded-md shadow-sm block text-[12px] outline-none'
+              onChange={(e) => setOrderStatus(e.target.value === "All" ? undefined: VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus])}
+            >
+              {["All", ...Object.keys(VendorOrderStatus)].map((status) => (
+                <option value={status} className=''>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            className='border bg-green-400 p-2 text-sm rounded-l-t-none rounded-l-b-none shadow-sm text-white flex items-center gap-1'
+            onClick={handleSearch}
           >
-            {["All", ...Object.keys(VendorOrderStatus)].map((status) => (
-              <option value={status} className=''>
-                {status}
-              </option>
-            ))}
-          </select>
+            Filter <FaFilter />
+
+          </button>
         </div>
+
         <div className='table-container sm:max-w-5xl m-auto mt-4 w-[90%] shadow-lg rounded-md overflow-scroll sm:overflow-hidden overflow-y-hidden'>
           <table className='p-4 w-full text-sm '>
             <thead>
@@ -120,18 +124,17 @@ console.log(orders)
               {filterOrders.map((item, index: number) => {
                 return (
                   <tr
-                    className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
-                    onClick={() =>
-                      navigate(`/order-details/${item.id}`)
-                    }
+                    className={`border text-center text-xs ${
+                      index % 2 !== 0 ? "bg-gray-100" : ""
+                    } hover:bg-gray-200 cursor-pointer`}
+                    onClick={() => navigate(`/order-details/${item.id}`)}
                   >
                     <td className='border p-2'>{index + 1}</td>
                     <td className='border p-2'>{item.brand}</td>
                     <td className='border p-2'>{item.subBrand}</td>
                     <td className='border p-2'>{item.type}</td>
                     <td className='border p-2 flex gap-2 items-center justify-center'>
-                      {item.status.length <= 0 
+                      {item.status.length <= 0
                         ? "Not Provided"
                         : item.status[item.status.length - 1].status}
                     </td>
@@ -142,7 +145,7 @@ console.log(orders)
           </table>
         </div>
       </Loading>
-    </Error >
+    </Error>
   );
 };
 
