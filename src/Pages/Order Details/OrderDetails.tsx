@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Error from "../../Components/ErrorHandler/Error";
 import Loading from "../../Components/Loading/Loading";
-import { VendorOrder, VendorOrderType , VendorOrderStatus } from "../../types/VendorOrder";
+import { VendorOrder, VendorOrderType, VendorOrderStatus } from "../../types/VendorOrder";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
@@ -52,14 +52,28 @@ const OrderDetails: React.FC = () => {
       dispatch(setLoading(false));
     }
   };
-  const handleToyArrayChanges = (index: number, quantity: number) => {
+
+  const handleStatusUpdate = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>, index: number) => {
+    const { name, value } = e.target;
+    setOrderDetails(prevValue => {
+      if (!prevValue) return prevValue;
+      const status = prevValue?.status ?? [];
+      status[index] = { ...status[index], [name]: value };
+      return { ...prevValue, status };
+    });
+  }
+  const handleToyArrayChanges = (index: number, value: number, fieldName: string) => {
     setOrderDetails(prevValue => {
       if (!prevValue) return prevValue;
       const listOfToysSentLink = prevValue?.listOfToysSentLink ?? [];
-      if (quantity == 0) {
+      if (fieldName == 'quantity' && value == 0) {
         listOfToysSentLink.splice(index, 1);
       } else {
-        listOfToysSentLink[index].quantity = quantity;
+        if (fieldName == 'quantity') {
+          listOfToysSentLink[index].quantity = value;
+        } else {
+          listOfToysSentLink[index].price = value;
+        }
       }
       return { ...prevValue, listOfToysSentLink };
     });
@@ -101,9 +115,9 @@ const OrderDetails: React.FC = () => {
                   <select
                     name='order-type'
                     className='border rounded-md shadow-md block w-full p-2 text-sm outline-none'
-                    onChange={(e) => setOrderDetails((prevValue) => prevValue ? {...prevValue, type: VendorOrderType[ e.target.value as keyof typeof VendorOrderType],}: prevValue)}
+                    onChange={(e) => setOrderDetails((prevValue) => prevValue ? { ...prevValue, type: VendorOrderType[e.target.value as keyof typeof VendorOrderType], } : prevValue)}
                     value={orderDetails?.type}
-                    >
+                  >
                     {Object.keys(VendorOrderType).map((orderType) => (
                       <option key={orderType} value={orderType}>{orderType}</option>
                     ))}
@@ -114,18 +128,18 @@ const OrderDetails: React.FC = () => {
 
               <p className='p-1 font-[300] flex flex-col'>
                 <strong>Address </strong>
-                {!editMode ? ( orderDetails?.address ? ( orderDetails?.address) 
-                : ("Not Provided")) 
-                : (
-                  <input
-                    type='text'
-                    className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
-                    value={orderDetails?.address}
-                    onChange={(e) =>
-                      setOrderDetails((prevValue) => prevValue ? { ...prevValue, address: e.target.value } : prevValue)
-                    }
-                  />
-                )}
+                {!editMode ? (orderDetails?.address ? (orderDetails?.address)
+                  : ("Not Provided"))
+                  : (
+                    <input
+                      type='text'
+                      className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
+                      value={orderDetails?.address}
+                      onChange={(e) =>
+                        setOrderDetails((prevValue) => prevValue ? { ...prevValue, address: e.target.value } : prevValue)
+                      }
+                    />
+                  )}
               </p>
             </div>
           </div>
@@ -145,9 +159,8 @@ const OrderDetails: React.FC = () => {
                 {orderDetails?.status?.map((item, index: number) => {
                   return (
                     <tr
-                      className={`border text-center text-sm ${
-                        index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
+                      className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
+                        } hover:bg-gray-200 cursor-pointer`}
                     >
                       <td className='border p-1'>
                         {!editMode ? (
@@ -155,53 +168,54 @@ const OrderDetails: React.FC = () => {
                         ) : (
                           <input
                             type='text'
+                            name="timestamps"
                             className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
                             value={item.timestamps}
-                            onChange={(e) => setOrderDetails((prevValue) => prevValue ? {...prevValue,timestamps:VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus],}: prevValue)
-                            }
+                            onChange={(e) => handleStatusUpdate(e, index)}
                           />
                         )}
                       </td>
 
                       <td className='border p-1'>
-                        {!editMode ? (<span>{item.personName}</span>) 
-                        : (
-                          <input
-                            type='text'
-                            className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
-                            value={item.personName}
-                            onChange={(e) =>setOrderDetails((prevValue) =>prevValue? {...prevValue,personName:VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus],}: prevValue)
-                            }
-                          />
-                        )}
+                        {!editMode ? (<span>{item.personName}</span>)
+                          : (
+                            <input
+                              type='text'
+                              name="personName"
+                              className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
+                              value={item.personName}
+                              onChange={(e) => handleStatusUpdate(e, index)}
+                            />
+                          )}
                       </td>
 
                       <td className='border p-1'>
-                        {!editMode ? (<span>{item.contactNumber}</span>) 
-                        : (
-                          <input
-                            type='text'
-                            className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
-                            value={item.contactNumber}
-                            onChange={(e) => setOrderDetails((prevValue) => prevValue ? {...prevValue,contactNumber:VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus]}: prevValue)
-                            }
-                          />
-                        )}
+                        {!editMode ? (<span>{item.contactNumber}</span>)
+                          : (
+                            <input
+                              type='text'
+                              name='contactNumber'
+                              className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
+                              value={item.contactNumber}
+                              onChange={(e) => handleStatusUpdate(e, index)}
+                            />
+                          )}
                       </td>
 
                       <td className='border p-1'>
-                        {!editMode ? (<span>{item.status}</span>) 
-                        : (
-                          <select
-                            value={item.status}
-                            className='outline-none p-1 rounded-md'
-                            onChange={(e) =>
-                              setOrderDetails((prevValue) => prevValue ? {...prevValue , status:VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus]}: prevValue)
-                            }
-                          >
-                            {Object.keys(VendorOrderStatus).map((ele) => (<option value={ele}>{ele}</option>))}
-                          </select>
-                        )}
+                        {!editMode ? (<span>{item.status}</span>)
+                          : (
+                            <select
+                              value={item.status}
+                              className='outline-none p-1 rounded-md'
+                              name='status'
+                              onChange={(e) =>
+                                handleStatusUpdate(e, index)
+                              }
+                            >
+                              {Object.keys(VendorOrderStatus).map((ele) => (<option value={ele}>{ele}</option>))}
+                            </select>
+                          )}
                       </td>
                     </tr>
                   );
@@ -236,17 +250,29 @@ const OrderDetails: React.FC = () => {
                     <td className='border p-1'>{toy.name}</td>
                     <td className='border p-1'>{toy.brand}</td>
                     <td className='border p-1'>{toy.subBrand}</td>
-                    <td className='border p-1'>{item.price}</td>
                     <td className='border p-1'>
-                      {!editMode ? (item.quantity) 
-                      : (
-                        <input
-                          type='number'
-                          className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
-                          value={item.quantity}
-                          onChange={(e) => handleToyArrayChanges(index,parseInt(e.target.value))}
-                        />
-                      )}
+                      {!editMode ? (item.price) :
+                        (
+                          <input
+                            type='number'
+                            className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
+                            value={item.price}
+                            onChange={(e) => handleToyArrayChanges(index, parseInt(e.target.value), 'price')}
+                          />
+                        )
+                      }
+                    </td>
+                    <td className='border p-1'>
+                      {!editMode ? (item.quantity)
+                        : (
+                          <input
+                            type='number'
+                            className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
+                            value={item.quantity}
+                            onChange={(e) => handleToyArrayChanges(index, parseInt(e.target.value), 'quantity')}
+                          />
+                        )
+                      }
                     </td>
                     <td className='border p-2'>{toy.category}</td>
                     <td className='border p-2'>{toy.level}</td>
