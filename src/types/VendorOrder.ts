@@ -1,8 +1,8 @@
 import { IToy } from "./School";
 
 export enum VendorOrderType {
-    SCHOOL = 'SCHOOL',
-    NGO = 'NGO'
+    NGO = 'NGO',
+    SCHOOL = 'SCHOOL'
 };
 
 export interface VendorCartItem {

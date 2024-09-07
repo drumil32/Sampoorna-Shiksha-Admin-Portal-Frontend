@@ -3,7 +3,7 @@ import Error from "../../Components/ErrorHandler/Error";
 import Loading from "../../Components/Loading/Loading";
 import axiosInstance from "../../utils/axiosInstance";
 import { GET_ALL_VENDOR_ORDER } from "../../utils/restEndPoints";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { setLoading, setError } from "../../redux/slices/statusSlice";
 import { toast } from "react-toastify";
 import { Action } from "../../types/error";
@@ -12,43 +12,40 @@ import {
   VendorOrderType,
   VendorOrderStatus,
 } from "../../types/VendorOrder";
-
-
 import { useNavigate } from "react-router-dom";
 
 const OrderHistory: React.FC = () => {
   const dispatch = useDispatch();
   const [orders, setOrders] = useState<VendorOrder[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [orderType , setOrderType] = useState<string>("");
-  const [orderStatus , setOrderStatus] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [orderType, setOrderType] = useState<VendorOrderType | undefined>(undefined);
+  const [orderStatus, setOrderStatus] = useState<VendorOrderStatus | undefined>(undefined);
+  const [filterOrders, setFilterOrders] = useState<VendorOrder[]>([]);
 
   const navigate = useNavigate();
 
-  const matchOrder = (orderName: string) => {
-    return orderName.toLowerCase().includes(inputValue.toLowerCase());
+  const matchOrderBrandOrSubBrand = (orderName: string) => {
+    return '' == orderName || orderName.toLowerCase().includes(searchQuery.toLowerCase());
   };
 
-  const filterOrder = (data: VendorOrder[]) => {
-    return data.filter((order) => matchOrder(order.brand) || matchOrder(order.subBrand));
-  };
+  const handleSearch = () => {
+    setFilterOrders(
+      orders.filter((order) =>
+        (order.type == orderType || orderType == undefined) &&
+        (matchOrderBrandOrSubBrand(order.brand) || matchOrderBrandOrSubBrand(order.subBrand)) &&
+        order.status[order.status.length - 1].status == orderStatus
+      )
+    );
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-
-        // let queryParams = `${SCHOOL}?sortByAsc=${sortAsc}`;
-
-        // if (searchType === "School Name") {
-        //   queryParams += `&nameOfSchoolInstitution=${search}`;
-        // } else if (searchType === "School Code") {
-        //   queryParams += `&code=${search}`;
-        // }
-
         dispatch(setLoading(true));
         const response = await axiosInstance.get(GET_ALL_VENDOR_ORDER);
         console.log(response.data);
         setOrders(response.data);
+        setFilterOrders(response.data);
       } catch (error: any) {
         if (error.response) {
           dispatch(
@@ -77,9 +74,9 @@ const OrderHistory: React.FC = () => {
               type='text'
               placeholder='Brand or subBrand'
               className='text-xs  outline-none'
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button className='border bg-green-400 p-2 text-sm rounded-l-t-none rounded-l-b-none shadow-sm text-white'>
+            <button className='border bg-green-400 p-2 text-sm rounded-l-t-none rounded-l-b-none shadow-sm text-white' onClick={handleSearch}>
               Search
             </button>
           </div>
@@ -87,7 +84,7 @@ const OrderHistory: React.FC = () => {
             name=''
             id=''
             className='border rounded-sm shadow-sm block  text-[12px] outline-none'
-            onChange={(e) => setOrderType(e.target.value)}
+            onChange={(e) => setOrderType(e.target.value === "All" ? undefined : VendorOrderType[e.target.value as keyof typeof VendorOrderType])}
           >
             {["All", ...Object.keys(VendorOrderType)].map((orderType) => (
               <option value={orderType}>{orderType}</option>
@@ -98,9 +95,9 @@ const OrderHistory: React.FC = () => {
             name=''
             id=''
             className='border rounded-md shadow-sm block text-[12px] outline-none'
-            onChange={(e) => setOrderStatus(e.target.value)}
+            onChange={(e) => setOrderStatus(e.target.value === "All" ? undefined : VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus])}
           >
-            {Object.keys(VendorOrderStatus).map((status) => (
+            {["All", ...Object.keys(VendorOrderStatus)].map((status) => (
               <option value={status} className=''>
                 {status}
               </option>
@@ -119,16 +116,13 @@ const OrderHistory: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filterOrder(orders)?.map((item: VendorOrder, index: number) => {
+              {filterOrders.map((item, index: number) => {
                 return (
                   <tr
-                    className={`border text-center text-xs ${
-                      index % 2 !== 0 ? "bg-gray-100" : ""
-                    } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                     onClick={() =>
-                      navigate(`/order-details/${item.id}`, {
-                        state: { data: item },
-                      })
+                      navigate(`/order-details/${item.id}`)
                     }
                   >
                     <td className='border p-2'>{index + 1}</td>
@@ -147,7 +141,7 @@ const OrderHistory: React.FC = () => {
           </table>
         </div>
       </Loading>
-    </Error>
+    </Error >
   );
 };
 
