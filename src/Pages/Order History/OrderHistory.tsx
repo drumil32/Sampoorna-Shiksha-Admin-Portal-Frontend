@@ -75,12 +75,12 @@ console.log(orders)
           <div className='pl-2 flex gap-2 '>
             <input
               type='text'
-              placeholder='Brand or subBrand'
-              className='text-xs  outline-none border p-2'
+              placeholder='Brand Or SubBrand...'
+              className='text-xs  outline-none border p-2 w-[300px] rounded-sm'
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <select
-              className='border rounded-sm shadow-sm block  text-[12px] outline-none'
+              className='border rounded-sm shadow-sm block  text-[12px] outline-none p-1'
               onChange={(e) => setOrderType(e.target.value === "All"? undefined: VendorOrderType[e.target.value as keyof typeof VendorOrderType])}
             >
               {["All", ...Object.keys(VendorOrderType)].map((orderType) => (
@@ -89,7 +89,7 @@ console.log(orders)
             </select>
 
             <select
-              className='border rounded-md shadow-sm block text-[12px] outline-none'
+              className='border rounded-md shadow-sm block text-[12px] outline-none p-1'
               onChange={(e) => setOrderStatus(e.target.value === "All" ? undefined: VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus])}
             >
               {["All", ...Object.keys(VendorOrderStatus)].map((status) => (
@@ -101,7 +101,7 @@ console.log(orders)
           </div>
 
           <button
-            className='border bg-green-400 p-2 text-sm rounded-l-t-none rounded-l-b-none shadow-sm text-white flex items-center gap-1'
+            className='border bg-green-400 p-2 text-sm rounded-sm shadow-md text-white flex items-center gap-1'
             onClick={handleSearch}
           >
             Filter <FaFilter />

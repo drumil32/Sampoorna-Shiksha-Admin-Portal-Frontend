@@ -55,51 +55,58 @@ const Home: React.FC = () => {
   return (
     <Loading>
       <Error>
-        <div className="gap-5  mt-3 flex sm:flex-row flex-col m-auto items-center justify-center sm:max-w-6xl">
+        <div className="gap-5  mt-3 flex sm:flex-row flex-col m-auto flex-wrap items-center justify-center sm:max-w-6xl">
           {toys?.map(toy => {
-            const { name, price, category, brand, learn , id, level , subBrand } = toy;
+            const { name, price, category, brand, learn , id, level , subBrand , link } = toy;
             return (
               <div
                 className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'
                 key={id}
               >
-                <h1 className='font-[400] text-2xl text-center'>{name}</h1>
+                <h1 className='font-[400] text-2xl text-center mb-3'>{name}</h1>
 
-                <div className='flex flex-col gap-1 p-2'>
-                    <p className='font-[300] flex justify-between'>
-                      <span className=''>
-                        <strong>Price</strong> : {price}
-                      </span>
-                      <span className=''>
-                        <strong>Category</strong> : {category}
-                      </span>
-                    </p>
-
-                    <p className='font-[300] flex justify-between'>
-                      <span className=''>
-                        <strong>ID</strong> : {id}
-                      </span>
-                      <span className=''>
-                        <strong>Level</strong> : {level}
-                      </span>
-                    </p>
-                  <p className='font-[300] flex justify-between'>
+                <div className='flex flex-col gap-2 p-2'>
+                <p className='font-[300] flex justify-between'>
                     <span className=''>
-                      <strong>Brand</strong> : {brand}
+                      <strong className="text-sm font-semibold">Price</strong> : {price}
+                    </span>
+                    <span className=''>
+                      <strong className="text-sm font-semibold">Category</strong> : {category}
                     </span>
                   </p>
 
                   <p className='font-[300] flex justify-between'>
+                    <span className=''><strong className="text-sm font-semibold">Brand</strong> : {brand}</span>
+                    <span className=''><strong className="text-sm font-semibold">Level</strong> : {level}</span>
+                  </p>
+
+                  <hr />
+
+                  <p className='font-[300] flex justify-between'>
+                    <span className=''> <strong className="text-sm font-semibold">ID</strong> : {id}</span>
+                  </p>
+                  <p className='font-[300] flex justify-between'>
                     <span className='text-ellipsis'>
-                      <strong>subBrand</strong> :{subBrand}
+                      <strong className="text-sm font-semibold">subBrand</strong> :{subBrand}
                     </span>
                   </p>
 
                   <p className='font-[300] flex '>
                     <span className=''>
-                      <strong>Learn</strong> : {learn.join(" ")}
+                      <strong className="text-sm font-semibold">Learn</strong> : {learn.join(" , ")}
                     </span>
                   </p>
+
+                  <p className='font-[300] flex '>
+                    <span className=''>
+                      <strong className="text-sm font-semibold">Link</strong> : 
+                      <a href={link} className="text-blue-400" target="_blank"> Video Link</a>
+                    </span>
+                  </p>
+                  
+                  
+
+                  
                 </div>
 
                 <div className='w-[90%] m-auto flex justify-end pt-2 text-xs'>
@@ -115,7 +122,7 @@ const Home: React.FC = () => {
                       onClick={() => addToCart(toy)}
                       className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'
                     >
-                      Add To cart
+                      Add To Cart
                     </button>
                   )}
                 </div>

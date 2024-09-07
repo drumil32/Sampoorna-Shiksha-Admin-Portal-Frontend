@@ -4,7 +4,7 @@ import Error from "../../Components/ErrorHandler/Error";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
 import { useDispatch } from "react-redux";
 import { ADD_TOY } from "../../utils/restEndPoints";
-import { IToy } from "../../types/School";
+import { IToy, Level } from "../../types/School";
 import axiosInstance from "../../utils/axiosInstance";
 import { Action } from "../../types/error";
 import { toast } from "react-toastify";
@@ -29,13 +29,12 @@ const AddToy: React.FC = () => {
     }
   };
 
-
-
   // Create new toy
   const createToy = async () => {
     try {
       dispatch(setLoading(true));
       await axiosInstance.post(ADD_TOY, {...toy,learn: arr});
+      setArray([]);
       toast.success("Toy added successfully!"); // Show success message
     } catch (error: any) {
       if (error.response) {
@@ -104,17 +103,13 @@ const AddToy: React.FC = () => {
                 </div>
 
                 <div className='flex flex-col gap-1'>
-                  <label htmlFor='category' className='text-sm'>
-                    Category
-                  </label>
-                  <select
+                  <label htmlFor='category' className='text-sm'>Category</label>
+                  <input
                     name='category'
                     className='border p-2 outline-none text-sm rounded-md'
                     onChange={handleChange}
-                  >
-                    <option value='ngo'>NGO</option>
-                    <option value='school'>SCHOOL</option>
-                  </select>
+                  />
+                  
                 </div>
               </div>
 
@@ -133,7 +128,7 @@ const AddToy: React.FC = () => {
                 </div>
                 <div className='flex flex-col gap-1'>
                   <label htmlFor='cataloguePgNo' className='text-sm'>
-                    Catalogue Pg No
+                    Catalogue Page No
                   </label>
                   <input
                     type='text'
@@ -147,22 +142,16 @@ const AddToy: React.FC = () => {
 
               <div className='flex flex-col gap-1'>
                 <div className="flex flex-col">
-                  <label htmlFor='level' className='text-sm'>
-                    Level
-                  </label>
-                  <input
-                    type='text'
-                    placeholder='Level....'
-                    className='border p-2 outline-none text-sm rounded-md'
-                    
-                    name='level'
-                    onChange={handleChange}
-                  />
+                  <label htmlFor='level' className='text-sm'>Level</label>
+                  <select name="level" className="text-xs p-2 rounded-md  outline-none" onChange={handleChange}>
+                   {Object.keys(Level).map(level => <option value={level}>{level}</option>)}
+                  </select>
+                  
                 </div>
               </div>
 
               <div className='grid grid-cols-1  w-full'>
-                <label htmlFor='' className='text-sm mb-2'>
+                <label htmlFor='' className='text-sm '>
                   Learn
                 </label>
                 <div className='flex flex-wrap gap-2'>

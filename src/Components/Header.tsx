@@ -2,7 +2,7 @@ import React from 'react'
 import { CiShoppingCart } from "react-icons/ci";
 import { Link, } from 'react-router-dom';
 import { useSelector ,  } from 'react-redux';
-import { CART, HOME, ORDER_HISTORY, ADD_TOY } from '../utils/routes';
+import { CART, HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY } from '../utils/routes';
 import { RootState } from '../redux/store';
 import { FaPlus } from "react-icons/fa6";
 
@@ -12,7 +12,12 @@ const Header = () => {
 
   return (
     <div className='bg-gray-200 shadow-md p-3 font-[300] text-gray-600 flex items-center justify-between'>
-      <Link to={HOME}>Logo</Link>
+      <Link
+        to={HOME}
+        className='font-semibold text-md text-gray-700 border-r-5 p-1 border-gray-900'
+      >
+        Sampooran Shiksha
+      </Link>
 
       <div className='flex gap-4 items-center'>
         <Link
@@ -22,9 +27,16 @@ const Header = () => {
           <span>Add Toy</span>
           <FaPlus className=' relative' />
         </Link>
+
+        <Link
+          to={UPDATE_TOY}
+          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+        >
+          <span>Update Toy</span>
+        </Link>
         <Link
           to={ORDER_HISTORY}
-          className='border p-2 border-gray-500 rounded-md text-xs bg-white'
+          className='border p-2 border-orange-500 rounded-md text-xs bg-white'
         >
           Order History
         </Link>

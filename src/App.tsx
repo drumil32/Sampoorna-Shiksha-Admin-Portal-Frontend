@@ -7,7 +7,8 @@ import {
   CART,
   ORDER_HISTORY,
   ORDER_DETAILS,
-  ADD_TOY
+  ADD_TOY,
+  UPDATE_TOY
 } from "./utils/routes";
 import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
@@ -19,6 +20,7 @@ import Cart from "./Pages/cart/Cart";
 import OrderHistory from "./Pages/Order History/OrderHistory";
 import OrderDetails from "./Pages/Order Details/OrderDetails";
 import AddToy from "./Pages/Add toy/AddToy";
+import UpdateToy from "./Pages/Update Toy/UpdateToy";
 function App() {
   const router = createBrowserRouter([
     {
@@ -29,9 +31,7 @@ function App() {
         {
           path: HOME,
           element: (
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
+            <ProtectedRoute><Home /></ProtectedRoute>
           ),
         },
         {
@@ -41,51 +41,46 @@ function App() {
         {
           path: SCHOOL,
           element: (
-            <ProtectedRoute>
-              <School />
-            </ProtectedRoute>
+            <ProtectedRoute><School /></ProtectedRoute>
           ),
         },
         {
           path: `${SCHOOL}/:id`,
           element: (
-            <ProtectedRoute>
-              <SchoolDetail />
-            </ProtectedRoute>
+            <ProtectedRoute> <SchoolDetail /></ProtectedRoute>
           ),
         },
         {
           path: CART,
           element: (
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
+            <ProtectedRoute> <Cart /></ProtectedRoute>
           ),
         },
         {
           path: ORDER_HISTORY,
           element: (
-            <ProtectedRoute>
-              <OrderHistory />
-            </ProtectedRoute>
+            <ProtectedRoute><OrderHistory /></ProtectedRoute>
           ),
         },
 
         {
           path: ORDER_DETAILS,
           element: (
-            <ProtectedRoute>
-              <OrderDetails />
-            </ProtectedRoute>
+            <ProtectedRoute> <OrderDetails /></ProtectedRoute>
           ),
         },
 
         {
           path: ADD_TOY,
           element: (
-            <ProtectedRoute>
-              <AddToy />
-            </ProtectedRoute>
+            <ProtectedRoute><AddToy /></ProtectedRoute>
+          ),
+        },
+
+        {
+          path: UPDATE_TOY,
+          element: (
+            <ProtectedRoute><UpdateToy /></ProtectedRoute>
           ),
         },
       ],
