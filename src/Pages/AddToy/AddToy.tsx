@@ -28,9 +28,9 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
     const { name, value } = e.target;
     // setToy((prev) => prev ? ({ ...prev, [name]: value }) : prev);
     setToy((prev) => {
-      if( !prev ){
-        return ({[name]: value});
-      }else{
+      if (!prev) {
+        return ({ [name]: value });
+      } else {
         return ({ ...prev, [name]: value });
       }
     })
@@ -48,7 +48,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
   const createToy = async () => {
     try {
       dispatch(setLoading(true));
-      await axiosInstance.post(ADD_TOY, { ...toy });
+      await axiosInstance.post(ADD_TOY, { toy });
       toast.success("Toy added successfully!");
     } catch (error: any) {
       if (error.response) {
@@ -82,7 +82,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
   const updateToy = async () => {
     try {
       dispatch(setLoading(true));
-      await axiosInstance.put(`${UPDATE_TOY_BY_ID}`, { ...toy });
+      await axiosInstance.put(`${UPDATE_TOY_BY_ID}`, { toy: { ...toy } });
       toast.success("Toy updated successfully!");
     } catch (error: any) {
       if (error.response) {
