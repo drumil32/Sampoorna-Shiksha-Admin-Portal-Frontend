@@ -39,12 +39,15 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
 
     const handleArray = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {
-            setToy(prev => prev ? ({ ...prev, learn: [...prev.learn, inputValue] }) : prev);
+            console.log(inputValue)
+            setToy(prev => {
+                console.log(prev)
+                return prev ? ({ ...prev, learn: [...(prev.learn ?? []), inputValue] }) : ({ learn: [inputValue] });
+            });
 
             setInputValue(""); // Clear input after adding
         }
     };
-
 
     const createToy = async () => {
         try {
