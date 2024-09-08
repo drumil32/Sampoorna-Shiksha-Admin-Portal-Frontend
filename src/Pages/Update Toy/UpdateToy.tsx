@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Error from "../../Components/ErrorHandler/Error";
 import Loading from "../../Components/Loading/Loading";
 import axiosInstance from "../../utils/axiosInstance";
-import { GET_ALL_VENDOR_ORDER } from "../../utils/restEndPoints";
 import { setLoading, setError } from "../../redux/slices/statusSlice";
 import { toast } from "react-toastify";
 import { Action } from "../../types/error";
 import { CiSearch } from "react-icons/ci";
-import AddToy from "../AddToy/AddToy";
 import { useDispatch } from "react-redux";
 import { IToy } from "../../types/School";
 import { GET_TOY_BY_ID } from "../../utils/restEndPoints";
 import ToyForm from "../../Components/ToyFrom/ToyForm";
-
-
 
 const UpdateToy: React.FC = () => {
 

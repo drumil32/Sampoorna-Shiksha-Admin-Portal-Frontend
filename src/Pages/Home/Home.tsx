@@ -75,7 +75,7 @@ const Home: React.FC = () => {
 
                   <p className='font-[300] flex justify-between'>
                     <span className=''><strong className="text-sm font-semibold">Brand</strong> : {brand}</span>
-                    <span className=''><strong className="text-sm font-semibold">Level</strong> : {level}</span>
+                    <span className=''><strong className="text-sm font-semibold">Level</strong> : {level??"Not Provided"}</span>
                   </p>
 
                   <hr />
