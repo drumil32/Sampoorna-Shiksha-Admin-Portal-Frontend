@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
@@ -16,43 +16,39 @@ interface MyComponentProps {
 }
 
 const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
-  
-  const [arr, setArray] = useState<string[]>([]);
 
   const [inputValue, setInputValue] = useState<string>("");
-  const [toy, setToy] = useState<IToy[]>([]); // Initialize with toyData
+  const [toy, setToy] = useState<IToy | null>(toyData ? toyData : null);
 
-  const [propsToy , setPropsToy] = useState<IToy>({...toyData})
   const dispatch = useDispatch();
-  
+
   console.log(title)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setToy((prev) => ({ ...prev, [name]: value })); // Update local state
+    // setToy((prev) => prev ? ({ ...prev, [name]: value }) : prev);
+    setToy((prev) => {
+      if( !prev ){
+        return ({[name]: value});
+      }else{
+        return ({ ...prev, [name]: value });
+      }
+    })
   };
 
   const handleArray = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim() !== "") {
-      setArray([...arr, inputValue]);
+      setToy(prev => prev ? ({ ...prev, learn: [...prev.learn, inputValue] }) : prev);
+
       setInputValue(""); // Clear input after adding
     }
   };
 
-  console.log(toy)
-
-  useEffect(() => {
-    if (toyData && toyData.learn) {
-      setArray(toyData?.learn);
-      setPropsToy(toyData); // Update local state with new toyData
-    }
-  }, [toyData]);
 
   const createToy = async () => {
     try {
       dispatch(setLoading(true));
-      await axiosInstance.post(ADD_TOY, { ...toy, learn: arr });
-      setArray([]);
+      await axiosInstance.post(ADD_TOY, { ...toy });
       toast.success("Toy added successfully!");
     } catch (error: any) {
       if (error.response) {
@@ -71,38 +67,47 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
     }
   };
 
+  const removeLearnTopic = (givenIndex: number) => {
+    setToy(prev => {
+      if (!prev) return prev;
+      const learn = prev.learn.filter((_, index) => index != givenIndex)
+      return {
+        ...prev,
+        learn: [...learn]
+      };
+    })
+  }
+
   //  update toy by id
-   const updateToy = async () => {
-     try {
-       dispatch(setLoading(true));
-       await axiosInstance.put(`${UPDATE_TOY_BY_ID}/${toy.id}`, { ...toy, learn: arr });
-       setArray([]);
-       toast.success("Toy updated successfully!");
-     } catch (error: any) {
-       if (error.response) {
-         dispatch(
-           setError({
-             statusCode: error.response.status,
-             message: error.response.data.error,
-             action: Action.TOY,
-           })
-         );
-       } else {
-         toast.error("Server is Down.");
-       }
-     } finally {
-       dispatch(setLoading(false));
-     }
-   };
+  const updateToy = async () => {
+    try {
+      dispatch(setLoading(true));
+      await axiosInstance.put(`${UPDATE_TOY_BY_ID}`, { ...toy });
+      toast.success("Toy updated successfully!");
+    } catch (error: any) {
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.TOY,
+          })
+        );
+      } else {
+        toast.error("Server is Down.");
+      }
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   return (
     <Error>
       <Loading>
         <div className='w-full'>
           <div
-            className={`${
-              title === "Add Toy" ? "mt-10" : "mt-3"
-            } p-3 border bg-blue-50 shadow-xl rounded-xl max-w-2xl m-auto`}
+            className={`${title === "Add Toy" ? "mt-10" : "mt-3"
+              } p-3 border bg-blue-50 shadow-xl rounded-xl max-w-2xl m-auto`}
           >
             <h3 className='text-3xl mb-1 font-[300] ml-3'>{title}</h3>
             <div className='p-4 flex flex-col gap-3'>
@@ -118,7 +123,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='brand'
                     onChange={handleChange}
-                    value={propsToy.brand || ""}
+                    value={toy?.brand || ""}
                   />
                 </div>
                 <div className='flex flex-col'>
@@ -131,7 +136,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='subBrand'
                     onChange={handleChange}
-                    value={propsToy.subBrand || ""}
+                    value={toy?.subBrand || ""}
                   />
                 </div>
               </div>
@@ -146,7 +151,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='price'
                     onChange={handleChange}
-                    value={propsToy.price  || 0}
+                    value={toy?.price || 0}
                   />
                 </div>
                 <div className='flex flex-col gap-1'>
@@ -154,11 +159,11 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     Category
                   </label>
                   <input
-                     type="text"
+                    type="text"
                     name='category'
                     className='border p-2 outline-none text-sm rounded-md'
                     onChange={handleChange}
-                    value={propsToy.category || ""}
+                    value={toy?.category || ""}
                   />
                 </div>
               </div>
@@ -173,7 +178,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='codeName'
                     onChange={handleChange}
-                    value={propsToy.codeName || ""}
+                    value={toy?.codeName || ""}
                   />
                 </div>
                 <div className='flex flex-col gap-1'>
@@ -186,7 +191,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='cataloguePgNo'
                     onChange={handleChange}
-                    value={propsToy.cataloguePgNo || ""}
+                    value={toy?.cataloguePgNo || ""}
                   />
                 </div>
               </div>
@@ -199,7 +204,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     name='level'
                     className='text-xs p-2 rounded-md outline-none'
                     onChange={handleChange}
-                    value={propsToy.level || ""}
+                    value={toy?.level || ""}
                   >
                     {Object.keys(Level).map((level) => (
                       <option value={level} key={level}>
@@ -215,15 +220,11 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                   Learn
                 </label>
                 <div className='flex flex-wrap gap-2'>
-                  {arr.map((item, index) => (
+                  {toy?.learn?.map((item, index) => (
                     <div
                       key={index}
                       className='border bg-white p-1 relative rounded-md shadow-sm cursor-pointer'
-                      onClick={() =>
-                        setArray(
-                          arr.filter((_, ItemIndex) => ItemIndex !== index)
-                        )
-                      }
+                      onClick={() => removeLearnTopic(index)}
                     >
                       <span className='text-xs'>{item}</span>
                       <IoIosCloseCircleOutline className='absolute bottom-6 right-0 text-sm' />
@@ -251,7 +252,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='link'
                     onChange={handleChange}
-                    value={propsToy.link || ""}
+                    value={toy?.link || ""}
                   />
                 </div>
                 <button
@@ -265,7 +266,7 @@ const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
           </div>
         </div>
       </Loading>
-    </Error>
+    </Error >
   );
 };
 
