@@ -1,4 +1,3 @@
-import React from 'react'
 import { ThreeDots } from "react-loader-spinner";
 
 function ButtonLoader() {
@@ -8,8 +7,8 @@ function ButtonLoader() {
             height="36"
             width="36"
             color="green"
-            strokeWidth="5"
-            animationDuration="0.75"
+            // strokeWidth="5"
+            // animationDuration="0.75"
             ariaLabel="rotating-lines-loading"
             wrapperStyle={{}}
             wrapperClass=""

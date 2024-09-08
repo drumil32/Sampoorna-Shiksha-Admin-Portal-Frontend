@@ -9,8 +9,8 @@ import { Action } from "../../types/error";
 
 interface ModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  currentOrder: ISchoolOrder;
-  setCurrentOrder: React.Dispatch<React.SetStateAction<ISchoolOrder>>;
+  currentOrder: ISchoolOrder | undefined;
+  setCurrentOrder: React.Dispatch<React.SetStateAction<ISchoolOrder | undefined>>;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -24,7 +24,7 @@ const Modal: React.FC<ModalProps> = ({
   const updateOrder = async (listOfToysSentLink: any) => {
     try {
       dispatch(setLoading(true));
-      const response = await axiosInstance.put(`${UPDATE_SCHOOL_ORDER}`,{ order: currentOrder });
+      const response = await axiosInstance.put(`${UPDATE_SCHOOL_ORDER}`, { order: currentOrder });
       console.log("Put response:", response.data);
       console.log("ListOFToysSentLink", listOfToysSentLink)
       setCurrentOrder(response.data.order);
@@ -50,29 +50,30 @@ const Modal: React.FC<ModalProps> = ({
 
   const handleOtherChanges = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setCurrentOrder((prevValue) => ({ ...prevValue, [name]: value }));
+    setCurrentOrder((prevValue) => prevValue ? ({ ...prevValue, [name]: value }) : prevValue);
   };
 
 
   const handleToyArrayChanges = (index: number, quantity: number) => {
     setCurrentOrder((prevValue) => {
+      if (!prevValue) return prevValue;
       const listOfToysSentLink = prevValue.listOfToysSentLink ?? [];
 
-        listOfToysSentLink[index].quantity = quantity;
-  
+      listOfToysSentLink[index].quantity = quantity;
+
       return { ...prevValue, listOfToysSentLink };
     });
   };
 
   const handleSave = () => {
     // updateOrder();
-    const listOfToysSentLink = (currentOrder.listOfToysSentLink ?? []).filter((item) => item.quantity && item.quantity  > 0);
-    
-    
+    const listOfToysSentLink = (currentOrder?.listOfToysSentLink ?? []).filter((item) => item.quantity && item.quantity > 0);
+
+
     updateOrder(listOfToysSentLink).then(() => {
       console.log("Updated currentOrder:", currentOrder);
-    });  
-    
+    });
+
     setisEdit(false);
   };
 
@@ -93,11 +94,11 @@ const Modal: React.FC<ModalProps> = ({
                   name="dateOfDispatch"
                   placeholder="Date of Dispatch"
                   className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
-                  value={currentOrder.dateOfDispatch || ""}
+                  value={currentOrder?.dateOfDispatch || ""}
                   onChange={handleOtherChanges}
                 />
               ) : (
-                <span>{currentOrder.dateOfDispatch}</span>
+                <span>{currentOrder?.dateOfDispatch}</span>
               )}
             </span>
             <span className="flex flex-col bg-[#f3f3f3] rounded-lg py-2 px-4">
@@ -108,11 +109,11 @@ const Modal: React.FC<ModalProps> = ({
                   name="modeOfDispatch"
                   placeholder="Mode of Dispatch"
                   className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
-                  value={currentOrder.modeOfDispatch || ""}
+                  value={currentOrder?.modeOfDispatch || ""}
                   onChange={handleOtherChanges}
                 />
               ) : (
-                <span>{currentOrder.modeOfDispatch}</span>
+                <span>{currentOrder?.modeOfDispatch}</span>
               )}
             </span>
           </div>
@@ -163,9 +164,8 @@ const Modal: React.FC<ModalProps> = ({
                 <div
                   key={toyObject.id}
                   id="row"
-                  className={`flex w-full items-center ${
-                    index % 2 == 0 ? "bg-[#fce99e]" : "bg-[#bef9b9]"
-                  }`}
+                  className={`flex w-full items-center ${index % 2 == 0 ? "bg-[#fce99e]" : "bg-[#bef9b9]"
+                    }`}
                 >
                   <div className="w-[5%] px-1 flex justify-center border-r border-black py-3">
                     {toyObject.toy.id}
@@ -228,7 +228,7 @@ const Modal: React.FC<ModalProps> = ({
                     {toyObject.toy.learn?.map((learn, learnIndex) => (
                       <span key={learnIndex}>
                         {learn}
-                        {learnIndex < toyObject.toy.learn.length - 1
+                        {(toyObject.toy.learn?.length && learnIndex < toyObject.toy.learn?.length - 1)
                           ? ", "
                           : ""}
                       </span>
@@ -258,11 +258,11 @@ const Modal: React.FC<ModalProps> = ({
                   name="trackingDetails"
                   placeholder="Tracking Details"
                   className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
-                  value={currentOrder.trackingDetails || ""}
+                  value={currentOrder?.trackingDetails || ""}
                   onChange={handleOtherChanges}
                 />
               ) : (
-                <span>{currentOrder.trackingDetails}</span>
+                <span>{currentOrder?.trackingDetails}</span>
               )}
             </span>
             <span className="flex flex-col bg-[#f3f3f3] rounded-lg py-2 px-4">
@@ -273,23 +273,23 @@ const Modal: React.FC<ModalProps> = ({
                   name="dateOfDelivery"
                   placeholder="Date of Delivery"
                   className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
-                  value={currentOrder.dateOfDelivery || ""}
+                  value={currentOrder?.dateOfDelivery || ""}
                   onChange={handleOtherChanges}
                 />
               ) : (
-                <span>{currentOrder.dateOfDelivery}</span>
+                <span>{currentOrder?.dateOfDelivery}</span>
               )}
             </span>
           </div>
         </div>
         <div className="w-full">
           <div className="flex items-center gap-7 justify-center">
-            {isEdit ? ( 
+            {isEdit ? (
               <button onClick={handleSave} className="bg-green-500 text-white font-semibold px-4 py-1 rounded-lg">
                 Save
               </button>
             ) : (
-              <button onClick={()=>{setisEdit(true)}} className="bg-blue-500 text-white font-semibold px-4 py-1 rounded-lg">
+              <button onClick={() => { setisEdit(true) }} className="bg-blue-500 text-white font-semibold px-4 py-1 rounded-lg">
                 Edit
               </button>
             )}

@@ -7,9 +7,8 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { SIGNIN } from "../../utils/restEndPoints";
 import { HOME } from "../../utils/routes";
-import { useDispatch } from "react-redux";
 import { ISignInForm } from "../../utils/types/form";
-import { validateEmail, validatePassword } from "../../utils/validation/loginFormValidation";
+import { validateEmail } from "../../utils/validation/loginFormValidation";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<ISignInForm>({
@@ -18,7 +17,6 @@ const Login: React.FC = () => {
   });
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevFormData) => ({ ...prevFormData, email: e.target.value }));

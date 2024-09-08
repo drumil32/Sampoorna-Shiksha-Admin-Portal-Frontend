@@ -13,12 +13,11 @@ import school from "../../Assests/Images/School.jpg";
 import Modal from "../../Components/Modal/Modal";
 import InfoSection from "../../Components/InfoSection/InfoSection";
 import { InfoItem } from "../../types/School";
-import ThreeDots from "../Loader/ButtonLoader/ButtonLoader";
 
 const SchoolDetail: React.FC = () => {
   const [schoolData, setSchoolData] = useState<ISchoolDetails>({});
   const [schoolOrders, setSchoolOrder] = useState<ISchoolOrder[]>([]);
-  const [currentOrder, setCurrentOrder] = useState<ISchoolOrder>({})
+  const [currentOrder, setCurrentOrder] = useState<ISchoolOrder>()
   const [showModal, setShowModal] = useState<boolean>(false)
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
@@ -38,7 +37,7 @@ const SchoolDetail: React.FC = () => {
           setError({
             statusCode: error.response.status,
             message: error.response.data.error,
-            action: Action.SCHOOL_DETILS,
+            action: Action.SCHOOL_DETAILS,
           })
         );
       } else {
