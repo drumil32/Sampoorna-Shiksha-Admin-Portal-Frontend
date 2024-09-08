@@ -30,8 +30,8 @@ const cartSlice = createSlice({
       if (index !== -1) state.cartItems[index].quantity = isNaN(action.payload.quantity) ? 0 : action.payload.quantity;
     },
 
-    clearCart: (state) => {
-      state.cartItems = [];
+    clearCart: (state , action) => {
+      state.cartItems = action.payload;
     },
   },
 });

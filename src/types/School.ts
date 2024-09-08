@@ -62,8 +62,6 @@ export interface IToy {
     level: Level;
     learn: string[];
     link: string;
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 export interface IProduct {

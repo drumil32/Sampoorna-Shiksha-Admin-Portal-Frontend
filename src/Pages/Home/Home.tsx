@@ -64,47 +64,62 @@ const Home: React.FC = () => {
                 <h1 className='font-[400] text-2xl text-center mb-3'>{name}</h1>
 
                 <div className='flex flex-col gap-2 p-2'>
-                <p className='font-[300] flex justify-between'>
+                  <p className='font-[300] flex  justify-between'>
                     <span className=''>
-                      <strong className="text-sm font-semibold">Price</strong> : {price}
+                      <strong className='text-sm font-semibold'>Price</strong> :{" "}
+                      {price}
                     </span>
                     <span className=''>
-                      <strong className="text-sm font-semibold">Category</strong> : {category}
+                      <strong className='text-sm font-semibold'>
+                        Category
+                      </strong>{" "}
+                      : {category}
                     </span>
                   </p>
 
-                  <p className='font-[300] flex justify-between'>
-                    <span className=''><strong className="text-sm font-semibold">Brand</strong> : {brand}</span>
-                    <span className=''><strong className="text-sm font-semibold">Level</strong> : {level??"Not Provided"}</span>
+                  <p className='font-[300] flex  justify-between'>
+                    <span className=''>
+                      <strong className='text-sm font-semibold'>Brand</strong> :{" "}
+                      {brand}
+                    </span>
+                    <span className=''>
+                      <strong className='text-sm font-semibold'>Link</strong> :
+                      <a href={link} className='text-blue-400' target='_blank'>Video Link</a>
+                    </span>
                   </p>
 
                   <hr />
 
                   <p className='font-[300] flex justify-between'>
-                    <span className=''> <strong className="text-sm font-semibold">ID</strong> : {id}</span>
+                    <span className=''>
+                      {" "}
+                      <strong className='text-sm font-semibold'>
+                        ID
+                      </strong> : {id}
+                    </span>
                   </p>
                   <p className='font-[300] flex justify-between'>
                     <span className='text-ellipsis'>
-                      <strong className="text-sm font-semibold">subBrand</strong> :{subBrand}
+                      <strong className='text-sm font-semibold'>
+                        subBrand
+                      </strong>{" "}
+                      :{subBrand}
                     </span>
                   </p>
 
                   <p className='font-[300] flex '>
                     <span className=''>
-                      <strong className="text-sm font-semibold">Learn</strong> : {learn.join(" , ")}
+                      <strong className='text-sm font-semibold'>Learn</strong> :{" "}
+                      {learn.join(" , ")}
                     </span>
                   </p>
 
                   <p className='font-[300] flex '>
                     <span className=''>
-                      <strong className="text-sm font-semibold">Link</strong> : 
-                      <a href={link} className="text-blue-400" target="_blank"> Video Link</a>
+                      <strong className='text-sm font-semibold'>Level</strong> :{" "}
+                      {level ?? "Not Provided"}
                     </span>
                   </p>
-                  
-                  
-
-                  
                 </div>
 
                 <div className='w-[90%] m-auto flex justify-end pt-2 text-xs'>
