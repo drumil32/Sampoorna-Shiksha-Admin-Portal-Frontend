@@ -1,25 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
 import { useDispatch } from "react-redux";
-import { ADD_TOY } from "../../utils/restEndPoints";
+import { ADD_TOY, UPDATE_TOY_BY_ID } from "../../utils/restEndPoints";
 import { IToy, Level } from "../../types/School";
 import axiosInstance from "../../utils/axiosInstance";
 import { Action } from "../../types/error";
 import { toast } from "react-toastify";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
-const AddToy: React.FC = () => {
+interface MyComponentProps {
+  title: string;
+  toyData: IToy;
+}
+
+const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
+  
   const [arr, setArray] = useState<string[]>([]);
+
   const [inputValue, setInputValue] = useState<string>("");
-  const [toy, setToy] = useState<IToy[]>([]);
+  const [toy, setToy] = useState<IToy[]>([]); // Initialize with toyData
+
+  const [propsToy , setPropsToy] = useState<IToy>({...toyData})
   const dispatch = useDispatch();
   
+  console.log(title)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setToy((prev) => ({ ...prev, [name]: value }));
+    setToy((prev) => ({ ...prev, [name]: value })); // Update local state
   };
 
   const handleArray = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -29,13 +39,21 @@ const AddToy: React.FC = () => {
     }
   };
 
-  // Create new toy
+  console.log(toy)
+
+  useEffect(() => {
+    if (toyData && toyData.learn) {
+      setArray(toyData?.learn);
+      setPropsToy(toyData); // Update local state with new toyData
+    }
+  }, [toyData]);
+
   const createToy = async () => {
     try {
       dispatch(setLoading(true));
-      await axiosInstance.post(ADD_TOY, {...toy,learn: arr});
+      await axiosInstance.post(ADD_TOY, { ...toy, learn: arr });
       setArray([]);
-      toast.success("Toy added successfully!"); // Show success message
+      toast.success("Toy added successfully!");
     } catch (error: any) {
       if (error.response) {
         dispatch(
@@ -53,15 +71,44 @@ const AddToy: React.FC = () => {
     }
   };
 
+  //  update toy by id
+   const updateToy = async () => {
+     try {
+       dispatch(setLoading(true));
+       await axiosInstance.put(`${UPDATE_TOY_BY_ID}/${toy.id}`, { ...toy, learn: arr });
+       setArray([]);
+       toast.success("Toy updated successfully!");
+     } catch (error: any) {
+       if (error.response) {
+         dispatch(
+           setError({
+             statusCode: error.response.status,
+             message: error.response.data.error,
+             action: Action.TOY,
+           })
+         );
+       } else {
+         toast.error("Server is Down.");
+       }
+     } finally {
+       dispatch(setLoading(false));
+     }
+   };
+
   return (
     <Error>
       <Loading>
         <div className='w-full'>
-          <div className='mt-10 p-3 border bg-blue-50 shadow-xl rounded-xl max-w-2xl m-auto'>
-            <h3 className='text-3xl mb-1 font-[300] ml-3'>Add Toy</h3>
+          <div
+            className={`${
+              title === "Add Toy" ? "mt-10" : "mt-3"
+            } p-3 border bg-blue-50 shadow-xl rounded-xl max-w-2xl m-auto`}
+          >
+            <h3 className='text-3xl mb-1 font-[300] ml-3'>{title}</h3>
             <div className='p-4 flex flex-col gap-3'>
+              {/* Input fields */}
               <div className='grid grid-cols-2 gap-3'>
-                <div className="flex flex-col">
+                <div className='flex flex-col'>
                   <label htmlFor='brand' className='text-sm'>
                     Brand
                   </label>
@@ -71,10 +118,10 @@ const AddToy: React.FC = () => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='brand'
                     onChange={handleChange}
+                    value={propsToy.brand || ""}
                   />
                 </div>
-
-                <div className="flex flex-col">
+                <div className='flex flex-col'>
                   <label htmlFor='subBrand' className='text-sm'>
                     SubBrand
                   </label>
@@ -84,37 +131,39 @@ const AddToy: React.FC = () => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='subBrand'
                     onChange={handleChange}
+                    value={propsToy.subBrand || ""}
                   />
                 </div>
               </div>
-
               <div className='grid grid-cols-2 gap-3'>
-                <div className="flex flex-col">
+                <div className='flex flex-col'>
                   <label htmlFor='price' className='text-sm'>
                     Price
                   </label>
                   <input
-                    type='text'
+                    type='number'
                     placeholder='Price....'
                     className='border p-2 outline-none text-sm rounded-md'
                     name='price'
                     onChange={handleChange}
+                    value={propsToy.price  || 0}
                   />
                 </div>
-
                 <div className='flex flex-col gap-1'>
-                  <label htmlFor='category' className='text-sm'>Category</label>
+                  <label htmlFor='category' className='text-sm'>
+                    Category
+                  </label>
                   <input
+                     type="text"
                     name='category'
                     className='border p-2 outline-none text-sm rounded-md'
                     onChange={handleChange}
+                    value={propsToy.category || ""}
                   />
-                  
                 </div>
               </div>
-
               <div className='grid grid-cols-2 gap-3'>
-                <div className="flex flex-col">
+                <div className='flex flex-col'>
                   <label htmlFor='codeName' className='text-sm'>
                     CodeName
                   </label>
@@ -124,6 +173,7 @@ const AddToy: React.FC = () => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='codeName'
                     onChange={handleChange}
+                    value={propsToy.codeName || ""}
                   />
                 </div>
                 <div className='flex flex-col gap-1'>
@@ -136,22 +186,32 @@ const AddToy: React.FC = () => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='cataloguePgNo'
                     onChange={handleChange}
+                    value={propsToy.cataloguePgNo || ""}
                   />
                 </div>
               </div>
-
               <div className='flex flex-col gap-1'>
-                <div className="flex flex-col">
-                  <label htmlFor='level' className='text-sm'>Level</label>
-                  <select name="level" className="text-xs p-2 rounded-md  outline-none" onChange={handleChange}>
-                   {Object.keys(Level).map(level => <option value={level}>{level}</option>)}
+                <div className='flex flex-col'>
+                  <label htmlFor='level' className='text-sm'>
+                    Level
+                  </label>
+                  <select
+                    name='level'
+                    className='text-xs p-2 rounded-md outline-none'
+                    onChange={handleChange}
+                    value={propsToy.level || ""}
+                  >
+                    {Object.keys(Level).map((level) => (
+                      <option value={level} key={level}>
+                        {level}
+                      </option>
+                    ))}
                   </select>
-                  
                 </div>
               </div>
 
-              <div className='grid grid-cols-1  w-full'>
-                <label htmlFor='' className='text-sm '>
+              <div className='grid grid-cols-1 w-full'>
+                <label htmlFor='' className='text-sm'>
                   Learn
                 </label>
                 <div className='flex flex-wrap gap-2'>
@@ -159,7 +219,11 @@ const AddToy: React.FC = () => {
                     <div
                       key={index}
                       className='border bg-white p-1 relative rounded-md shadow-sm cursor-pointer'
-                      onClick={() => setArray( arr.filter((_, ItemIndex) => ItemIndex !== index))}
+                      onClick={() =>
+                        setArray(
+                          arr.filter((_, ItemIndex) => ItemIndex !== index)
+                        )
+                      }
                     >
                       <span className='text-xs'>{item}</span>
                       <IoIosCloseCircleOutline className='absolute bottom-6 right-0 text-sm' />
@@ -174,11 +238,10 @@ const AddToy: React.FC = () => {
                     name='learn'
                     onKeyDown={handleArray}
                   />
-               </div>
+                </div>
               </div>
-
               <div className='grid grid-cols-2 gap-2 items-center'>
-                <div className="flex flex-col">
+                <div className='flex flex-col'>
                   <label htmlFor='link' className='text-sm'>
                     Link
                   </label>
@@ -188,14 +251,20 @@ const AddToy: React.FC = () => {
                     className='border p-2 outline-none text-sm rounded-md'
                     name='link'
                     onChange={handleChange}
+                    value={propsToy.link || ""}
                   />
                 </div>
-                  <button className='border p-2 bg-green-500 text-white rounded-md mt-5 cursor-pointer text-sm' onClick={createToy}>Add Toy</button>
+                <button
+                  className='border p-2 bg-green-500 text-white rounded-md mt-5 cursor-pointer text-sm'
+                  onClick={title === "Add Toy" ? createToy : updateToy}
+                >
+                  {title.split(" ")[0]}
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </Loading>  
+      </Loading>
     </Error>
   );
 };

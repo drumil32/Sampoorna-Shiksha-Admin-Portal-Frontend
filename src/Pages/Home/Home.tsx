@@ -20,12 +20,10 @@ const Home: React.FC = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log('inside useEffect')
     const fetchToys = async () => {
       try {
         dispatch(setLoading(true));
         const response = await axiosInstance.get(TOYS);
-        console.log(response.data)
         setToys(response.data.toys);
       } catch (error: any) {
         if (error.response) {

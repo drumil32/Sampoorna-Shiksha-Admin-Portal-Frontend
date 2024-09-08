@@ -19,7 +19,7 @@ import Home from "./Pages/Home/Home";
 import Cart from "./Pages/cart/Cart";
 import OrderHistory from "./Pages/Order History/OrderHistory";
 import OrderDetails from "./Pages/Order Details/OrderDetails";
-import AddToy from "./Pages/Add toy/AddToy";
+import AddToy from "./Pages/AddToy/AddToy";
 import UpdateToy from "./Pages/Update Toy/UpdateToy";
 function App() {
   const router = createBrowserRouter([
@@ -73,7 +73,7 @@ function App() {
         {
           path: ADD_TOY,
           element: (
-            <ProtectedRoute><AddToy /></ProtectedRoute>
+            <ProtectedRoute><AddToy title="Add Toy" /></ProtectedRoute>
           ),
         },
 

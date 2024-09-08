@@ -8,3 +8,5 @@ export const GET_ALL_VENDOR_ORDER = 'vendor-order';
 export const GET_VENDOR_ORDER_BY_ID = 'vendor-order';
 export const UPDATE_VENDOR_ORDER = 'vendor-order'
 export const ADD_TOY = '/toys'
+export const GET_TOY_BY_ID = 'toys'
+export const UPDATE_TOY_BY_ID = 'toys'
