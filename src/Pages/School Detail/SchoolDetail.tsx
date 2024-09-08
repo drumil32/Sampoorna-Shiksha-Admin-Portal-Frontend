@@ -13,6 +13,7 @@ import school from "../../Assests/Images/School.jpg";
 import Modal from "../../Components/Modal/Modal";
 import InfoSection from "../../Components/InfoSection/InfoSection";
 import { InfoItem } from "../../types/School";
+import ThreeDots from "../Loader/ButtonLoader/ButtonLoader";
 
 const SchoolDetail: React.FC = () => {
   const [schoolData, setSchoolData] = useState<ISchoolDetails>({});
@@ -59,7 +60,7 @@ const SchoolDetail: React.FC = () => {
     if (Object.keys(schoolData).length === 0) {
       fetchData();
     }
-  }, [id]);
+  }, []); 
 
   const schoolPersonInfo: InfoItem[] = [
     { label: "Principal", value: schoolData.nameOfPrincipalAndManagement },
@@ -116,7 +117,6 @@ const SchoolDetail: React.FC = () => {
         {/* orders */}
         <div className="p-8 bg-[#f5f5f5] max-h-[100vh] my-[40px] mx-8 overflow-y-auto flex flex-col gap-6">
           <h2 className="text-2xl font-bold">Orders</h2>
-
           {/* particular order  */}
           {schoolOrders.map((order, index) => <div
             key={order.id}
