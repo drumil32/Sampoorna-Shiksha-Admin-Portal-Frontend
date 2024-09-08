@@ -20,7 +20,7 @@ const Error: React.FC<ErrorProps> = ({ children }) => {
             toast.error(error.message);
             if (401 == error.statusCode) {
                 navigate(SIGNIN)
-            }else if ( error.action==Action.SCHOOL_DETILS ){
+            }else if ( error.action==Action.SCHOOL_DETAILS ){
                 if( error.statusCode == 404 ){
                     toast.error('School with given id not found.');
                 }

@@ -9,19 +9,24 @@ import { Action } from "../../types/error";
 
 interface ModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  currentOrder: ISchoolOrder;
-  setCurrentOrder: React.Dispatch<React.SetStateAction<ISchoolOrder>>;
+  currentOrder: ISchoolOrder | undefined;
+  setCurrentOrder: React.Dispatch<React.SetStateAction<ISchoolOrder | undefined>>;
 }
 
-const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrder }) => {
-  const [editRowIndex, setEditRowIndex] = useState<number | null>(null);
+const Modal: React.FC<ModalProps> = ({
+  setShowModal,
+  currentOrder,
+  setCurrentOrder,
+}) => {
+  const [isEdit, setisEdit] = useState<boolean>(false);
   const dispatch = useDispatch();
-  
-  const updateOrder = async () => {
+
+  const updateOrder = async (listOfToysSentLink: any) => {
     try {
       dispatch(setLoading(true));
-      const response = await axiosInstance.put(`${UPDATE_SCHOOL_ORDER}`,{ order: currentOrder });
+      const response = await axiosInstance.put(`${UPDATE_SCHOOL_ORDER}`, { order: currentOrder });
       console.log("Put response:", response.data);
+      console.log("ListOFToysSentLink", listOfToysSentLink)
       setCurrentOrder(response.data.order);
       toast.success(response.data.message);
     } catch (error: any) {
@@ -38,50 +43,78 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrd
         console.error("Server is Down.");
         toast.error("Server is Down");
       }
-    }finally{
+    } finally {
       dispatch(setLoading(false));
     }
   };
 
   const handleOtherChanges = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setCurrentOrder(prevValue => ({ ...prevValue, [name]: value }));
-  }
+    setCurrentOrder((prevValue) => prevValue ? ({ ...prevValue, [name]: value }) : prevValue);
+  };
+
+
   const handleToyArrayChanges = (index: number, quantity: number) => {
-    setCurrentOrder(prevValue => {
+    setCurrentOrder((prevValue) => {
+      if (!prevValue) return prevValue;
       const listOfToysSentLink = prevValue.listOfToysSentLink ?? [];
-      if (quantity == 0) {
-        listOfToysSentLink.splice(index, 1);
-      } else {
-        listOfToysSentLink[index].quantity = quantity;
-      }
+
+      listOfToysSentLink[index].quantity = quantity;
+
       return { ...prevValue, listOfToysSentLink };
     });
-  }
+  };
 
   const handleSave = () => {
-    updateOrder();
-    setEditRowIndex(null);
+    // updateOrder();
+    const listOfToysSentLink = (currentOrder?.listOfToysSentLink ?? []).filter((item) => item.quantity && item.quantity > 0);
+
+
+    updateOrder(listOfToysSentLink).then(() => {
+      console.log("Updated currentOrder:", currentOrder);
+    });
+
+    setisEdit(false);
   };
 
-  const hideScrollbar = {
-    overflow: "scroll",
-    scrollbarWidth: "none",
-    msOverflowStyle: "none",
-  };
+  const handleCancelButtonClick = () => {
+    console.log("clicked")
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg relative h-5/6 w-[98%]">
-        <div className="flex flex-col justify-between h-full items-center py-10 px-5">
+        <div className="flex flex-col justify-between h-[94%] items-center py-8 px-5">
           <div className="flex justify-between w-full">
             <span className="flex flex-col bg-[#f3f3f3] rounded-lg py-2 px-4">
               <span>Date of Dispatch :</span>
-              <span>{currentOrder.dateOfDispatch}</span>
+              {isEdit ? (
+                <input
+                  type="text"
+                  name="dateOfDispatch"
+                  placeholder="Date of Dispatch"
+                  className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
+                  value={currentOrder?.dateOfDispatch || ""}
+                  onChange={handleOtherChanges}
+                />
+              ) : (
+                <span>{currentOrder?.dateOfDispatch}</span>
+              )}
             </span>
             <span className="flex flex-col bg-[#f3f3f3] rounded-lg py-2 px-4">
               <span>Mode of Dispatch :</span>
-              <span>{currentOrder.modeOfDispatch}</span>
+              {isEdit ? (
+                <input
+                  type="text"
+                  name="modeOfDispatch"
+                  placeholder="Mode of Dispatch"
+                  className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
+                  value={currentOrder?.modeOfDispatch || ""}
+                  onChange={handleOtherChanges}
+                />
+              ) : (
+                <span>{currentOrder?.modeOfDispatch}</span>
+              )}
             </span>
           </div>
 
@@ -127,7 +160,7 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrd
             </div>
 
             <div id="body">
-              {currentOrder.listOfToysSentLink?.map((toyObject, index) => (
+              {currentOrder?.listOfToysSentLink?.map((toyObject, index) => (
                 <div
                   key={toyObject.id}
                   id="row"
@@ -135,141 +168,53 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrd
                     }`}
                 >
                   <div className="w-[5%] px-1 flex justify-center border-r border-black py-3">
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="srNo"
-                        value={toyObject.toy.srNo}
-                        onChange={(e) =>
-                          handleInputChange(index, "srNo", e.target.value)
-                        }
-                      />
-                    ) : (
-                      toyObject.toy.srNo
-                    )}
+                    {toyObject.toy.id}
                   </div>
                   <div
-                    style={hideScrollbar}
-                    className="w-[10%] px-1 flex justify-center border-r border-black py-3"
+                    id="hideScrollbar"
+                    className="w-[10%] px-1 flex justify-center border-r border-black py-3 overscroll-x-auto"
                   >
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Category"
-                        value={toyObject.toy.category}
-                      // onChange={(e) =>
-                      //   handleInputChange(index, "category", e.target.value)
-                      // }
-                      />
-                    ) : (
-                      toyObject.toy.category
-                    )}
+                    {toyObject.toy.category}
                   </div>
                   <div
-                    style={hideScrollbar}
-                    className="w-[10%] px-1 flex justify-center border-r border-black py-3"
+                    id="hideScrollbar"
+                    className="w-[10%] px-1 flex justify-center border-r border-black py-3 overscroll-x-auto"
                   >
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Brand"
-                        value={toyObject.toy.brand}
-                      // onChange={(e) =>
-                      //   handleInputChange(index, "brand", e.target.value)
-                      // }
-                      />
-                    ) : (
-                      toyObject.toy.brand
-                    )}
+                    {toyObject.toy.brand}
                   </div>
                   <div
-                    style={{
-                      overflowX: "scroll",
-                      scrollbarWidth: "none",
-                      msOverflowStyle: "none",
-                    }}
-                    className="w-[13%] px-1 flex justify-center border-r border-black py-3"
+                    id="hideScrollbar"
+                    className="w-[13%] px-1 flex justify-center border-r border-black py-3 overscroll-x-auto"
                   >
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Sub-Brand"
-                        value={product.toy.subBrand}
-                      // onChange={(e) =>
-                      //   handleInputChange(index, "subBrand", e.target.value)
-                      // }
-                      />
-                    ) : (
-                      toyObject.toy.subBrand
-                    )}
+                    {toyObject.toy.subBrand}
                   </div>
                   <div
-                    style={hideScrollbar}
-                    className="w-[6%] px-1 flex justify-center border-r border-black py-3"
+                    id="hideScrollbar"
+                    className="w-[6%] px-1 flex justify-center border-r border-black py-3 overscroll-x-auto"
                   >
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Price"
-                        value={toyObject.toy.price}
-                      // onChange={(e) =>
-                      //   handleInputChange(index, "price", e.target.value)
-                      // }
-                      />
-                    ) : (
-                      toyObject.toy.price
-                    )}
+                    {toyObject.toy.price}
                   </div>
                   <div
-                    style={hideScrollbar}
-                    className="w-[10%] px-1 flex justify-center border-r border-black py-3"
+                    id="hideScrollbar"
+                    className="w-[10%] px-1 flex justify-center border-r border-black py-3 overscroll-x-auto"
                   >
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Name"
-                        value={toyObject.toy.name}
-                      // onChange={(e) =>
-                      //   handleInputChange(index, "name", e.target.value)
-                      // }
-                      />
-                    ) : (
-                      toyObject.toy.name
-                    )}
+                    {toyObject.toy.name}
                   </div>
                   <div
-                    style={hideScrollbar}
-                    className="w-[10%] px-1 flex justify-center border-r border-black py-3"
+                    id="hideScrollbar"
+                    className="w-[10%] px-1 flex justify-center border-r border-black py-3 overscroll-x-auto"
                   >
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Level"
-                        value={toyObject.toy.level}
-                      // onChange={(e) =>
-                      //   handleInputChange(index, "level", e.target.value)
-                      // }
-                      />
-                    ) : (
-                      toyObject.toy.level
-                    )}
+                    {toyObject.toy.level}
                   </div>
-                  <div className="w-[7%] px-1 flex justify-center border-r border-black py-3">
-                    {editRowIndex === index ? (
+                  <div className="w-[7%] px-1 flex justify-center border-r border-black py-3 overscroll-x-auto">
+                    {isEdit ? (
                       <input
                         type="number"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Quantity"
+                        className="w-full outline-none border-black border rounded-lg px-1"
+                        name="quantity"
                         value={toyObject.quantity}
                         onChange={(e) =>
-                          handleToyArrayChanges(index, parseInt(e.target.value))
+                          handleToyArrayChanges(index, Number(e.target.value))
                         }
                       />
                     ) : (
@@ -277,55 +222,27 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrd
                     )}
                   </div>
                   <div
-                    style={hideScrollbar}
-                    className="w-[20%] px-1 flex justify-center border-r border-black py-3"
+                    id="hideScrollbar"
+                    className="w-[20%] px-1 flex justify-center border-r border-black py-3 overflow-auto overscroll-x-auto"
                   >
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Learn"
-                        value={toyObject.toy.learn.join(", ")}
-                      // onChange={(e) =>
-                      //   handleInputChange(
-                      //     index,
-                      //     "learn",
-                      //     e.target.value.split(", ").join(", ")
-                      //   )
-                      // }
-                      />
-                    ) : (
-                      toyObject.toy.learn?.map((learn, learnIndex) => (
-                        <span key={learnIndex}>
-                          {learn}
-                          {learnIndex < toyObject.toy.learn.length - 1
-                            ? ", "
-                            : ""}
-                        </span>
-                      ))
-                    )}
+                    {toyObject.toy.learn?.map((learn, learnIndex) => (
+                      <span key={learnIndex}>
+                        {learn}
+                        {(toyObject.toy.learn?.length && learnIndex < toyObject.toy.learn?.length - 1)
+                          ? ", "
+                          : ""}
+                      </span>
+                    ))}
                   </div>
                   <div className="w-[7%] px-1 flex justify-center border-r border-black py-3">
-                    {editRowIndex === index ? (
-                      <input
-                        type="text"
-                        className="w-full px-1 outline-none border-black border rounded-lg"
-                        placeholder="Link"
-                        value={toyObject.toy.link}
-                      // onChange={(e) =>
-                      //   handleInputChange(index, "link", e.target.value)
-                      // }
-                      />
-                    ) : (
-                      <a href={toyObject.toy.link}>Youtube</a>
-                    )}
+                    {
+                      <a className="text-blue-700 underline" href={toyObject.toy.link} target="_blank">
+                        Youtube
+                      </a>
+                    }
                   </div>
                   <div className="w-[2%] px-1 flex justify-center">
-                    {editRowIndex === index ? (
-                      <button onClick={handleSave}>💾</button>
-                    ) : (
-                      <button onClick={() => setEditRowIndex(index)}>✏️</button>
-                    )}
+                    <button>🗑️</button>
                   </div>
                 </div>
               ))}
@@ -334,19 +251,57 @@ const Modal: React.FC<ModalProps> = ({ setShowModal, currentOrder, setCurrentOrd
 
           <div className="flex justify-between w-full">
             <span className="flex flex-col bg-[#f3f3f3] rounded-lg py-2 px-4">
-              <span>Tracking Details :</span>
-              <span>{currentOrder.trackingDetails}</span>
+              <span>Tracking Details:</span>
+              {isEdit ? (
+                <input
+                  type="text"
+                  name="trackingDetails"
+                  placeholder="Tracking Details"
+                  className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
+                  value={currentOrder?.trackingDetails || ""}
+                  onChange={handleOtherChanges}
+                />
+              ) : (
+                <span>{currentOrder?.trackingDetails}</span>
+              )}
             </span>
             <span className="flex flex-col bg-[#f3f3f3] rounded-lg py-2 px-4">
               <span>Date of Delivery :</span>
-              <span>{currentOrder.dateOfDelivery}</span>
+              {isEdit ? (
+                <input
+                  type="text"
+                  name="dateOfDelivery"
+                  placeholder="Date of Delivery"
+                  className="outline-none border-black border rounded-lg py-1 px-1 w-[190px]"
+                  value={currentOrder?.dateOfDelivery || ""}
+                  onChange={handleOtherChanges}
+                />
+              ) : (
+                <span>{currentOrder?.dateOfDelivery}</span>
+              )}
             </span>
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="flex items-center gap-7 justify-center">
+            {isEdit ? (
+              <button onClick={handleSave} className="bg-green-500 text-white font-semibold px-4 py-1 rounded-lg">
+                Save
+              </button>
+            ) : (
+              <button onClick={() => { setisEdit(true) }} className="bg-blue-500 text-white font-semibold px-4 py-1 rounded-lg">
+                Edit
+              </button>
+            )}
+            <button onClick={handleCancelButtonClick} className="bg-red-500 text-white font-semibold px-4 py-1 rounded-lg">
+              Cancel
+            </button>
           </div>
         </div>
 
         {/* button */}
         <button
-          className="text-gray-600 hover:text-gray-800 absolute top-4 right-5"
+          className=" hover:bg-red-100 absolute top-4 right-5"
           onClick={() => setShowModal(false)}
         >
           <span className="material-icons text-2xl">❌</span>

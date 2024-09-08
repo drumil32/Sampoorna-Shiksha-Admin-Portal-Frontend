@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
@@ -12,7 +12,7 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 
 interface ToyFormProps {
     title: string;
-    toy: IToy;
+    toy: IToy | undefined;
     setToy: React.Dispatch<React.SetStateAction<IToy | undefined>>
 }
 
@@ -72,10 +72,10 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
     const removeLearnTopic = (givenIndex: number) => {
         setToy(prev => {
             if (!prev) return prev;
-            const learn = prev.learn.filter((_, index) => index != givenIndex)
+            const learn = prev.learn?.filter((_, index) => index != givenIndex);
             return {
                 ...prev,
-                learn: [...learn]
+                learn: [...(learn ?? [])]
             };
         })
     }

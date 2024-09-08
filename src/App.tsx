@@ -73,7 +73,7 @@ function App() {
         {
           path: ADD_TOY,
           element: (
-            <ProtectedRoute><AddToy title="Add Toy" /></ProtectedRoute>
+            <ProtectedRoute><AddToy /></ProtectedRoute>
           ),
         },
 

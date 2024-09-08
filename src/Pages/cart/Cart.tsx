@@ -35,7 +35,7 @@ const Cart: React.FC = () => {
   });
 
   useEffect(() => {
-    setTotal(vendorCartItems.reduce((acc, curr) => acc + curr.toy.price * curr.quantity,0));
+    setTotal(vendorCartItems.reduce((acc, curr) => acc + (curr.toy.price ?? 0) * curr.quantity, 0));
   }, [vendorCartItems]);
 
   // place order function
@@ -91,21 +91,21 @@ const Cart: React.FC = () => {
                     {item.toy.name}
                     <CiTrash
                       className='cursor-pointer text-lg text-red-400'
-                      onClick={() => dispatch(removeItemToCart(item.toy.id))}
+                      onClick={() => dispatch(removeItemToCart(item.toy.id ?? ''))}
                     />
                   </h1>
 
                   <div className='flex flex-col mt-4 gap-1 className="font-semibold" text-sm '>
                     <p className='font-[300] flex '>
                       <span className=''>
-                        <strong className="font-semibold">ID</strong> : {item.toy.id}
+                        <strong className="font-semibold">ID</strong> : {item.toy.id ?? ''}
                       </span>
                     </p>
 
                     <p className='font-[300] flex '>
-                    <span className=''>
-                      <strong className="font-semibold">Level</strong> : {item.toy.level}
-                    </span>
+                      <span className=''>
+                        <strong className="font-semibold">Level</strong> : {item.toy.level}
+                      </span>
                     </p>
 
                     <p className='font-[300] flex justify-between'>
@@ -122,7 +122,7 @@ const Cart: React.FC = () => {
                         <strong className='font-semibold'>Brand</strong> : {item.toy.brand}
                       </span>
                       <span className='text-ellipsis'>
-                        <strong className='font-semibold'>Learn</strong> {item.toy.learn[0] + "..."}
+                        <strong className='font-semibold'>Learn</strong> {(item.toy.learn && item.toy.learn[0]) + "..."}
                       </span>
                     </p>
                   </div>

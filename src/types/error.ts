@@ -15,5 +15,5 @@ export enum Action {
     UPDATE_SCHOOL_ORDER = 'update_school_order',
     GET_VENDOR_ORDER = "get_vendor_orders",
     VENDOR_ORDER_HISTORY = "vendor order history",
-    TOY = "toy"
+    TOY = "toy",
 }

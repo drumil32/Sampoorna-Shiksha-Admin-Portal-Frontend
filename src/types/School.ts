@@ -50,8 +50,9 @@ export interface SchoolOrderToyLink {
 }
 
 export interface IToy {
-    id: string;
+    id?: string;
     // srNo: number;
+<<<<<<< HEAD
     brand: string;
     subBrand: string;
     name: string;
@@ -62,6 +63,18 @@ export interface IToy {
     level: Level;
     learn: string[];
     link: string;
+=======
+    brand?: string;
+    subBrand?: string;
+    name?: string;
+    price?: number;
+    category?: string;
+    codeName?: string;
+    cataloguePgNo?: number;
+    level?: Level;
+    learn?: string[];
+    link?: string;
+>>>>>>> aa4b258dd1c4e9b22a8307f08f0aad51d424c97a
 }
 
 export interface IProduct {
