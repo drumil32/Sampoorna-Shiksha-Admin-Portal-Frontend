@@ -11,38 +11,39 @@ import AddToy from "../AddToy/AddToy";
 import { useDispatch } from "react-redux";
 import { IToy } from "../../types/School";
 import { GET_TOY_BY_ID } from "../../utils/restEndPoints";
+import ToyForm from "../../Components/ToyFrom/ToyForm";
 
 
 
 const UpdateToy: React.FC = () => {
 
-    const [toyId , setToyId] = useState<string>("");
-    const [toy , setToy] = useState<IToy>();
-    const dispatch = useDispatch();
-    console.log(toy)
+  const [toyId, setToyId] = useState<string>("");
+  const [toy, setToy] = useState<IToy>();
+  const dispatch = useDispatch();
+  console.log(toy)
 
 
-      const findToy = async () => {
-        try {
-          dispatch(setLoading(true));
-          const response = await axiosInstance.get(`${GET_TOY_BY_ID}/${toyId}`);
-          setToy(response.data.toy);
-        } catch (error: any) {
-          if (error.response) {
-            dispatch(
-              setError({
-                statusCode: error.response.status,
-                message: error.response.data.error,
-                action: Action.VENDOR_ORDER_HISTORY,
-              })
-            );
-          } else {
-            toast.error("Server is Down.");
-          }
-        } finally {
-          dispatch(setLoading(false));
-        }
+  const findToy = async () => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.get(`${GET_TOY_BY_ID}/${toyId}`);
+      setToy(response.data.toy);
+    } catch (error: any) {
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.VENDOR_ORDER_HISTORY,
+          })
+        );
+      } else {
+        toast.error("Server is Down.");
       }
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }
 
 
   return (
@@ -57,12 +58,12 @@ const UpdateToy: React.FC = () => {
               onChange={(e) => setToyId(e.target.value)}
             />
             <button className="border p-2 bg-green-500 text-white flex items-center text-sm gap-1" onClick={findToy}>
-             <span>Search</span>
-              <CiSearch className="mt-1"/>
+              <span>Search</span>
+              <CiSearch className="mt-1" />
             </button>
           </div>
         </div>
-        <AddToy title="Update Toy" toy={toy} setToy={setToy}/>
+        {toy && <ToyForm title="Update Toy" toy={toy} setToy={setToy} />}
       </Loading>
     </Error>
   );
