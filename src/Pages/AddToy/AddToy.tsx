@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
@@ -12,17 +12,15 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 
 interface MyComponentProps {
   title: string;
-  toyData: IToy;
+  toy: IToy;
+  setToy: React.Dispatch<React.SetStateAction<IToy | undefined>>
 }
 
-const AddToy: React.FC<MyComponentProps> = ({ title, toyData }) => {
+const AddToy: React.FC<MyComponentProps> = ({ title, toy, setToy }) => {
 
   const [inputValue, setInputValue] = useState<string>("");
-  const [toy, setToy] = useState<IToy | null>(toyData ? toyData : null);
-
   const dispatch = useDispatch();
 
-  console.log(title)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

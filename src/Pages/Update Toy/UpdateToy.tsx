@@ -27,7 +27,6 @@ const UpdateToy: React.FC = () => {
           dispatch(setLoading(true));
           const response = await axiosInstance.get(`${GET_TOY_BY_ID}/${toyId}`);
           setToy(response.data.toy);
-          console.log(response.data.toy)
         } catch (error: any) {
           if (error.response) {
             dispatch(
@@ -63,7 +62,7 @@ const UpdateToy: React.FC = () => {
             </button>
           </div>
         </div>
-        <AddToy title="Update Toy" toyData={toy}/>
+        <AddToy title="Update Toy" toy={toy} setToy={setToy}/>
       </Loading>
     </Error>
   );
