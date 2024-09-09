@@ -82,8 +82,8 @@ const OrderDetails: React.FC = () => {
   return (
     <Error>
       <Loading>
-        <div className='toys-details-container grid grid-cols-2 mt-4 max-w-[90%] gap-2 m-auto'>
-          <div className=' shadow-lg rounded-md border p-8 bg-blue-50'>
+        <div className='toys-details-container grid grid-cols-1 mt-4 max-w-[90%] gap-4 m-auto'>
+          <div className=' shadow-lg rounded-md border p-8 bg-blue-50 max-w-xl'>
             <div className='flex justify-between items-center'>
               <h2 className='text-xl mb-3'>Order Details</h2>
               <button
@@ -108,38 +108,58 @@ const OrderDetails: React.FC = () => {
               </p>
 
               <p className='p-1 font-[300] flex flex-col gap-1 '>
-                <strong >Order Type </strong>
+                <strong>Order Type </strong>
                 {!editMode ? (
                   <span className='text-sm'>{orderDetails?.type}</span>
                 ) : (
                   <select
                     name='order-type'
                     className='border rounded-md shadow-md block w-full p-2 text-sm outline-none'
-                    onChange={(e) => setOrderDetails((prevValue) => prevValue ? { ...prevValue, type: VendorOrderType[e.target.value as keyof typeof VendorOrderType], } : prevValue)}
+                    onChange={(e) =>
+                      setOrderDetails((prevValue) =>
+                        prevValue
+                          ? {
+                              ...prevValue,
+                              type: VendorOrderType[
+                                e.target.value as keyof typeof VendorOrderType
+                              ],
+                            }
+                          : prevValue
+                      )
+                    }
                     value={orderDetails?.type}
                   >
                     {Object.keys(VendorOrderType).map((orderType) => (
-                      <option key={orderType} value={orderType}>{orderType}</option>
+                      <option key={orderType} value={orderType}>
+                        {orderType}
+                      </option>
                     ))}
                   </select>
                 )}
               </p>
 
-
               <p className='p-1 font-[300] flex flex-col'>
                 <strong>Address </strong>
-                {!editMode ? (orderDetails?.address ? (orderDetails?.address)
-                  : ("Not Provided"))
-                  : (
-                    <input
-                      type='text'
-                      className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
-                      value={orderDetails?.address}
-                      onChange={(e) =>
-                        setOrderDetails((prevValue) => prevValue ? { ...prevValue, address: e.target.value } : prevValue)
-                      }
-                    />
-                  )}
+                {!editMode ? (
+                  orderDetails?.address ? (
+                    orderDetails?.address
+                  ) : (
+                    "Not Provided"
+                  )
+                ) : (
+                  <input
+                    type='text'
+                    className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
+                    value={orderDetails?.address}
+                    onChange={(e) =>
+                      setOrderDetails((prevValue) =>
+                        prevValue
+                          ? { ...prevValue, address: e.target.value }
+                          : prevValue
+                      )
+                    }
+                  />
+                )}
               </p>
             </div>
           </div>
@@ -159,8 +179,9 @@ const OrderDetails: React.FC = () => {
                 {orderDetails?.status?.map((item, index: number) => {
                   return (
                     <tr
-                      className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
-                        } hover:bg-gray-200 cursor-pointer`}
+                      className={`border text-center text-sm ${
+                        index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                     >
                       <td className='border p-1'>
                         {!editMode ? (
@@ -168,7 +189,7 @@ const OrderDetails: React.FC = () => {
                         ) : (
                           <input
                             type='text'
-                            name="timestamps"
+                            name='timestamps'
                             className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
                             value={item.timestamps}
                             onChange={(e) => handleStatusUpdate(e, index)}
@@ -177,50 +198,97 @@ const OrderDetails: React.FC = () => {
                       </td>
 
                       <td className='border p-1'>
-                        {!editMode ? (<span>{item.personName}</span>)
-                          : (
-                            <input
-                              type='text'
-                              name="personName"
-                              className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
-                              value={item.personName}
-                              onChange={(e) => handleStatusUpdate(e, index)}
-                            />
-                          )}
+                        {!editMode ? (
+                          <span>{item.personName}</span>
+                        ) : (
+                          <input
+                            type='text'
+                            name='personName'
+                            className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
+                            value={item.personName}
+                            onChange={(e) => handleStatusUpdate(e, index)}
+                          />
+                        )}
                       </td>
 
                       <td className='border p-1'>
-                        {!editMode ? (<span>{item.contactNumber}</span>)
-                          : (
-                            <input
-                              type='text'
-                              name='contactNumber'
-                              className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
-                              value={item.contactNumber}
-                              onChange={(e) => handleStatusUpdate(e, index)}
-                            />
-                          )}
+                        {!editMode ? (
+                          <span>{item.contactNumber}</span>
+                        ) : (
+                          <input
+                            type='text'
+                            name='contactNumber'
+                            className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
+                            value={item.contactNumber}
+                            onChange={(e) => handleStatusUpdate(e, index)}
+                          />
+                        )}
                       </td>
 
                       <td className='border p-1'>
-                        {!editMode ? (<span>{item.status}</span>)
-                          : (
-                            <select
-                              value={item.status}
-                              className='outline-none p-1 rounded-md'
-                              name='status'
-                              onChange={(e) =>
-                                handleStatusUpdate(e, index)
-                              }
-                            >
-                              {Object.keys(VendorOrderStatus).map((ele) => (<option value={ele}>{ele}</option>))}
-                            </select>
-                          )}
+                        {!editMode ? (
+                          <span>{item.status}</span>
+                        ) : (
+                          <select
+                            value={item.status}
+                            className='outline-none p-1 rounded-md'
+                            name='status'
+                            onChange={(e) => handleStatusUpdate(e, index)}
+                          >
+                            {Object.keys(VendorOrderStatus).map((ele) => (
+                              <option value={ele}>{ele}</option>
+                            ))}
+                          </select>
+                        )}
                       </td>
                     </tr>
                   );
                 })}
               </tbody>
+
+              <tfoot className="">
+                <tr className="mt-3">
+                  <td>
+                    <input
+                      className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
+                      type='text'
+                      placeholder='TimeStamps'
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
+                      type='text'
+                      placeholder='Person name'
+                    />
+                  </td>
+                  <td>
+                    <input
+                      className='border border-gray-300 w-full  rounded-sm p-3  text-sm outline-none'
+                      type='number'
+                      placeholder='Contact number'
+                    />
+                  </td>
+                  <td>
+                    <select
+                      name='status'
+                      className='text-sm border border-gray-300 w-full p-3'
+                    >
+                      {Object.keys(VendorOrderStatus).map((orderType) => (
+                        <option key={orderType} value={orderType}>
+                          {orderType}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colSpan={4} className="text-center">
+                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-bold ml-auto'>Add Status</button>
+                  </td>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
@@ -245,34 +313,51 @@ const OrderDetails: React.FC = () => {
               {orderDetails?.listOfToysSentLink?.map((item, index: number) => {
                 const { toy } = item;
                 return (
-                  <tr key={toy.id} className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""} hover:bg-gray-200 cursor-pointer`}>
+                  <tr
+                    key={toy.id}
+                    className={`border text-center text-sm ${
+                      index % 2 !== 0 ? "bg-gray-100" : ""
+                    } hover:bg-gray-200 cursor-pointer`}
+                  >
                     <td className='border p-1'>{toy.id}</td>
                     <td className='border p-1'>{toy.name}</td>
                     <td className='border p-1'>{toy.brand}</td>
                     <td className='border p-1'>{toy.subBrand}</td>
                     <td className='border p-1'>
-                      {!editMode ? (item.price) :
-                        (
-                          <input
-                            type='number'
-                            className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
-                            value={item.price}
-                            onChange={(e) => handleToyArrayChanges(index, parseInt(e.target.value), 'price')}
-                          />
-                        )
-                      }
+                      {!editMode ? (
+                        item.price
+                      ) : (
+                        <input
+                          type='number'
+                          className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
+                          value={item.price}
+                          onChange={(e) =>
+                            handleToyArrayChanges(
+                              index,
+                              parseInt(e.target.value),
+                              "price"
+                            )
+                          }
+                        />
+                      )}
                     </td>
                     <td className='border p-1'>
-                      {!editMode ? (item.quantity)
-                        : (
-                          <input
-                            type='number'
-                            className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
-                            value={item.quantity}
-                            onChange={(e) => handleToyArrayChanges(index, parseInt(e.target.value), 'quantity')}
-                          />
-                        )
-                      }
+                      {!editMode ? (
+                        item.quantity
+                      ) : (
+                        <input
+                          type='number'
+                          className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleToyArrayChanges(
+                              index,
+                              parseInt(e.target.value),
+                              "quantity"
+                            )
+                          }
+                        />
+                      )}
                     </td>
                     <td className='border p-2'>{toy.category}</td>
                     <td className='border p-2'>{toy.level}</td>
