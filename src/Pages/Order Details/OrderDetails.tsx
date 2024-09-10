@@ -32,9 +32,8 @@ const OrderDetails: React.FC = () => {
       const response = await axiosInstance.put(`${UPDATE_VENDOR_ORDER}/${id}`, {
         order: orderDetails
       });
-      console.log(response.data);
       setOrderDetails(response.data.order);
-      toast.success("Updated Details successfully");
+      toast.success(response.data.message);
     } catch (error: any) {
       if (error.response) {
         dispatch(

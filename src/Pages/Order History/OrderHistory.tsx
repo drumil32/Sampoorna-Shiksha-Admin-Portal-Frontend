@@ -24,11 +24,10 @@ const OrderHistory: React.FC = () => {
   const [orderStatus, setOrderStatus] = useState<VendorOrderStatus | undefined>(undefined);
   const [filterOrders, setFilterOrders] = useState<VendorOrder[]>([]);
 
-console.log(orders)
   const navigate = useNavigate();
 
   const matchOrderBrandOrSubBrand = (orderName: string) => {
-    return '' == orderName || orderName.toLowerCase().includes(searchQuery.toLowerCase());
+    return '' == searchQuery || orderName.toLowerCase().includes(searchQuery.toLowerCase());
   };
 
   const handleSearch = () => {
@@ -36,7 +35,7 @@ console.log(orders)
       orders.filter((order) =>
         (order.type == orderType || orderType == undefined) &&
         (matchOrderBrandOrSubBrand(order.brand) || matchOrderBrandOrSubBrand(order.subBrand)) &&
-        order.status[order.status.length - 1].status == orderStatus
+        (undefined == orderStatus || (order.status.length > 0 ? order.status[order.status.length - 1].status == orderStatus : true))
       )
     );
   }
@@ -81,7 +80,7 @@ console.log(orders)
             />
             <select
               className='border rounded-sm shadow-sm block  text-[12px] outline-none p-1'
-              onChange={(e) => setOrderType(e.target.value === "All"? undefined: VendorOrderType[e.target.value as keyof typeof VendorOrderType])}
+              onChange={(e) => setOrderType(e.target.value === "All" ? undefined : VendorOrderType[e.target.value as keyof typeof VendorOrderType])}
             >
               {["All", ...Object.keys(VendorOrderType)].map((orderType) => (
                 <option value={orderType}>{orderType}</option>
@@ -90,7 +89,7 @@ console.log(orders)
 
             <select
               className='border rounded-md shadow-sm block text-[12px] outline-none p-1'
-              onChange={(e) => setOrderStatus(e.target.value === "All" ? undefined: VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus])}
+              onChange={(e) => setOrderStatus(e.target.value === "All" ? undefined : VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus])}
             >
               {["All", ...Object.keys(VendorOrderStatus)].map((status) => (
                 <option value={status} className=''>
@@ -124,9 +123,8 @@ console.log(orders)
               {filterOrders.map((item, index: number) => {
                 return (
                   <tr
-                    className={`border text-center text-xs ${
-                      index % 2 !== 0 ? "bg-gray-100" : ""
-                    } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                     onClick={() => navigate(`/order-details/${item.id}`)}
                   >
                     <td className='border p-2'>{index + 1}</td>
