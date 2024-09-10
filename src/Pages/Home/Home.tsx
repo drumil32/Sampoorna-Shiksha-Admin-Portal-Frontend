@@ -5,18 +5,14 @@ import { TOYS } from "../../utils/restEndPoints";
 import { IToy } from "../../types/School";
 import { Action } from "../../types/error";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
-import { removeItemToCart, setItemToCart } from "../../redux/slices/cartSlice";
-import { RootState } from "../../redux/store";
-import { ShowVendorOrder } from "../../types/VendorOrder";
-
+import Card from "../../Components/Card";
 const Home: React.FC = () => {
   const [toys, setToys] = useState<IToy[]>([]);
 
-  const vendorCartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.cartItems);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -44,17 +40,12 @@ const Home: React.FC = () => {
     fetchToys();
   }, []);
 
-  const addToCart = (toy: IToy) => {
-    const isExits = vendorCartItems.find((item) => item.toy.id === toy.id);
-    if (!isExits) {
-      dispatch(setItemToCart({ toy, quantity: 1 }));
-    };
-  }
+  
   return (
     <Loading>
       <Error>
         <div className="gap-5  mt-3 flex sm:flex-row flex-col m-auto flex-wrap items-center justify-center sm:max-w-6xl">
-          {toys?.map(toy => {
+          {/* {toys?.map(toy => {
             const { name, price, category, brand, learn, id, level, subBrand, link } = toy;
             return (
               <div
@@ -134,7 +125,8 @@ const Home: React.FC = () => {
                 </div>
               </div>
             );
-          })}
+          })} */}
+          {toys?.map(toy => <Card toy={toy}/>)};
         </div>
       </Error>
     </Loading>
