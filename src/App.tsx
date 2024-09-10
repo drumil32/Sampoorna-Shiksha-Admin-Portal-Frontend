@@ -8,7 +8,8 @@ import {
   ORDER_HISTORY,
   ORDER_DETAILS,
   ADD_TOY,
-  UPDATE_TOY
+  UPDATE_TOY,
+  STOCK
 } from "./utils/routes";
 import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
@@ -21,6 +22,7 @@ import OrderHistory from "./Pages/Order History/OrderHistory";
 import OrderDetails from "./Pages/Order Details/OrderDetails";
 import AddToy from "./Pages/AddToy/AddToy";
 import UpdateToy from "./Pages/Update Toy/UpdateToy";
+import Stock from "./Pages/Stock/Stock";
 function App() {
   const router = createBrowserRouter([
     {
@@ -83,6 +85,13 @@ function App() {
             <ProtectedRoute><UpdateToy /></ProtectedRoute>
           ),
         },
+
+        {
+          path: STOCK,
+          element: (
+            <ProtectedRoute> <Stock /></ProtectedRoute>
+          )
+        }
       ],
     },
   ]);

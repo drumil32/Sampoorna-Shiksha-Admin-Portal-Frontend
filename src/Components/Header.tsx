@@ -1,13 +1,13 @@
 import { CiShoppingCart } from "react-icons/ci";
 import { Link, } from 'react-router-dom';
-import { useSelector ,  } from 'react-redux';
-import { CART, HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY } from '../utils/routes';
+import { useSelector, } from 'react-redux';
+import { CART, HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK } from '../utils/routes';
 import { RootState } from '../redux/store';
 import { FaPlus } from "react-icons/fa6";
 
 
 const Header = () => {
-      const cartItems = useSelector((store:RootState) => store.cart.cartItems);
+  const cartItems = useSelector((store: RootState) => store.cart.cartItems);
 
   return (
     <div className='bg-gray-200 shadow-md p-3 font-[300] text-gray-600 flex items-center justify-between'>
@@ -19,6 +19,13 @@ const Header = () => {
       </Link>
 
       <div className='flex gap-4 items-center'>
+        <Link
+          to={STOCK}
+          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+        >
+          <span>Stock</span>
+          <FaPlus className=' relative' />
+        </Link>
         <Link
           to={ADD_TOY}
           className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'

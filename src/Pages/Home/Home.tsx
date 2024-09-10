@@ -126,6 +126,7 @@ const Home: React.FC = () => {
               </div>
             );
           })} */}
+          <h1>Home Page</h1>
           {toys?.map(toy => <Card toy={toy}/>)};
         </div>
       </Error>

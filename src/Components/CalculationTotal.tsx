@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ShowVendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
-import Loading from "../Components/Loading/Loading";
-import Error from "../Components/ErrorHandler/Error";
 import { VENDOR_ORDER } from "../utils/restEndPoints";
 import { toast } from "react-toastify";
 import validateVendorType from "../utils/validation/validateOrder";
