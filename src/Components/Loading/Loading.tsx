@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { RotatingLines } from 'react-loader-spinner';
+import { RotatingLines } from "react-loader-spinner";
 
 interface LoadingProps {
     children: React.ReactNode;

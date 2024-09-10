@@ -7,9 +7,10 @@ import { RootState } from "../redux/store";
 
 interface MyComponentProps {
   toy: IToy
+  quantity? : string
 }
 
-const Card: React.FC<MyComponentProps> = ({ toy }) => {
+const Card: React.FC<MyComponentProps> = ({ toy , quantity }) => {
   const vendorCartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.cartItems);
   const { name, price, category, brand, learn, id, level, subBrand, link } = toy;
   const dispatch = useDispatch();
@@ -23,79 +24,75 @@ const Card: React.FC<MyComponentProps> = ({ toy }) => {
   }
   return (
     <div
-      className='single-toy border rounded-md shadow-md sm:max-w-xs w-[80%] p-4 text-sm flex flex-col'
+      className='single-toy border rounded-md shadow-md sm:max-w-[350px]  w-[80%] p-3 text-sm flex flex-col h-[300px]'
       key={id}
     >
       <h1 className='font-[400] text-2xl text-center mb-3'>{name}</h1>
 
-      <div className='flex flex-col gap-2 p-2'>
-        <p className='font-[300] flex justify-between'>
-          <span className=''>
-            <strong className='text-sm font-semibold'>Price</strong> :{" "}
-            {price}
-          </span>
-          <span className=''>
-            <strong className='text-sm font-semibold'>Category</strong> :{" "}
-            {category}
-          </span>
+      <div className='flex flex-col gap-3 p-2'>
+        <p className='font-[300] flex justify-between items-center'>
+          <strong className='text-[16px] font-semibold'>
+            Price : <span className='font-[300]'>{price}</span>
+          </strong>
+          <strong className='text-[16px] font-semibold'>
+            Category : <span className='font-[300]'>{category}</span>
+          </strong>
         </p>
 
-        <p className='font-[300] flex justify-between'>
-          <span className=''>
-            <strong className='text-sm font-semibold'>Brand</strong> :{" "}
-            {brand}
-          </span>
-          <span className=''>
-            <strong className='text-sm font-semibold'>Level</strong> :{" "}
-            {level ?? "Not Provided"}
-          </span>
+        <p className='font-[300] flex justify-between items-center'>
+          <strong className='text-[16px] font-semibold'>
+            Brand : <span className='font-[300]'>{brand}</span>
+          </strong>
+          <strong className='text-[16px] font-semibold'>
+            Level :{" "}
+            <span className='font-[300] text-sm'>
+              {level ?? "Not Provided"}
+            </span>
+          </strong>
         </p>
 
         <hr />
 
-        <p className='font-[300] flex justify-between'>
-          <span className=''>
-            {" "}
-            <strong className='text-sm font-semibold'>ID</strong> : {id}
-          </span>
-        </p>
-        <p className='font-[300] flex justify-between'>
-          <span className='text-ellipsis'>
-            <strong className='text-sm font-semibold'>subBrand</strong> :
-            {subBrand}
-          </span>
+        <p className='font-[300] flex justify-between items-center'>
+          <strong className='text-[16px] font-semibold'>
+            Learn: <span className='font-[300]'>{learn?.join(" , ")}</span>
+          </strong>
         </p>
 
-        <p className='font-[300] flex '>
-          <span className=''>
-            <strong className='text-sm font-semibold'>Learn</strong> :{" "}
-            {learn?.join(" , ")}
-          </span>
+        <p className='font-[300] flex justify-between items-center'>
+          <strong
+            className={`text-[16px] font-semibold ${!quantity && "hidden"}`}
+          >
+            Quantity: <span className='font-[300]'>{quantity}</span>
+          </strong>
+          <strong className='text-[16px] font-semibold'>
+            subBrand : <span className='font-[300]'>{subBrand}</span>
+          </strong>
         </p>
-
-        <p className='font-[300] flex '>
-          <span className=''>
-            <strong className='text-sm font-semibold'>Link</strong> :
-            <a href={link} className='text-blue-400' target='_blank'>
-              {" "}
-              Video Link
-            </a>
-          </span>
+        <p className='font-[300] flex justify-between items-center'>
+          <strong className='text-[16px] font-semibold'>
+            ID: <span className='font-[300]'>{id}</span>
+          </strong>
         </p>
       </div>
 
-      <div className='w-[90%] m-auto flex justify-end pt-2 text-xs'>
+      <div className='w-[95%] m-auto flex items-center gap-2 justify-between pt-2 text-xs'>
+          <a href={link} className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium' target='_blank'>
+            Video Link
+          </a>
+    
+
         {vendorCartItems?.some((item) => item.toy.id == id) ? (
           <button
             onClick={() => dispatch(removeItemToCart(toy.id ?? ""))}
-            className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'
+            className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
           >
             Remove From Cart
           </button>
         ) : (
           <button
             onClick={() => addToCart(toy)}
-            className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white'
+            className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
           >
             Add To Cart
           </button>

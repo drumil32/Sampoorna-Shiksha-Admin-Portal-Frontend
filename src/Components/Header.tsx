@@ -24,7 +24,6 @@ const Header = () => {
           className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
         >
           <span>Stock</span>
-          <FaPlus className=' relative' />
         </Link>
         <Link
           to={ADD_TOY}

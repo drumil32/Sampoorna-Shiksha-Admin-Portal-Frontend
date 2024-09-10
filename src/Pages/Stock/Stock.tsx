@@ -45,8 +45,9 @@ const Stock: React.FC = () => {
     return (
         <Loading>
             <Error>
-                <h1>Stocks</h1>
+            <div className="gap-5  mt-3 flex sm:flex-row flex-col m-auto flex-wrap items-center justify-start sm:max-w-6xl pb-20 ">
                 {toys?.map(item => <Card toy={item.toy} quantity={item.quantity} />)};
+            </div>
             </Error>
         </Loading>
     );
