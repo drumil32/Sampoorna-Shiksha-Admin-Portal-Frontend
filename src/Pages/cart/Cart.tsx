@@ -5,7 +5,7 @@ import { ShowVendorOrder, VendorOrderType } from '../../types/VendorOrder';
 import { toast } from "react-toastify";
 import axiosInstance from '../../utils/axiosInstance';
 import { setLoading, setError } from '../../redux/slices/statusSlice';
-import { setUpdateQty, removeItemToCart } from '../../redux/slices/cartSlice';
+import { setUpdateQty, removeItemToCart , clearCart } from '../../redux/slices/cartSlice';
 import { CiTrash } from "react-icons/ci";
 import { CiShoppingCart } from "react-icons/ci";
 import { RootState } from '../../redux/store';
@@ -18,10 +18,9 @@ import Loading from '../../Components/Loading/Loading';
 const Cart: React.FC = () => {
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
 
-  const [orderType, setOrderType] = useState<VendorOrderType>(VendorOrderType.NGO);
+  const [orderType, setOrderType] = useState<VendorOrderType>("");
   const [address, setAddress] = useState<string>("");
   const [total, setTotal] = useState<number>(0);
-  // const [vendorOrdercart, setVendorOrderCart] = useState<VendorCartItem[]>([]);
 
   const dispatch = useDispatch();
 
@@ -36,8 +35,7 @@ const Cart: React.FC = () => {
   });
 
   useEffect(() => {
-    setTotal(vendorCartItems.reduce((acc, curr) => acc + (curr.toy.price ?? 0) * curr.quantity, 0)
-    );
+    setTotal(vendorCartItems.reduce((acc, curr) => acc + (curr.toy.price ?? 0) * curr.quantity, 0));
   }, [vendorCartItems]);
 
   // place order function
@@ -56,6 +54,7 @@ const Cart: React.FC = () => {
         address,
       });
       toast.success(response.data.message);
+      dispatch(clearCart([]));
     } catch (error: any) {
       if (error.response) {
         dispatch(
