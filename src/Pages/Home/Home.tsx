@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
 import Card from "../../Components/Card";
+import Backdrop from "../../Components/Backdrop/Backdrop";
 const Home: React.FC = () => {
   const [toys, setToys] = useState<IToy[]>([]);
 
@@ -46,6 +47,7 @@ const Home: React.FC = () => {
       <Error>
         <div className=" mt-3 flex m-auto gap-5 flex-wrap items-center justify-start max-w-6xl pb-20">
           {toys?.map(toy => <Card toy={toy}/>)};
+          {/* <Backdrop/> */}
         </div>
       </Error>
     </Loading>

@@ -13,7 +13,7 @@ import { setUpdateQty } from "../redux/slices/cartSlice";
 
 const Calculation: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
-  const [address, setAddress] = useState<string>("");
+  const [schoolAddress, setSchoolAddress] = useState<string>("");
 
   const [orderType, setOrderType] = useState<VendorOrderType>(VendorOrderType.NGO);
 
@@ -81,14 +81,26 @@ const Calculation: React.FC = () => {
           {vendorCartItems?.map((item, index) => {
             return (
               <tr
-                className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
-                  }`}
+                className={`border text-center text-xs ${
+                  index % 2 !== 0 ? "bg-gray-100" : ""
+                }`}
               >
                 <td className='border p-2'>{item.toy.name}</td>
                 <td className='border p-2'>{item.toy.price}</td>
                 <td className='border p-2'>
-                  <input type="text" placeholder='Qty' className='border p-1 outline-none' min={1}
-                    onChange={(e) => dispatch(setUpdateQty({ toy: item.toy, quantity: parseInt(e.target.value) }))}
+                  <input
+                    type='text'
+                    placeholder='Qty'
+                    className='border p-1 outline-none'
+                    min={1}
+                    onChange={(e) =>
+                      dispatch(
+                        setUpdateQty({
+                          toy: item.toy,
+                          quantity: parseInt(e.target.value),
+                        })
+                      )
+                    }
                     value={item.quantity}
                   />
                 </td>
@@ -108,29 +120,63 @@ const Calculation: React.FC = () => {
       </table>
 
       <div className='place-order mt-4 w-full flex flex-col gap-2'>
-        <select
-          name=''
-          id=''
-          className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
-          onChange={(e) => setOrderType(VendorOrderType[e.target.value as keyof typeof VendorOrderType])}
-        >
-          {Object.keys(VendorOrderType).map((orderType) => (
-            <option value={orderType}>{orderType}</option>
-          ))}
-        </select>
+        <div className='grid grid-cols-2 gap-3 w-full'>
+          <div className="">
+            <label htmlFor=''>From</label>
+            <select
+              name=''
+              id=''
+              className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
+              onChange={(e) =>
+                setOrderType(
+                  VendorOrderType[
+                    e.target.value as keyof typeof VendorOrderType
+                  ]
+                )
+              }
+            >
+              <option value=''>vendor</option>
+              <option value='ngo'>ngo</option>
+              <option value='school'>school</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor=''>To</label>
+            <select
+              name=''
+              id=''
+              className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
+              onChange={(e) =>
+                setOrderType(
+                  VendorOrderType[
+                    e.target.value as keyof typeof VendorOrderType
+                  ]
+                )
+              }
+            >
+              <option value=''>vendor</option>
+              <option value='ngo'>ngo</option>
+              <option value='school'>school</option>
+            </select>
+          </div>
+        </div>
         <input
           type='text'
-          placeholder='Enter your delivery address'
+          placeholder='Enter your School Id'
           className='border rounded-md shadow-md w-full p-3 text-xs outline-none'
-          onChange={(e) => setAddress(e.target.value)}
-          value={address}
+          onChange={(e) => setSchoolAddress(e.target.value)}
+          value={schoolAddress}
         />
-        <button onClick={placeOrder} className='bg-blue-500 p-2 rounded-md hover:bg-blue-600 text-white w-full'>
+        <button
+          onClick={placeOrder}
+          className='bg-blue-500 p-2 rounded-md hover:bg-blue-600 text-white w-full'
+        >
           Place Order
         </button>
       </div>
     </div>
-  )
+  );
 };
 
 

@@ -11,13 +11,17 @@ const Loading: React.FC<LoadingProps> = ({ children }) => {
     const loading = useSelector((state: RootState) => state.status.loading);
 
     if (loading) {
-        return <RotatingLines
-            // height="90"
-            width="90"
-            // radius="9"
-            // color="blue"
-            ariaLabel="loading"
-        />
+        return (
+          <div className='w-full h-screen flex items-center justify-center'>
+            <RotatingLines
+              // height="90"
+              width='90'
+              // radius="9"
+            //   color="gray"
+              ariaLabel='loading'
+            />
+          </div>
+        );
     }
 
     return <>{children}</>;
