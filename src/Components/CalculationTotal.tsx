@@ -4,8 +4,6 @@ import { ShowVendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
 import { VENDOR_ORDER } from "../utils/restEndPoints";
 import { toast } from "react-toastify";
-import validateVendorType from "../utils/validation/validateOrder";
-import { VendorOrderType } from "../types/VendorOrder";
 import axiosInstance from "../utils/axiosInstance";
 import { Action } from "../types/error";
 import { setLoading, setError } from "../redux/slices/statusSlice";
@@ -13,10 +11,9 @@ import { setUpdateQty } from "../redux/slices/cartSlice";
 
 const Calculation: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
-  const [schoolAddress, setSchoolAddress] = useState<string>("");
-
-  const [orderType, setOrderType] = useState<VendorOrderType>(VendorOrderType.NGO);
-
+  const [from, setFrom] = useState<string>('vendor');
+  const [to, setTo] = useState<string>('ngo');
+  const [schoolId, setSchoolId] = useState<string | undefined>(undefined);
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
   const dispatch = useDispatch();
 
@@ -36,17 +33,17 @@ const Calculation: React.FC = () => {
 
   // place order function
   const placeOrder = async () => {
-    if (!validateVendorType(orderType)) {
-      toast.error("Vendor type is required");
+    if (schoolId && schoolId.length == 0) {
+      toast.error("School ID is required");
       return;
     }
-
     try {
       dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
       const response = await axiosInstance.post(VENDOR_ORDER, {
         cart: orderItems,
-        orderType,
-        address,
+        schoolId,
+        from,
+        to
       });
       toast.success(response.data.message);
     } catch (error: any) {
@@ -81,9 +78,9 @@ const Calculation: React.FC = () => {
           {vendorCartItems?.map((item, index) => {
             return (
               <tr
-                className={`border text-center text-xs ${
-                  index % 2 !== 0 ? "bg-gray-100" : ""
-                }`}
+                key={item.toy.id}
+                className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
+                  }`}
               >
                 <td className='border p-2'>{item.toy.name}</td>
                 <td className='border p-2'>{item.toy.price}</td>
@@ -124,38 +121,29 @@ const Calculation: React.FC = () => {
           <div className="">
             <label htmlFor=''>From</label>
             <select
-              name=''
-              id=''
+              name='from'
               className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
               onChange={(e) =>
-                setOrderType(
-                  VendorOrderType[
-                    e.target.value as keyof typeof VendorOrderType
-                  ]
-                )
+                setFrom(e.target.value)
               }
+              value={from}
             >
-              <option value=''>vendor</option>
+              <option value='vendor'>vendor</option>
               <option value='ngo'>ngo</option>
-              <option value='school'>school</option>
             </select>
           </div>
 
           <div>
             <label htmlFor=''>To</label>
             <select
-              name=''
+              name='to'
               id=''
               className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
               onChange={(e) =>
-                setOrderType(
-                  VendorOrderType[
-                    e.target.value as keyof typeof VendorOrderType
-                  ]
-                )
+                setTo(e.target.value)
               }
+              value={to}
             >
-              <option value=''>vendor</option>
               <option value='ngo'>ngo</option>
               <option value='school'>school</option>
             </select>
@@ -165,8 +153,8 @@ const Calculation: React.FC = () => {
           type='text'
           placeholder='Enter your School Id'
           className='border rounded-md shadow-md w-full p-3 text-xs outline-none'
-          onChange={(e) => setSchoolAddress(e.target.value)}
-          value={schoolAddress}
+          onChange={(e) => setSchoolId(e.target.value == "" ? undefined : e.target.value)}
+          value={schoolId}
         />
         <button
           onClick={placeOrder}

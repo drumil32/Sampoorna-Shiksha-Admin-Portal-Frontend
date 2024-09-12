@@ -41,12 +41,12 @@ const Home: React.FC = () => {
     fetchToys();
   }, []);
 
-  
+
   return (
     <Loading>
       <Error>
         <div className=" mt-3 flex m-auto gap-5 flex-wrap items-center justify-start max-w-6xl pb-20">
-          {toys?.map(toy => <Card toy={toy}/>)};
+          {toys?.map(toy => <Card key={toy.id} toy={toy} />)};
           {/* <Backdrop/> */}
         </div>
       </Error>

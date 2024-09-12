@@ -17,7 +17,7 @@ const CartItems : React.FC = () => {
           <div className='item-details flex flex-col items-center gap-3'>
             {vendorCartItems?.map((item) => {
               return (
-                <div className='single-toy border rounded-md shadow-md sm:max-w-sm w-[80%] p-6 text-sm flex flex-col bg-blue-50'>
+                <div key={item.toy.id} className='single-toy border rounded-md shadow-md sm:max-w-sm w-[80%] p-6 text-sm flex flex-col bg-blue-50'>
                   <h1 className='font-medium text-xl text-center flex items-center justify-between'>
                     {item.toy.name}
                     <CiTrash
