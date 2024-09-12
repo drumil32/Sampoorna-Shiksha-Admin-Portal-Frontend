@@ -9,12 +9,14 @@ import { toast } from "react-toastify";
 import { Action } from "../../types/error";
 import { GET_VENDOR_ORDER_BY_ID, UPDATE_VENDOR_ORDER } from "../../utils/restEndPoints";
 import { setLoading, setError } from "../../redux/slices/statusSlice";
+import { useNavigate } from "react-router-dom";
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [orderDetails, setOrderDetails] = useState<VendorOrder | null>(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -33,6 +35,7 @@ const OrderDetails: React.FC = () => {
         order: orderDetails
       });
       setOrderDetails(response.data.order);
+      console.log(response.data.order)
       toast.success(response.data.message);
     } catch (error: any) {
       if (error.response) {
@@ -137,9 +140,19 @@ const OrderDetails: React.FC = () => {
                 )}
               </p>
 
-              <p className='p-1 font-[300] flex flex-col'>
-                <strong>Address </strong>
-                {!editMode ? (
+              <p className='p-1 font-[300] flex flex-col items-start'>
+                <strong>School </strong>
+                {orderDetails?.school ? (
+                  <button
+                    onClick={() => navigate(`/school/${orderDetails.school}`)}
+                    className='text-xs border bg-green-500 flex flex-cols items-start p-2 text-white rounded-md'
+                  >
+                    Visit School
+                  </button>
+                ) : (
+                  "Not Provided"
+                )}
+                {/* {!editMode ? (
                   orderDetails?.address ? (
                     orderDetails?.address
                   ) : (
@@ -158,7 +171,7 @@ const OrderDetails: React.FC = () => {
                       )
                     }
                   />
-                )}
+                )} */}
               </p>
             </div>
           </div>
@@ -245,8 +258,8 @@ const OrderDetails: React.FC = () => {
                 })}
               </tbody>
 
-              <tfoot className="">
-                <tr className="mt-3">
+              <tfoot className=''>
+                <tr className='mt-3'>
                   <td>
                     <input
                       className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
@@ -283,8 +296,10 @@ const OrderDetails: React.FC = () => {
                 </tr>
 
                 <tr>
-                  <td colSpan={4} className="text-center">
-                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-bold ml-auto'>Add Status</button>
+                  <td colSpan={4} className='text-center'>
+                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-bold ml-auto'>
+                      Add Status
+                    </button>
                   </td>
                 </tr>
               </tfoot>

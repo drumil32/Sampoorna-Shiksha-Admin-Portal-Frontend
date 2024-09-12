@@ -13,6 +13,7 @@ interface MyComponentProps {
 const Card: React.FC<MyComponentProps> = ({ toy , quantity }) => {
   const vendorCartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.cartItems);
   const { name, price, category, brand, learn, id, level, subBrand, link } = toy;
+  console.log(link)
   const dispatch = useDispatch();
 
 
@@ -77,9 +78,12 @@ const Card: React.FC<MyComponentProps> = ({ toy , quantity }) => {
       </div>
 
       <div className='w-[95%] m-auto flex items-center gap-2 justify-between pt-2 text-xs'>
-          <a href={link} className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium' target='_blank'>
-            Video Link
+          {(link !== "Not Provided" && link !== null) &&
+           <a href={link} className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium' target='_blank'>
+             Video Link
           </a>
+          }
+          
     
 
         {vendorCartItems?.some((item) => item.toy.id == id) ? (

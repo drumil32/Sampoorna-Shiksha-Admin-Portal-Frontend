@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 import { Action } from "../types/error";
 import { setLoading, setError } from "../redux/slices/statusSlice";
-import { setUpdateQty } from "../redux/slices/cartSlice";
+import { clearCart, setUpdateQty } from "../redux/slices/cartSlice";
 
 const Calculation: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
@@ -46,6 +46,9 @@ const Calculation: React.FC = () => {
         to
       });
       toast.success(response.data.message);
+      setTimeout(() => {
+        dispatch(clearCart([]));
+      },2000)
     } catch (error: any) {
       if (error.response) {
         dispatch(

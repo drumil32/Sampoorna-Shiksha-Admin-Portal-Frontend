@@ -16,6 +16,7 @@ const Home: React.FC = () => {
 
 
   const dispatch = useDispatch();
+
   useEffect(() => {
     const fetchToys = async () => {
       try {

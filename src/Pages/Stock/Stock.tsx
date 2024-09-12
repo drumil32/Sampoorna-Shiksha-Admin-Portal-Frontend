@@ -21,9 +21,7 @@ const Stock: React.FC = () => {
                 dispatch(setLoading(true));
                 const response = await axiosInstance.get(GET_ALL_TOYS_FROM_STOCK);
                 console.log(response.data);
-                setToys(
-                    response.data.toys.map((item: any) => ({ quantity: item.quantity, toy: item.toy }))
-                );
+                setToys(response.data.toys.map((item: any) => ({ quantity: item.quantity, toy: item.toy })));
             } catch (error: any) {
                 if (error.response) {
                     dispatch(
