@@ -46,13 +46,13 @@ const Home: React.FC = () => {
   return (
     <Loading>
       <Error>
-        <div className=" mt-3 flex m-auto gap-5 flex-wrap items-center justify-start max-w-6xl pb-20">
-          {toys?.map(toy => <Card key={toy.id} toy={toy} />)};
-          {/* <Backdrop/> */}
+        {/* <div className="mt-3 gap-y-8 grid sm:grid-cols-3 grid-cols-2 bg-red-300 max-w-6xl m-auto pb-20"> */}
+        <div className="w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10">
+          {toys?.map((toy) => (<Card key={toy.id} toy={toy} />))}
         </div>
       </Error>
     </Loading>
-  )
+  );
 }
 
 export default Home;

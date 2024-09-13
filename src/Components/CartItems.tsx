@@ -14,10 +14,10 @@ const CartItems : React.FC = () => {
     return (
       <Error>
         <Loading>
-          <div className='item-details flex flex-col items-center gap-3'>
+          <div className='item-details flex flex-col items-center gap-3  flex-1'>
             {vendorCartItems?.map((item) => {
               return (
-                <div key={item.toy.id} className='single-toy border rounded-md shadow-md sm:max-w-sm w-[80%] p-6 text-sm flex flex-col bg-blue-50'>
+                <div key={item.toy.id} className='single-toy border rounded-md shadow-md w-full m-auto  p-6 text-sm flex flex-col bg-blue-100'>
                   <h1 className='font-medium text-xl text-center flex items-center justify-between'>
                     {item.toy.name}
                     <CiTrash

@@ -109,39 +109,9 @@ const OrderDetails: React.FC = () => {
                 <span className='text-sm'>{orderDetails?.subBrand}</span>
               </p>
 
-              <p className='p-1 font-[300] flex flex-col gap-1 '>
-                <strong>Order Type </strong>
-                {!editMode ? (
-                  <span className='text-sm'>{orderDetails?.type}</span>
-                ) : (
-                  <select
-                    name='order-type'
-                    className='border rounded-md shadow-md block w-full p-2 text-sm outline-none'
-                    onChange={(e) =>
-                      setOrderDetails((prevValue) =>
-                        prevValue
-                          ? {
-                              ...prevValue,
-                              type: VendorOrderType[
-                                e.target.value as keyof typeof VendorOrderType
-                              ],
-                            }
-                          : prevValue
-                      )
-                    }
-                    value={orderDetails?.type}
-                  >
-                    {Object.keys(VendorOrderType).map((orderType) => (
-                      <option key={orderType} value={orderType}>
-                        {orderType}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </p>
-
               <p className='p-1 font-[300] flex flex-col items-start'>
-                <strong>School </strong>
+                {orderDetails && <strong>School </strong>}
+
                 {orderDetails?.school ? (
                   <button
                     onClick={() => navigate(`/school/${orderDetails.school}`)}
@@ -152,26 +122,6 @@ const OrderDetails: React.FC = () => {
                 ) : (
                   "Not Provided"
                 )}
-                {/* {!editMode ? (
-                  orderDetails?.address ? (
-                    orderDetails?.address
-                  ) : (
-                    "Not Provided"
-                  )
-                ) : (
-                  <input
-                    type='text'
-                    className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
-                    value={orderDetails?.address}
-                    onChange={(e) =>
-                      setOrderDetails((prevValue) =>
-                        prevValue
-                          ? { ...prevValue, address: e.target.value }
-                          : prevValue
-                      )
-                    }
-                  />
-                )} */}
               </p>
             </div>
           </div>
@@ -195,7 +145,7 @@ const OrderDetails: React.FC = () => {
                         index % 2 !== 0 ? "bg-gray-100" : ""
                       } hover:bg-gray-200 cursor-pointer`}
                     >
-                      <td className='border p-1'>
+                      <td className='border p-2'>
                         {!editMode ? (
                           <span>{item.timestamps}</span>
                         ) : (
@@ -258,8 +208,8 @@ const OrderDetails: React.FC = () => {
                 })}
               </tbody>
 
-              <tfoot className=''>
-                <tr className='mt-3'>
+              <tfoot>
+                <tr>
                   <td>
                     <input
                       className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
@@ -297,7 +247,7 @@ const OrderDetails: React.FC = () => {
 
                 <tr>
                   <td colSpan={4} className='text-center'>
-                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-bold ml-auto'>
+                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3'>
                       Add Status
                     </button>
                   </td>
@@ -375,7 +325,7 @@ const OrderDetails: React.FC = () => {
                     </td>
                     <td className='border p-2'>{toy.category}</td>
                     <td className='border p-2'>{toy.level}</td>
-                    <td className='border p-2'>{toy.learn}</td>
+                    <td className='border p-2'>{toy.learn?.join(" , ")}</td>
                   </tr>
                 );
               })}

@@ -11,9 +11,9 @@ import { toast } from "react-toastify";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
 interface ToyFormProps {
-    title: string;
-    toy: IToy | undefined;
-    setToy: React.Dispatch<React.SetStateAction<IToy | undefined>>
+  title: string;
+  toy: IToy | undefined;
+  setToy: React.Dispatch<React.SetStateAction<IToy | undefined>>;
 }
 
 const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
@@ -27,7 +27,6 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
         if (name == 'price') {
             v = parseInt(value);
         }
-        console.log(v);
         setToy((prev) => {
             if (!prev) {
                 return ({ [name]: v });
@@ -39,13 +38,13 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
 
     const handleArray = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && inputValue.trim() !== "") {
-            console.log(inputValue)
             setToy(prev => {
                 return prev ? ({ ...prev, learn: [...(prev.learn ?? []), inputValue] }) : ({ learn: [inputValue] });
             });
             setInputValue(""); // Clear input after adding
         }
     };
+
 
     const createToy = async () => {
         try {
@@ -80,9 +79,20 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
         })
     }
 
+    function validateToyDetails(toy:IToy | undefined) {
+      for (const key in toy) {
+        if (toy[key] === "") {
+          toast.error("Please enter toy details for " + key);
+          return false; // Return false to indicate validation failure
+        }
+      }
+      return true; // Return true if all details are valid
+    }
+
     //  update toy by id
     const updateToy = async () => {
         try {
+           validateToyDetails(toy);
             dispatch(setLoading(true));
             await axiosInstance.put(`${UPDATE_TOY_BY_ID}`, { toy: { ...toy } });
             toast.success("Toy updated successfully!");
@@ -106,18 +116,18 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
     return (
       <Error>
         <Loading>
-          <div className='w-full'>
+          <div className='w-full pb-10'>
             <div
               className={`${
-                title === "Add Toy" ? "mt-10" : "mt-3"
-              } p-3 border bg-blue-50 shadow-xl rounded-xl max-w-2xl m-auto`}
+                title === "Add Toy" ? "mt-6" : "mt-3"
+              } p-8 border-2  shadow-xl rounded-xl max-w-xl m-auto`}
             >
-              <h3 className='text-3xl mb-1 font-[300] ml-3'>{title}</h3>
+              <h3 className='text-4xl mb-2 ml-3 font-semibold'>{title}</h3>
               <div className='p-4 flex flex-col gap-3'>
                 {/* Input fields */}
                 <div className='grid grid-cols-2 gap-3'>
                   <div className='flex flex-col'>
-                    <label htmlFor='brand' className='text-sm'>
+                    <label htmlFor='brand' className='text-sm font-semibold '>
                       Toy Name
                     </label>
                     <input
@@ -127,25 +137,27 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                       name='name'
                       onChange={handleChange}
                       value={toy?.name || ""}
+                      required
                     />
                   </div>
                   <div className='flex flex-col'>
-                    <label htmlFor='subBrand' className='text-sm'>
+                    <label htmlFor='subBrand' className='text-sm font-semibold'>
                       Brand
                     </label>
                     <input
                       type='text'
                       placeholder='brand....'
                       className='border p-2 outline-none text-sm rounded-md'
-                      name='subBrand'
+                      name='brand'
                       onChange={handleChange}
                       value={toy?.brand || ""}
+                      required
                     />
                   </div>
                 </div>
                 <div className='grid grid-cols-2 gap-3'>
                   <div className='flex flex-col'>
-                    <label htmlFor='price' className='text-sm'>
+                    <label htmlFor='price' className='text-sm font-semibold'>
                       Price
                     </label>
                     <input
@@ -155,10 +167,11 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                       name='price'
                       onChange={handleChange}
                       value={toy?.price || 0}
+                      required
                     />
                   </div>
                   <div className='flex flex-col gap-1'>
-                    <label htmlFor='category' className='text-sm'>
+                    <label htmlFor='category' className='text-sm font-semibold'>
                       Category
                     </label>
                     <input
@@ -167,12 +180,13 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                       className='border p-2 outline-none text-sm rounded-md'
                       onChange={handleChange}
                       value={toy?.category || ""}
+                      required
                     />
                   </div>
                 </div>
                 <div className='grid grid-cols-2 gap-3'>
                   <div className='flex flex-col'>
-                    <label htmlFor='codeName' className='text-sm'>
+                    <label htmlFor='codeName' className='text-sm font-semibold'>
                       CodeName
                     </label>
                     <input
@@ -182,10 +196,14 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                       name='codeName'
                       onChange={handleChange}
                       value={toy?.codeName || ""}
+                      required
                     />
                   </div>
                   <div className='flex flex-col gap-1'>
-                    <label htmlFor='cataloguePgNo' className='text-sm'>
+                    <label
+                      htmlFor='cataloguePgNo'
+                      className='text-sm font-semibold'
+                    >
                       Catalogue Page No
                     </label>
                     <input
@@ -195,12 +213,13 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                       name='cataloguePgNo'
                       onChange={handleChange}
                       value={toy?.cataloguePgNo || ""}
+                      required
                     />
                   </div>
                 </div>
                 <div className='grid grid-cols-2 gap-3  '>
                   <div className='flex flex-col'>
-                    <label htmlFor='subBrand' className='text-sm'>
+                    <label htmlFor='subBrand' className='text-sm font-semibold'>
                       SubBrand
                     </label>
                     <input
@@ -210,18 +229,20 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                       name='subBrand'
                       onChange={handleChange}
                       value={toy?.subBrand || ""}
+                      required
                     />
                   </div>
 
                   <div className='flex flex-col'>
-                    <label htmlFor='level' className='text-sm'>
+                    <label htmlFor='level' className='text-sm font-semibold'>
                       Level
                     </label>
                     <select
                       name='level'
-                      className='text-xs p-2 rounded-md outline-none'
+                      className='text-xs p-2 rounded-md outline-none border'
                       onChange={handleChange}
                       value={toy?.level || ""}
+                      required
                     >
                       {Object.keys(Level).map((level) => (
                         <option value={level} key={level}>
@@ -233,7 +254,7 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                 </div>
 
                 <div className='grid grid-cols-1 w-full'>
-                  <label htmlFor='' className='text-sm'>
+                  <label htmlFor='' className='text-sm font-semibold'>
                     Learn
                   </label>
                   <div className='flex flex-wrap gap-2'>
@@ -260,7 +281,7 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                 </div>
                 <div className='grid grid-cols-2 gap-2 items-center'>
                   <div className='flex flex-col'>
-                    <label htmlFor='link' className='text-sm'>
+                    <label htmlFor='link' className='text-sm font-semibold'>
                       Link
                     </label>
                     <input
@@ -270,6 +291,7 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
                       name='link'
                       onChange={handleChange}
                       value={toy?.link || ""}
+                      required
                     />
                   </div>
                   <button

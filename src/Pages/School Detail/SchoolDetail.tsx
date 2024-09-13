@@ -13,7 +13,7 @@ import school from "../../Assests/Images/School.jpg";
 import Modal from "../../Components/Modal/Modal";
 import InfoSection from "../../Components/InfoSection/InfoSection";
 import { InfoItem } from "../../types/School";
-
+import OrderHistoryTable from "../../Components/OrderHistoryTable";
 const SchoolDetail: React.FC = () => {
   const [schoolData, setSchoolData] = useState<ISchoolDetails>({});
   const [schoolOrders, setSchoolOrder] = useState<ISchoolOrder[]>([]);
@@ -114,10 +114,10 @@ const SchoolDetail: React.FC = () => {
         </div>
 
         {/* orders */}
-        <div className="p-8 bg-[#f5f5f5] max-h-[100vh] my-[40px] mx-8 overflow-y-auto flex flex-col gap-6">
-          <h2 className="text-2xl font-bold">Orders</h2>
+        {/* <div className="p-8 bg-[#f5f5f5] max-h-[100vh] my-[40px] mx-8 overflow-y-auto flex flex-col gap-6"> */}
+          <h2 className="text-2xl font-bold ml-[12rem]">Orders</h2>
           {/* particular order  */}
-          {schoolOrders.map((order, index) => <div
+          {/* {schoolOrders.map((order, index) => <div
             key={order.id}
             className="flex gap-8">
             <div id="order" className="shadow-xl rounded-lg flex items-center justify-around gap-5 w-full min-h-[100px] bg-white">
@@ -126,8 +126,9 @@ const SchoolDetail: React.FC = () => {
               <span>Date of Dispatch : {order.dateOfDelivery}</span>
               <button onClick={() => { handleModalClick(order) }} className="bg-[#2f77f4] text-white font-semibold w-[150px] h-[40px] rounded-xl shadow-lg">More Details</button>
             </div>
-          </div>)}
-        </div>
+          </div>)} */}
+          <OrderHistoryTable orders={schoolOrders} />
+        {/* </div> */}
       </Error>
     </Loading>
   );

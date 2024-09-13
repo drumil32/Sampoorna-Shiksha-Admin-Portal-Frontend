@@ -67,7 +67,7 @@ const Calculation: React.FC = () => {
   };
 
   return (
-    <div className='max-w-xl mt-3 w-[80%] m-auto'>
+    <div className='max-w-xl flex-1'>
       <table className='border w-full shadow-md'>
         <thead>
           <tr className='text-sm bg-gray-100'>
@@ -80,11 +80,7 @@ const Calculation: React.FC = () => {
         <tbody>
           {vendorCartItems?.map((item, index) => {
             return (
-              <tr
-                key={item.toy.id}
-                className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
-                  }`}
-              >
+              <tr key={item.toy.id} className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""}`}>
                 <td className='border p-2'>{item.toy.name}</td>
                 <td className='border p-2'>{item.toy.price}</td>
                 <td className='border p-2'>

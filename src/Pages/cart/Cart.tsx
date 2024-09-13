@@ -11,8 +11,8 @@ const Cart: React.FC = () => {
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
 
   if (vendorCartItems.length <= 0) return (
-    <div className='w-full flex calc-height items-center justify-center text-2xl font-[200]'>
-      Please add some toys <CiShoppingCart />
+    <div className='w-full flex calc-height items-center justify-center text-2xl font-[400]'>
+      Please add some toys <CiShoppingCart className='mt-2 w-[30px]'/>
     </div>
   );
 
@@ -20,9 +20,8 @@ const Cart: React.FC = () => {
   return (
     <Error>
       <Loading>
-        <div className='container max-w-4xl m-auto mt-6  bg-white shadow-xl p-4 grid  sm:grid-cols-2 grid-cols-1'>
+        <div className='max-w-4xl m-auto mt-6  bg-white flex sm:flex-cols flex-row shadow-xl gap-3 p-4'>
           <CartItems />
-          {/* price container */}
           <Calculation/>
         </div>
       </Loading>

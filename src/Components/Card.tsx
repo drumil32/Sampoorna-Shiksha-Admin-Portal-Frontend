@@ -25,11 +25,9 @@ const Card: React.FC<MyComponentProps> = ({ toy , quantity }) => {
   }
   return (
     <div
-      className='single-toy border rounded-md shadow-md sm:max-w-[350px]  w-[80%] p-3 text-sm flex flex-col h-[300px]'
-      key={id}
-    >
+      className='single-toy border rounded-md shadow-md sm:w-[400px] p-8 bg-white  h-auto' key={id}>
       <h1 className='font-[400] text-2xl text-center mb-3'>{name}</h1>
-
+      
       <div className='flex flex-col gap-3 p-2'>
         <p className='font-[300] flex justify-between items-center'>
           <strong className='text-[16px] font-semibold'>
@@ -70,6 +68,7 @@ const Card: React.FC<MyComponentProps> = ({ toy , quantity }) => {
             subBrand : <span className='font-[300]'>{subBrand}</span>
           </strong>
         </p>
+
         <p className='font-[300] flex justify-between items-center'>
           <strong className='text-[16px] font-semibold'>
             ID: <span className='font-[300]'>{id}</span>
@@ -83,8 +82,6 @@ const Card: React.FC<MyComponentProps> = ({ toy , quantity }) => {
              Video Link
           </a>
           }
-          
-    
 
         {vendorCartItems?.some((item) => item.toy.id == id) ? (
           <button
