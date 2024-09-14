@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Error from "../../Components/ErrorHandler/Error";
 import Loading from "../../Components/Loading/Loading";
-import { VendorOrder, VendorOrderType, VendorOrderStatus } from "../../types/VendorOrder";
+import { VendorOrder, VendorOrderType, VendorOrderStatus, VendorOrderStatusInfo } from "../../types/VendorOrder";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
@@ -15,6 +15,7 @@ const OrderDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [orderDetails, setOrderDetails] = useState<VendorOrder | null>(null);
+  const [newStatus, setNewStatus] = useState<VendorOrderStatusInfo>({ timestamps: '', personName: '', contactNumber: '', status: VendorOrderStatus.PENDING });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -54,6 +55,33 @@ const OrderDetails: React.FC = () => {
       dispatch(setLoading(false));
     }
   };
+
+  const addNewStatus = async () => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.put(`${UPDATE_VENDOR_ORDER}/${id}`, {
+        order: { ...orderDetails, status: [...(orderDetails?.status ?? []), newStatus] }
+      });
+      setOrderDetails(response.data.order);
+      console.log(response.data.order)
+      toast.success(response.data.message);
+    } catch (error: any) {
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.VENDOR_ORDER_HISTORY,
+          })
+        );
+      } else {
+        toast.error("Server is Down.");
+      }
+    } finally {
+      setEditMode(false);
+      dispatch(setLoading(false));
+    }
+  }
 
   const handleStatusUpdate = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>, index: number) => {
     const { name, value } = e.target;
@@ -141,9 +169,8 @@ const OrderDetails: React.FC = () => {
                 {orderDetails?.status?.map((item, index: number) => {
                   return (
                     <tr
-                      className={`border text-center text-sm ${
-                        index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
+                      className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
+                        } hover:bg-gray-200 cursor-pointer`}
                     >
                       <td className='border p-2'>
                         {!editMode ? (
@@ -215,6 +242,9 @@ const OrderDetails: React.FC = () => {
                       className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
                       type='text'
                       placeholder='TimeStamps'
+                      name="timestamps"
+                      value={newStatus.timestamps}
+                      onChange={(e) => setNewStatus(prev => ({ ...prev, timestamps: e.target.value }))}
                     />
                   </td>
                   <td>
@@ -222,6 +252,9 @@ const OrderDetails: React.FC = () => {
                       className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
                       type='text'
                       placeholder='Person name'
+                      name="personName"
+                      value={newStatus.personName}
+                      onChange={(e) => setNewStatus(prev => ({ ...prev, personName: e.target.value }))}
                     />
                   </td>
                   <td>
@@ -229,12 +262,17 @@ const OrderDetails: React.FC = () => {
                       className='border border-gray-300 w-full  rounded-sm p-3  text-sm outline-none'
                       type='number'
                       placeholder='Contact number'
+                      name='contactNumber'
+                      value={newStatus.contactNumber}
+                      onChange={(e) => setNewStatus(prev => ({ ...prev, contactNumber: e.target.value }))}
                     />
                   </td>
                   <td>
                     <select
                       name='status'
                       className='text-sm border border-gray-300 w-full p-3'
+                      value={newStatus.status}
+                      onChange={(e) => setNewStatus(prev => ({ ...prev, status: VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus] }))}
                     >
                       {Object.keys(VendorOrderStatus).map((orderType) => (
                         <option key={orderType} value={orderType}>
@@ -247,7 +285,7 @@ const OrderDetails: React.FC = () => {
 
                 <tr>
                   <td colSpan={4} className='text-center'>
-                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3'>
+                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3' onClick={addNewStatus}>
                       Add Status
                     </button>
                   </td>
@@ -279,9 +317,8 @@ const OrderDetails: React.FC = () => {
                 return (
                   <tr
                     key={toy.id}
-                    className={`border text-center text-sm ${
-                      index % 2 !== 0 ? "bg-gray-100" : ""
-                    } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                   >
                     <td className='border p-1'>{toy.id}</td>
                     <td className='border p-1'>{toy.name}</td>
