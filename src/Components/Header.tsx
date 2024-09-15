@@ -1,13 +1,40 @@
 import { CiShoppingCart } from "react-icons/ci";
 import { Link, } from 'react-router-dom';
-import { useSelector, } from 'react-redux';
+import { useDispatch, useSelector, } from 'react-redux';
 import { CART, HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK } from '../utils/routes';
 import { RootState } from '../redux/store';
 import { FaPlus } from "react-icons/fa6";
+import { setBackdrop, setError } from "../redux/slices/statusSlice";
+import axiosInstance from "../utils/axiosInstance";
+import { SCHOOL } from "../utils/restEndPoints";
+import { Action } from "../types/error";
+import { toast } from "react-toastify";
 
 
 const Header = () => {
   const cartItems = useSelector((store: RootState) => store.cart.cartItems);
+  const dispatch = useDispatch();
+  const addNewSchoolData = async () => {
+    try {
+      dispatch(setBackdrop(true));
+      const response = await axiosInstance.post(SCHOOL);
+      toast.success(response.data.message);
+    } catch (error: any) {
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.SCHOOL,
+          })
+        );
+      } else {
+        toast.error("Server is Down.");
+      }
+    } finally {
+      dispatch(setBackdrop(false));
+    }
+  }
 
   return (
     <div className='bg-gray-200 shadow-md p-3 font-[300] text-gray-600 flex items-center justify-between'>
@@ -17,6 +44,10 @@ const Header = () => {
       >
         Sampooran Shiksha
       </Link>
+
+      <button onClick={addNewSchoolData}>
+        add new Schools
+      </button>
 
       <div className='flex gap-4 items-center'>
         <Link

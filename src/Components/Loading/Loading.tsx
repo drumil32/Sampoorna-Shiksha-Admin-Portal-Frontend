@@ -2,29 +2,33 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { RotatingLines } from "react-loader-spinner";
+import Backdrop from '../Backdrop/Backdrop';
 
 interface LoadingProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const Loading: React.FC<LoadingProps> = ({ children }) => {
-    const loading = useSelector((state: RootState) => state.status.loading);
+  const loading = useSelector((state: RootState) => state.status.loading);
+  const backdrop = useSelector((state: RootState) => state.status.backdrop);
 
-    if (loading) {
-        return (
-          <div className='w-full h-screen flex items-center justify-center'>
-            <RotatingLines
-              // height="90"
-              width='90'
-              // radius="9"
-            //   color="gray"
-              ariaLabel='loading'
-            />
-          </div>
-        );
-    }
-
+  if (loading) {
+    return (
+      <div className='w-full h-screen flex items-center justify-center'>
+        <RotatingLines
+          // height="90"
+          width='90'
+          // radius="9"
+          //   color="gray"
+          ariaLabel='loading'
+        />
+      </div>
+    );
+  } else if (backdrop) {
+    return <Backdrop />
+  } else {
     return <>{children}</>;
+  }
 };
 
 export default Loading;

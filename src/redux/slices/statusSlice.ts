@@ -4,11 +4,13 @@ import { IBackEndError } from '../../types/error';
 interface StatusState {
     loading: boolean;
     error: IBackEndError | null;
+    backdrop: boolean;
 }
 
 const initialState: StatusState = {
     loading: false,
-    error: null
+    error: null,
+    backdrop: false
 };
 
 const statusSlice = createSlice({
@@ -17,6 +19,9 @@ const statusSlice = createSlice({
     reducers: {
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
+        },
+        setBackdrop: (state, action: PayloadAction<boolean>) => {
+            state.backdrop = action.payload;
         },
         setError: (state, action: PayloadAction<IBackEndError>) => {
             state.error = action.payload;
@@ -27,10 +32,5 @@ const statusSlice = createSlice({
     }
 });
 
-
-
-
-
-
-export const { setLoading, setError, clearError } = statusSlice.actions;
+export const { setLoading, setError, clearError, setBackdrop } = statusSlice.actions;
 export default statusSlice.reducer;

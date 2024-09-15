@@ -7,21 +7,15 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Action } from "../../types/error";
-import { GET_VENDOR_ORDER_BY_ID, UPDATE_VENDOR_ORDER , STOCK } from "../../utils/restEndPoints";
-import { setLoading, setError } from "../../redux/slices/statusSlice";
+import { GET_VENDOR_ORDER_BY_ID, UPDATE_VENDOR_ORDER, STOCK, REMOVE_FROM_STOCK } from "../../utils/restEndPoints";
+import { setLoading, setError, setBackdrop } from "../../redux/slices/statusSlice";
 import { useNavigate } from "react-router-dom";
-
-interface TOY {
-  objectId : string,
-  quantity : number,
-}
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [orderDetails, setOrderDetails] = useState<VendorOrder | null>(null);
   const [newStatus, setNewStatus] = useState<VendorOrderStatusInfo>({ timestamps: '', personName: '', contactNumber: '', status: VendorOrderStatus.PENDING });
-  const [toy , setToys] = useState<TOY>([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -30,7 +24,6 @@ const OrderDetails: React.FC = () => {
       const response = await axiosInstance.get(`${GET_VENDOR_ORDER_BY_ID}/${id}`);
       console.log(response.data);
       setOrderDetails(response.data);
-      console.log(orderDetails);
     }
     fetchData();
   }, []);
@@ -65,7 +58,7 @@ const OrderDetails: React.FC = () => {
 
   const addNewStatus = async () => {
     try {
-      dispatch(setLoading(true));
+      dispatch(setBackdrop(true));
       const response = await axiosInstance.put(`${UPDATE_VENDOR_ORDER}/${id}`, {
         order: { ...orderDetails, status: [...(orderDetails?.status ?? []), newStatus] }
       });
@@ -86,18 +79,16 @@ const OrderDetails: React.FC = () => {
       }
     } finally {
       setEditMode(false);
-      dispatch(setLoading(false));
+      dispatch(setBackdrop(false));
     }
   }
 
-  const addToStock = async() => {
+  const addToStock = async () => {
     try {
-      dispatch(setLoading(true));
+      dispatch(setBackdrop(true));
       const response = await axiosInstance.post(STOCK, {
-        toys: [{toy : id , quantity : 1}]
+        toys: orderDetails?.listOfToysSentLink.map(toy => ({ toy: toy.toy.id, quantity: toy.quantity }))
       });
-      // setOrderDetails(response.data.order);
-      console.log(response.data);
       toast.success(response.data.message);
     } catch (error: any) {
       if (error.response) {
@@ -112,10 +103,36 @@ const OrderDetails: React.FC = () => {
         toast.error("Server is Down.");
       }
     } finally {
-      setEditMode(false);
-      dispatch(setLoading(false));
+      setEditMode(false); // TODO: why setEditMode false here?
+      dispatch(setBackdrop(false));
     }
+  }
 
+  const removeToStock = async () => {
+    if (orderDetails?.to == 'ngo' && orderDetails.isAddedOrRemovedFromTheStock == false) {
+      try {
+        dispatch(setBackdrop(true));
+        const response = await axiosInstance.post(REMOVE_FROM_STOCK, {
+          toys: orderDetails?.listOfToysSentLink.map(toy => ({ toy: toy.toy.id, quantity: toy.quantity }))
+        });
+        toast.success(response.data.message);
+      } catch (error: any) {
+        if (error.response) {
+          dispatch(
+            setError({
+              statusCode: error.response.status,
+              message: error.response.data.error,
+              action: Action.VENDOR_ORDER_HISTORY,
+            })
+          );
+        } else {
+          toast.error("Server is Down.");
+        }
+      } finally {
+        setEditMode(false); // TODO: why setEditMode false here?
+        dispatch(setBackdrop(false));
+      }
+    }
   }
 
   const handleStatusUpdate = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>, index: number) => {
@@ -127,7 +144,7 @@ const OrderDetails: React.FC = () => {
       return { ...prevValue, status };
     });
   }
-  
+
   const handleToyArrayChanges = (index: number, value: number, fieldName: string) => {
     setOrderDetails(prevValue => {
       if (!prevValue) return prevValue;
@@ -174,7 +191,6 @@ const OrderDetails: React.FC = () => {
               </p>
 
               <p className='p-1 font-[300] flex flex-col items-start'>
-                <strong>School</strong>
                 {/* {!editMode ? (
                   <button
                     onClick={() => navigate(`/school/${orderDetails?.school}`)}
@@ -196,33 +212,44 @@ const OrderDetails: React.FC = () => {
                   <button
                     onClick={() => addToStock()}
                     className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
-                    disabled={orderDetails?.isPresentInStock}
+                    disabled={orderDetails?.isAddedOrRemovedFromTheStock}
                   >
-                    {orderDetails?.isPresentInStock ? "Added" : "Add To stock"}
+                    {orderDetails?.isAddedOrRemovedFromTheStock ? "Added" : "Add To stock"}
                   </button>
                 )}
 
                 {orderDetails?.to == "school" && (
+                  <>
+                    <strong>School</strong>
+                    <button
+                      onClick={() => navigate(`/school/${orderDetails?.school}`)}
+                      className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
+                      disabled={orderDetails?.isAddedOrRemovedFromTheStock}
+                    >
+                      Visit to school
+                    </button>
+                  </>
+                )}
+                {orderDetails?.from == "ngo" && (
                   <button
-                    onClick={() => navigate(`/school/${orderDetails?.school}`)}
+                    onClick={() => removeToStock()}
                     className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
-                    disabled={orderDetails?.isPresentInStock}
+                    disabled={orderDetails?.isAddedOrRemovedFromTheStock}
                   >
-                    Visit to school
+                    {orderDetails?.isAddedOrRemovedFromTheStock ? "Removed" : "Remove From stock"}
                   </button>
                 )}
               </p>
-             
-             {orderDetails?.to == "school" &&
-              <p className='p-1 font-[300] flex flex-col'>
-                <strong>School Id </strong>
-                {!editMode ? <span className='text-sm'>{orderDetails?.id}</span> 
-                : <input type="text" placeholder="School id" name="id" className="border outline-none rounded-md text-sm p-2" 
-                 onChange={(e) => setOrderDetails((prev) => ({...prev , id : e.target.value}))}/>
-                }
-               
-              </p>
-             }
+
+              {orderDetails?.to == "school" &&
+                <p className='p-1 font-[300] flex flex-col'>
+                  <strong>School Id </strong>
+                  {!editMode ? <span className='text-sm'>{orderDetails?.id}</span>
+                    : <input type="text" placeholder="School id" name="id" className="border outline-none rounded-md text-sm p-2"
+                      onChange={(e) => setOrderDetails((prev) => prev ? ({ ...prev, id: e.target.value }) : prev)} />
+                  }
+                </p>
+              }
             </div>
           </div>
 
@@ -241,9 +268,8 @@ const OrderDetails: React.FC = () => {
                 {orderDetails?.status?.map((item, index: number) => {
                   return (
                     <tr
-                      className={`border text-center text-sm ${
-                        index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
+                      className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
+                        } hover:bg-gray-200 cursor-pointer`}
                     >
                       <td className='border p-2'>
                         {!editMode ? (
@@ -365,7 +391,7 @@ const OrderDetails: React.FC = () => {
                           ...prev,
                           status:
                             VendorOrderStatus[
-                              e.target.value as keyof typeof VendorOrderStatus
+                            e.target.value as keyof typeof VendorOrderStatus
                             ],
                         }))
                       }
@@ -416,9 +442,8 @@ const OrderDetails: React.FC = () => {
                 return (
                   <tr
                     key={toy.id}
-                    className={`border text-center text-sm ${
-                      index % 2 !== 0 ? "bg-gray-100" : ""
-                    } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                   >
                     <td className='border p-1'>{toy.id}</td>
                     <td className='border p-1'>{toy.name}</td>

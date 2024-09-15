@@ -6,16 +6,14 @@ import { IToy } from "../../types/School";
 import { Action } from "../../types/error";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
-import Card from "../../Components/Card";
-
+import ToyTable from "../../Components/ToyTable";
 
 const Home: React.FC = () => {
   const [toys, setToys] = useState<IToy[]>([]);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     const fetchToys = async () => {
       try {
@@ -46,7 +44,7 @@ const Home: React.FC = () => {
   return (
     <Loading>
       <Error>
-         <Card toys={toys} />
+        <ToyTable toys={toys.map(toy => ({ toy }))} />
       </Error>
     </Loading>
   );

@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ShowVendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
-import { VENDOR_ORDER } from "../utils/restEndPoints";
+import { CHECK_AVAILABLE_STOCK, VENDOR_ORDER } from "../utils/restEndPoints";
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 import { Action } from "../types/error";
-import { setLoading, setError } from "../redux/slices/statusSlice";
+import { setError, setBackdrop } from "../redux/slices/statusSlice";
 import { clearCart, setUpdateQty } from "../redux/slices/cartSlice";
 
 const Calculation: React.FC = () => {
@@ -38,7 +38,13 @@ const Calculation: React.FC = () => {
       return;
     }
     try {
-      dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
+      // dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
+      dispatch(setBackdrop(true));
+
+      if (from == 'ngo') {
+        await axiosInstance.post(CHECK_AVAILABLE_STOCK, { cart: orderItems });
+      }
+
       const response = await axiosInstance.post(VENDOR_ORDER, {
         cart: orderItems,
         schoolId,
@@ -46,9 +52,10 @@ const Calculation: React.FC = () => {
         to
       });
       toast.success(response.data.message);
+      // TODO: why we are using setTimeout here?
       setTimeout(() => {
         dispatch(clearCart([]));
-      },2000)
+      }, 2000)
     } catch (error: any) {
       if (error.response) {
         dispatch(
@@ -62,7 +69,7 @@ const Calculation: React.FC = () => {
         toast.error("Server is Down");
       }
     } finally {
-      dispatch(setLoading(false));
+      dispatch(setBackdrop(false));
     }
   };
 

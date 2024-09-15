@@ -8,10 +8,10 @@ import { Action } from '../../types/error';
 import { toast } from 'react-toastify';
 import Loading from '../../Components/Loading/Loading';
 import Error from '../../Components/ErrorHandler/Error';
-import Card from '../../Components/Card';
+import ToyTable from '../../Components/ToyTable';
 
 const Stock: React.FC = () => {
-        const [toys, setToys] = useState<{ toy: IToy; quantity: string }[]>([]);
+    const [toys, setToys] = useState<{ toy: IToy; quantity: string }[]>([]);
 
 
     const dispatch = useDispatch();
@@ -22,7 +22,7 @@ const Stock: React.FC = () => {
                 dispatch(setLoading(true));
                 const response = await axiosInstance.get(GET_ALL_TOYS_FROM_STOCK);
                 // setToys(response.data.toys);
-               setToys(response.data.toys.map((item: any) => ({ quantity: item.quantity, toy: item.toy })));
+                setToys(response.data.toys.map((item: any) => ({ quantity: item.quantity, toy: item.toy })));
 
             } catch (error: any) {
                 if (error.response) {
@@ -43,11 +43,11 @@ const Stock: React.FC = () => {
         fetchToys();
     }, []);
     return (
-      <Loading>
-        <Error>
-          <Card toys={toys.map(toy => toy.toy)}  />);
-        </Error>
-      </Loading>
+        <Loading>
+            <Error>
+                <ToyTable toys={toys.map(toy => ({ toy: toy.toy, quantity: toy.quantity }))} />;
+            </Error>
+        </Loading>
     );
 }
 
