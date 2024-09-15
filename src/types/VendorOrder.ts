@@ -26,7 +26,7 @@ export enum VendorOrderStatus {
     CANCELLED = 'CANCELLED'
 };
 
-export interface VendorOrderStatusInfo{
+export interface VendorOrderStatusInfo {
     timestamps: string;
     personName: string;
     contactNumber: string;

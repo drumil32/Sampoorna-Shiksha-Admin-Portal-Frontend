@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FaFilter } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { VendorOrder, VendorOrderStatus } from "../types/VendorOrder";
+import { VendorOrder } from "../types/VendorOrder";
 import OrderHistoryFilters from "./OrderHistoryFilters";
-import { useParams } from "react-router-dom";
+
 interface MyComponentProps {
   orders?: VendorOrder[];
 }
@@ -15,7 +14,7 @@ const OrderHistoryTable: React.FC<MyComponentProps> = ({ orders = [] }) => {
 
   // Create a URL object
   const url = new URL(currentUrl);
- console.log(currentUrl)
+  console.log(currentUrl)
   // Use URLSearchParams to get parameters
   const params = url.pathname.split("/")[1];
 
@@ -26,7 +25,7 @@ const OrderHistoryTable: React.FC<MyComponentProps> = ({ orders = [] }) => {
   return (
     <div className='pb-10'>
       {params !== "school" &&
-      <OrderHistoryFilters orders={orders} setFilterOrders={setFilterOrders} />
+        <OrderHistoryFilters orders={orders} setFilterOrders={setFilterOrders} />
       }
       <div className='table-container sm:max-w-5xl m-auto mt-4 w-[90%] shadow-lg rounded-md overflow-scroll sm:overflow-hidden overflow-y-hidden'>
         <table className='p-4 w-full text-sm'>
@@ -44,9 +43,8 @@ const OrderHistoryTable: React.FC<MyComponentProps> = ({ orders = [] }) => {
             {filterOrders.map((item, index: number) => (
               <tr
                 key={item.id}
-                className={`border text-center text-xs ${
-                  index % 2 !== 0 ? "bg-gray-100" : ""
-                } hover:bg-gray-200 cursor-pointer`}
+                className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""
+                  } hover:bg-gray-200 cursor-pointer`}
                 onClick={() => navigate(`/order-details/${item.id}`)}
               >
                 <td className='border p-2'>{index + 1}</td>

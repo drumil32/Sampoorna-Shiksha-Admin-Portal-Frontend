@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Error from "../../Components/ErrorHandler/Error";
 import Loading from "../../Components/Loading/Loading";
-import { VendorOrder, VendorOrderType, VendorOrderStatus, VendorOrderStatusInfo } from "../../types/VendorOrder";
+import { VendorOrder, VendorOrderStatus, VendorOrderStatusInfo } from "../../types/VendorOrder";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
@@ -24,7 +24,6 @@ const OrderDetails: React.FC = () => {
   const [toy , setToys] = useState<TOY>([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchData = async () => {
