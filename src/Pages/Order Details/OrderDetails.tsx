@@ -173,7 +173,7 @@ const OrderDetails: React.FC = () => {
         <div className=' shadow-lg rounded-md border p-8 bg-blue-50 max-w-xl'>
           <div className='flex justify-between items-center'>
             <h2 className='text-xl mb-3'>Order Details</h2>
-            {orderDetails?.isAddedOrRemovedFromTheStock == false &&
+            {orderDetails?.isAddedOrRemovedFromTheStock == false && (
               <button
                 className='bg-green-500 text-xs rounded-md p-2 text-white font-medium mb-3'
                 onClick={() =>
@@ -182,7 +182,7 @@ const OrderDetails: React.FC = () => {
               >
                 {editMode ? "Save Details" : "Update Details"}
               </button>
-            }
+            )}
           </div>
 
           <div className='card grid grid-cols-2 bg-white border p-2'>
@@ -197,30 +197,16 @@ const OrderDetails: React.FC = () => {
             </p>
 
             <p className='p-1 font-[300] flex flex-col items-start'>
-              {/* {!editMode ? (
-                  <button
-                    onClick={() => navigate(`/school/${orderDetails?.school}`)}
-                    className='text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md'
-                  >
-                    Visit School
-                  </button>
-                ) : (
-                  <input
-                    type='text'
-                    placeholder='school'
-                    name='school'
-                    value={orderDetails?.school}
-                    className="w-full p-1 border outline-none"
-                    onChange={(e) => setOrderDetails((prev) => ({...prev , school : e.target.value}))}
-                  /> */}
-              {/* )} */}
+            
               {orderDetails?.to == "ngo" && (
                 <button
                   onClick={() => addToStock()}
                   className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
                   disabled={orderDetails?.isAddedOrRemovedFromTheStock}
                 >
-                  {orderDetails?.isAddedOrRemovedFromTheStock ? "Added" : "Add To stock"}
+                  {orderDetails?.isAddedOrRemovedFromTheStock
+                    ? "Added"
+                    : "Add To stock"}
                 </button>
               )}
 
@@ -242,20 +228,33 @@ const OrderDetails: React.FC = () => {
                   className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
                   disabled={orderDetails?.isAddedOrRemovedFromTheStock}
                 >
-                  {orderDetails?.isAddedOrRemovedFromTheStock ? "Removed" : "Remove From stock"}
+                  {orderDetails?.isAddedOrRemovedFromTheStock
+                    ? "Removed"
+                    : "Remove From stock"}
                 </button>
               )}
             </p>
 
-            {orderDetails?.to == "school" &&
+            {orderDetails?.to == "school" && (
               <p className='p-1 font-[300] flex flex-col'>
                 <strong>School Id </strong>
-                {!editMode ? <span className='text-sm'>{orderDetails?.id}</span>
-                  : <input type="text" placeholder="School id" name="id" className="border outline-none rounded-md text-sm p-2"
-                    onChange={(e) => setOrderDetails((prev) => prev ? ({ ...prev, id: e.target.value }) : prev)} />
-                }
+                {!editMode ? (
+                  <span className='text-sm'>{orderDetails?.id}</span>
+                ) : (
+                  <input
+                    type='text'
+                    placeholder='School id'
+                    name='id'
+                    className='border outline-none rounded-md text-sm p-2'
+                    onChange={(e) =>
+                      setOrderDetails((prev) =>
+                        prev ? { ...prev, id: e.target.value } : prev
+                      )
+                    }
+                  />
+                )}
               </p>
-            }
+            )}
           </div>
         </div>
 
@@ -274,15 +273,16 @@ const OrderDetails: React.FC = () => {
               {orderDetails?.status?.map((item, index: number) => {
                 return (
                   <tr
-                    className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-sm ${
+                      index % 2 !== 0 ? "bg-gray-100" : ""
+                    } hover:bg-gray-200 cursor-pointer`}
                   >
                     <td className='border p-2'>
                       {!editMode ? (
                         <span>{item.timestamps}</span>
                       ) : (
                         <input
-                          type='text'
+                          type='datetime-local'
                           name='timestamps'
                           className='border rounded-md shadow-md block w-full p-2 text-sm mt-1 outline-none'
                           value={item.timestamps}
@@ -345,7 +345,7 @@ const OrderDetails: React.FC = () => {
                 <td>
                   <input
                     className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
-                    type='text'
+                    type='datetime-local'
                     placeholder='TimeStamps'
                     name='timestamps'
                     value={newStatus.timestamps}
@@ -397,7 +397,7 @@ const OrderDetails: React.FC = () => {
                         ...prev,
                         status:
                           VendorOrderStatus[
-                          e.target.value as keyof typeof VendorOrderStatus
+                            e.target.value as keyof typeof VendorOrderStatus
                           ],
                       }))
                     }
@@ -448,8 +448,9 @@ const OrderDetails: React.FC = () => {
               return (
                 <tr
                   key={toy.id}
-                  className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
-                    } hover:bg-gray-200 cursor-pointer`}
+                  className={`border text-center text-sm ${
+                    index % 2 !== 0 ? "bg-gray-100" : ""
+                  } hover:bg-gray-200 cursor-pointer`}
                 >
                   <td className='border p-1'>{toy.id}</td>
                   <td className='border p-1'>{toy.name}</td>
@@ -466,7 +467,9 @@ const OrderDetails: React.FC = () => {
                         onChange={(e) =>
                           handleToyArrayChanges(
                             index,
-                            isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value),
+                            isNaN(parseInt(e.target.value))
+                              ? 0
+                              : parseInt(e.target.value),
                             "price"
                           )
                         }
@@ -484,7 +487,9 @@ const OrderDetails: React.FC = () => {
                         onChange={(e) =>
                           handleToyArrayChanges(
                             index,
-                            isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value),
+                            isNaN(parseInt(e.target.value))
+                              ? 0
+                              : parseInt(e.target.value),
                             "quantity"
                           )
                         }
@@ -492,8 +497,14 @@ const OrderDetails: React.FC = () => {
                     )}
                   </td>
                   <td className='border p-2'>{toy.category}</td>
-                  <td className='border p-2'>{toy.level}</td>
-                  <td className='border p-2'>{toy.learn?.join(" , ")}</td>
+                  <td className='border p-2'>
+                    {toy.level ? toy.level : "Not Provided"}
+                  </td>
+                  <td className='border p-2'>
+                    {toy.learn?.length !== 0
+                      ? toy.learn?.join(" , ")
+                      : "Not Provided"}
+                  </td>
                 </tr>
               );
             })}

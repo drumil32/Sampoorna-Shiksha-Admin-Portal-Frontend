@@ -126,6 +126,7 @@ const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp,
         <div className='grid grid-cols-2 gap-3 w-full'>
           <div className="">
             <label htmlFor=''>From</label>
+            {" "}
             {fromProp ??
               <select
                 name='from'
@@ -143,6 +144,7 @@ const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp,
 
           <div>
             <label htmlFor=''>To</label>
+            {" "}
             {toProp ??
               <select
                 name='to'

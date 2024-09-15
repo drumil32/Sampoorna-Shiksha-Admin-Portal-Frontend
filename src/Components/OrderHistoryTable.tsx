@@ -11,15 +11,13 @@ const OrderHistoryTable: React.FC<MyComponentProps> = ({ orders = [] }) => {
   const [filterOrders, setFilterOrders] = useState<VendorOrder[]>(orders);
   const navigate = useNavigate();
   const currentUrl = window.location.href;
-
-  // Create a URL object
   const url = new URL(currentUrl);
-  console.log(currentUrl)
-  // Use URLSearchParams to get parameters
   const params = url.pathname.split("/")[1];
 
   useEffect(() => {
-    setFilterOrders(orders);
+    if (JSON.stringify(filterOrders) !== JSON.stringify(orders)) {
+      setFilterOrders(orders);
+    }
   }, [orders]);
 
   return (

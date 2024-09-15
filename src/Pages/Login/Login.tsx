@@ -40,11 +40,6 @@ const Login: React.FC = () => {
       return;
     }
 
-    // if (!validatePassword(formData.password)) {
-    //   toast.error("Invalid Password");
-    //   return;
-    // }
-
     try {
       const { email, password } = formData;
       const response = await axiosInstance.post(SIGNIN, { email, password });

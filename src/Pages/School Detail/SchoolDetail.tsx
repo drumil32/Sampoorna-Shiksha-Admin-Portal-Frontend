@@ -13,6 +13,7 @@ import InfoSection from "../../Components/InfoSection/InfoSection";
 import { InfoItem } from "../../types/School";
 import OrderHistoryTable from "../../Components/OrderHistoryTable";
 import { VendorOrder } from "../../types/VendorOrder";
+
 const SchoolDetail: React.FC = () => {
   const [schoolData, setSchoolData] = useState<ISchoolDetails>({});
   const [schoolOrders, setSchoolOrder] = useState<VendorOrder[]>([]);
@@ -22,13 +23,15 @@ const SchoolDetail: React.FC = () => {
   const dispatch = useDispatch();
 
   const fetchData = async () => {
+    console.log('afsd')
     try {
       dispatch(setLoading(true));
       const response = await axiosInstance.get(`${SCHOOL}/${id}`);
       console.log("School data:", response.data);
       setSchoolData(response.data.school);
       const orderResponse = await axiosInstance.get(`${SCHOOL_ORDER}/${id}`);
-      // console.log("School orders:", orderResponse.data.orders);
+      
+      console.log("School orders:", orderResponse.data.orders);
       setSchoolOrder(orderResponse.data.orders);
     } catch (error: any) {
       if (error.response) {
@@ -110,23 +113,8 @@ const SchoolDetail: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* orders */}
-      {/* <div className="p-8 bg-[#f5f5f5] max-h-[100vh] my-[40px] mx-8 overflow-y-auto flex flex-col gap-6"> */}
-      <h2 className="text-2xl font-bold ml-[12rem]">Orders</h2>
-      {/* particular order  */}
-      {/* {schoolOrders.map((order, index) => <div
-            key={order.id}
-            className="flex gap-8">
-            <div id="order" className="shadow-xl rounded-lg flex items-center justify-around gap-5 w-full min-h-[100px] bg-white">
-              <span>{index + 1}</span>
-              <span><span>Order Placed on: </span>{order.createdAtIST}</span>
-              <span>Date of Dispatch : {order.dateOfDelivery}</span>
-              <button onClick={() => { handleModalClick(order) }} className="bg-[#2f77f4] text-white font-semibold w-[150px] h-[40px] rounded-xl shadow-lg">More Details</button>
-            </div>
-          </div>)} */}
-      <OrderHistoryTable orders={schoolOrders} />
-      {/* </div> */}
+      <h2 className="text-2xl font-bold ml-[4rem]">Orders</h2>
+        <OrderHistoryTable orders={schoolOrders} />
     </Loading>
   );
 };

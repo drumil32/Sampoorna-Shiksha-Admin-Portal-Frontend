@@ -40,7 +40,7 @@ const Home: React.FC = () => {
 
   return (
     <Loading>
-        <ToyTable toys={toys.map(toy => ({ toy }))} />
+        <ToyTable toys={toys.map(toy => ({ toy }))} isFrom="isToy" />
     </Loading>
   );
 }
