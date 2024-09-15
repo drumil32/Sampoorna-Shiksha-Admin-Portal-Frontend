@@ -3,9 +3,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useParams } from "react-router-dom";
 import { SCHOOL, SCHOOL_ORDER } from "../../utils/restEndPoints";
 import { ISchoolDetails, ISchoolOrder } from "../../types/School";
-import Error from "../../Components/ErrorHandler/Error";
 import { toast } from "react-toastify";
-import { Action } from "../../types/error";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
 import { useDispatch } from "react-redux";
 import Loading from "../../Components/Loading/Loading";
@@ -14,9 +12,10 @@ import Modal from "../../Components/Modal/Modal";
 import InfoSection from "../../Components/InfoSection/InfoSection";
 import { InfoItem } from "../../types/School";
 import OrderHistoryTable from "../../Components/OrderHistoryTable";
+import { VendorOrder } from "../../types/VendorOrder";
 const SchoolDetail: React.FC = () => {
   const [schoolData, setSchoolData] = useState<ISchoolDetails>({});
-  const [schoolOrders, setSchoolOrder] = useState<ISchoolOrder[]>([]);
+  const [schoolOrders, setSchoolOrder] = useState<VendorOrder[]>([]);
   const [currentOrder, setCurrentOrder] = useState<ISchoolOrder>()
   const [showModal, setShowModal] = useState<boolean>(false)
   const { id } = useParams<{ id: string }>();
@@ -26,7 +25,7 @@ const SchoolDetail: React.FC = () => {
     try {
       dispatch(setLoading(true));
       const response = await axiosInstance.get(`${SCHOOL}/${id}`);
-      // console.log("School data:", response.data);
+      console.log("School data:", response.data);
       setSchoolData(response.data.school);
       const orderResponse = await axiosInstance.get(`${SCHOOL_ORDER}/${id}`);
       // console.log("School orders:", orderResponse.data.orders);
@@ -36,8 +35,7 @@ const SchoolDetail: React.FC = () => {
         dispatch(
           setError({
             statusCode: error.response.status,
-            message: error.response.data.error,
-            action: Action.SCHOOL_DETAILS,
+            message: error.response.data.error
           })
         );
       } else {
@@ -59,7 +57,7 @@ const SchoolDetail: React.FC = () => {
     if (Object.keys(schoolData).length === 0) {
       fetchData();
     }
-  }, []); 
+  }, []);
 
   const schoolPersonInfo: InfoItem[] = [
     { label: "School Id", value: schoolData.id },
@@ -91,34 +89,33 @@ const SchoolDetail: React.FC = () => {
 
   return (
     <Loading>
-      <Error>
-        {showModal && <Modal setShowModal={setShowModal} currentOrder={currentOrder} setCurrentOrder={setCurrentOrder} />}
-        <div className="p-8 bg-[#f5f5f5] h-[100vh] overflow-y-auto flex gap-8">
-          <div className="w-2/5 h-full flex items-center justify-center gap-8 bg-white">
-            <img src={school} className="max-h-[80vh]" alt="" />
-          </div>
-          <div className="w-3/5 overflow-y-auto bg-white h-full p-7">
-            <div id="main">
-              <h1 className="text-3xl font-bold mb-4">
-                {schoolData.nameOfSchoolInstitution}{" "}
-                <span>({schoolData.typeOfInstitutionSchool})</span>
-              </h1>
+      {showModal && <Modal setShowModal={setShowModal} currentOrder={currentOrder} setCurrentOrder={setCurrentOrder} />}
+      <div className="p-8 bg-[#f5f5f5] h-[100vh] overflow-y-auto flex gap-8">
+        <div className="w-2/5 h-full flex items-center justify-center gap-8 bg-white">
+          <img src={school} className="max-h-[80vh]" alt="" />
+        </div>
+        <div className="w-3/5 overflow-y-auto bg-white h-full p-7">
+          <div id="main">
+            <h1 className="text-3xl font-bold mb-4">
+              {schoolData.nameOfSchoolInstitution}{" "}
+              <span>({schoolData.typeOfInstitutionSchool})</span>
+            </h1>
 
-              <div className="flex flex-col gap-7 h-full">
-                <InfoSection title="School Person's" info={schoolPersonInfo} />
-                <InfoSection title="School Address" info={schoolAddressInfo} />
-                <InfoSection title="Class" info={classInfo} />
-                <InfoSection title="Other Details" info={otherDetailsInfo} />
-              </div>
+            <div className="flex flex-col gap-7 h-full">
+              <InfoSection title="School Person's" info={schoolPersonInfo} />
+              <InfoSection title="School Address" info={schoolAddressInfo} />
+              <InfoSection title="Class" info={classInfo} />
+              <InfoSection title="Other Details" info={otherDetailsInfo} />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* orders */}
-        {/* <div className="p-8 bg-[#f5f5f5] max-h-[100vh] my-[40px] mx-8 overflow-y-auto flex flex-col gap-6"> */}
-          <h2 className="text-2xl font-bold ml-[12rem]">Orders</h2>
-          {/* particular order  */}
-          {/* {schoolOrders.map((order, index) => <div
+      {/* orders */}
+      {/* <div className="p-8 bg-[#f5f5f5] max-h-[100vh] my-[40px] mx-8 overflow-y-auto flex flex-col gap-6"> */}
+      <h2 className="text-2xl font-bold ml-[12rem]">Orders</h2>
+      {/* particular order  */}
+      {/* {schoolOrders.map((order, index) => <div
             key={order.id}
             className="flex gap-8">
             <div id="order" className="shadow-xl rounded-lg flex items-center justify-around gap-5 w-full min-h-[100px] bg-white">
@@ -128,9 +125,8 @@ const SchoolDetail: React.FC = () => {
               <button onClick={() => { handleModalClick(order) }} className="bg-[#2f77f4] text-white font-semibold w-[150px] h-[40px] rounded-xl shadow-lg">More Details</button>
             </div>
           </div>)} */}
-          <OrderHistoryTable orders={schoolOrders} />
-        {/* </div> */}
-      </Error>
+      <OrderHistoryTable orders={schoolOrders} />
+      {/* </div> */}
     </Loading>
   );
 };

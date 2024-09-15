@@ -3,8 +3,6 @@ import axiosInstance from "../../utils/axiosInstance";
 import { SCHOOL } from "../../utils/restEndPoints";
 import { useDispatch } from "react-redux";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
-import { Action } from "../../types/error";
-import Error from "../../Components/ErrorHandler/Error";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FcGenericSortingAsc } from "react-icons/fc";
@@ -56,8 +54,7 @@ const School: React.FC = () => {
         dispatch(
           setError({
             statusCode: error.response.status,
-            message: error.response.data.error,
-            action: Action.SCHOOL,
+            message: error.response.data.error
           })
         );
       } else {
@@ -88,59 +85,57 @@ const School: React.FC = () => {
 
   return (
     <Loading>
-      <Error>
-        <div className="w-full flex flex-col items-center p-8 bg-[#f5f5f5]">
-          <div id="table" className="w-full p-5 shadow-lg rounded-2xl bg-white overflow-hidden 2xl:text-2xl min-h-[90vh]">
-            <div id="tableFunctionalityBox" className="mb-5 bg-[#e8e6e6] rounded-lg flex gap-5 items-center justify-between py-2 px-5 w-full">
+      <div className="w-full flex flex-col items-center p-8 bg-[#f5f5f5]">
+        <div id="table" className="w-full p-5 shadow-lg rounded-2xl bg-white overflow-hidden 2xl:text-2xl min-h-[90vh]">
+          <div id="tableFunctionalityBox" className="mb-5 bg-[#e8e6e6] rounded-lg flex gap-5 items-center justify-between py-2 px-5 w-full">
 
-              <div className="flex gap-6">
-                <SearchBox
-                  searchTerm={searchTerm}
-                  searchType={searchType}
-                  setSearchTerm={setSearchTerm}
-                  handleSubmitSearch={handleSubmitSearch}
-                />
-                <Select options={[{ value: "School Name", label: "School Name" }, { value: "School Code", label: "School Code" }]} defaultValue={searchType} onChange={setSearchType} />
-              </div>
-
-              <div id="sort" className="relative cursor-pointer">
-                <div
-                  className="flex gap-3 items-center bg-white duration-500 rounded-lg px-2 py-1"
-                >
-                  <div className="flex gap-1 items-center">
-                    <FcGenericSortingAsc className="text-lg cursor-pointer" />
-                    Sort
-                  </div>
-                  <ToggleSwitch isChecked={isAscending} onChange={() => { setIsAscending(!isAscending) }} />
-                </div>
-              </div>
-            </div>
-            <div id="tableHead" className="w-full flex items-center text-lg 2xl:text-2xl font-bold border border-black py-2 2xl:py-7 px-1 bg-[#1E487C] text-white">
-              <div className="w-1/6 pl-5">School Code</div>
-              <div className="w-2/6 pl-5">School Name</div>
-              <div className="w-3/6 pl-5">Address</div>
+            <div className="flex gap-6">
+              <SearchBox
+                searchTerm={searchTerm}
+                searchType={searchType}
+                setSearchTerm={setSearchTerm}
+                handleSubmitSearch={handleSubmitSearch}
+              />
+              <Select options={[{ value: "School Name", label: "School Name" }, { value: "School Code", label: "School Code" }]} defaultValue={searchType} onChange={setSearchType} />
             </div>
 
-            {/* table body */}
-            {currentSchools.length > 0 && currentSchools.map((data, index) => (
+            <div id="sort" className="relative cursor-pointer">
               <div
-                key={index}
-                onClick={() => navigate(`/school/${data["_id"]}`)}
-                id="table body"
-                className={`w-full flex items-center border-r-[1px] border-b-[1px] border-l-[1px] border-black py-2 2xl:py-7 px-1 hover:bg-[#e6e7e9] hover:cursor-pointer text-sm 2xl:text-2xl ${index % 2 === 0 ? "bg-white" : "bg-[#DAE2F4]"}`}
+                className="flex gap-3 items-center bg-white duration-500 rounded-lg px-2 py-1"
               >
-                <div className="w-1/6 pl-5 ellipsisStyle">{data["code"]}</div>
-                <div className="w-2/6 pl-5 ellipsisStyle">{data["nameOfSchoolInstitution"]}</div>
-                <div className="w-3/6 pl-5 ellipsisStyle ">{data["fullAddressWithPinCode"]}</div>
+                <div className="flex gap-1 items-center">
+                  <FcGenericSortingAsc className="text-lg cursor-pointer" />
+                  Sort
+                </div>
+                <ToggleSwitch isChecked={isAscending} onChange={() => { setIsAscending(!isAscending) }} />
               </div>
-            ))}
-            {currentSchools.length === 0 && <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px">No Data Found</div>}
-
-            {/* Pagination */}
-            <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
+            </div>
           </div>
+          <div id="tableHead" className="w-full flex items-center text-lg 2xl:text-2xl font-bold border border-black py-2 2xl:py-7 px-1 bg-[#1E487C] text-white">
+            <div className="w-1/6 pl-5">School Code</div>
+            <div className="w-2/6 pl-5">School Name</div>
+            <div className="w-3/6 pl-5">Address</div>
+          </div>
+
+          {/* table body */}
+          {currentSchools.length > 0 && currentSchools.map((data, index) => (
+            <div
+              key={index}
+              onClick={() => navigate(`/school/${data["_id"]}`)}
+              id="table body"
+              className={`w-full flex items-center border-r-[1px] border-b-[1px] border-l-[1px] border-black py-2 2xl:py-7 px-1 hover:bg-[#e6e7e9] hover:cursor-pointer text-sm 2xl:text-2xl ${index % 2 === 0 ? "bg-white" : "bg-[#DAE2F4]"}`}
+            >
+              <div className="w-1/6 pl-5 ellipsisStyle">{data["code"]}</div>
+              <div className="w-2/6 pl-5 ellipsisStyle">{data["nameOfSchoolInstitution"]}</div>
+              <div className="w-3/6 pl-5 ellipsisStyle ">{data["fullAddressWithPinCode"]}</div>
+            </div>
+          ))}
+          {currentSchools.length === 0 && <div className="w-full flex items-center justify-center h-[50px] 2xl:h-[100px">No Data Found</div>}
+
+          {/* Pagination */}
+          <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
         </div>
-      </Error>
+      </div>
     </Loading>
   );
 };

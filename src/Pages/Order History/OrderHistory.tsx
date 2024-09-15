@@ -1,11 +1,9 @@
-import Error from "../../Components/ErrorHandler/Error";
 import Loading from "../../Components/Loading/Loading";
 import OrderHistoryTable from "../../Components/OrderHistoryTable";
 import axiosInstance from '../../utils/axiosInstance';
 import { GET_ALL_VENDOR_ORDER } from '../../utils/restEndPoints';
 import { setLoading, setError } from '../../redux/slices/statusSlice';
 import { toast } from "react-toastify";
-import { Action } from '../../types/error';
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { VendorOrder } from "../../types/VendorOrder";
@@ -27,8 +25,7 @@ const OrderHistory: React.FC = () => {
           dispatch(
             setError({
               statusCode: error.response.status,
-              message: error.response.data.error,
-              action: Action.VENDOR_ORDER_HISTORY,
+              message: error.response.data.error
             })
           );
         } else {
@@ -43,13 +40,11 @@ const OrderHistory: React.FC = () => {
   }, []);
 
   return (
-    <Error>
-      <Loading>
-        <div>
-          <OrderHistoryTable orders={orders}/>
-        </div>
-      </Loading>
-    </Error>
+    <Loading>
+      <div>
+        <OrderHistoryTable orders={orders} />
+      </div>
+    </Loading>
   );
 };
 

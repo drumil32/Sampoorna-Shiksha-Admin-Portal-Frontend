@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { RotatingLines } from "react-loader-spinner";
-import Backdrop from '../Backdrop/Backdrop';
 
 interface LoadingProps {
   children: React.ReactNode;
@@ -10,7 +9,6 @@ interface LoadingProps {
 
 const Loading: React.FC<LoadingProps> = ({ children }) => {
   const loading = useSelector((state: RootState) => state.status.loading);
-  const backdrop = useSelector((state: RootState) => state.status.backdrop);
 
   if (loading) {
     return (
@@ -24,8 +22,6 @@ const Loading: React.FC<LoadingProps> = ({ children }) => {
         />
       </div>
     );
-  } else if (backdrop) {
-    return <Backdrop />
   } else {
     return <>{children}</>;
   }

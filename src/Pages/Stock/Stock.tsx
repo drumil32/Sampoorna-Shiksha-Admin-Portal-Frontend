@@ -4,10 +4,8 @@ import { IToy } from '../../types/School';
 import { setError, setLoading } from '../../redux/slices/statusSlice';
 import axiosInstance from '../../utils/axiosInstance';
 import { GET_ALL_TOYS_FROM_STOCK } from '../../utils/restEndPoints';
-import { Action } from '../../types/error';
 import { toast } from 'react-toastify';
 import Loading from '../../Components/Loading/Loading';
-import Error from '../../Components/ErrorHandler/Error';
 import ToyTable from '../../Components/ToyTable';
 
 const Stock: React.FC = () => {
@@ -29,8 +27,7 @@ const Stock: React.FC = () => {
                     dispatch(
                         setError({
                             statusCode: error.response.status,
-                            message: error.response.data.error,
-                            action: Action.GET_VENDOR_ORDER,
+                            message: error.response.data.error
                         })
                     );
                 } else {
@@ -44,9 +41,7 @@ const Stock: React.FC = () => {
     }, []);
     return (
         <Loading>
-            <Error>
-                <ToyTable toys={toys.map(toy => ({ toy: toy.toy, quantity: toy.quantity }))} />;
-            </Error>
+            <ToyTable toys={toys.map(toy => ({ toy: toy.toy, quantity: toy.quantity }))} />;
         </Loading>
     );
 }

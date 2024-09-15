@@ -7,9 +7,7 @@ import { FaPlus } from "react-icons/fa6";
 import { setBackdrop, setError } from "../redux/slices/statusSlice";
 import axiosInstance from "../utils/axiosInstance";
 import { SCHOOL } from "../utils/restEndPoints";
-import { Action } from "../types/error";
 import { toast } from "react-toastify";
-
 
 const Header = () => {
   const cartItems = useSelector((store: RootState) => store.cart.cartItems);
@@ -24,8 +22,7 @@ const Header = () => {
         dispatch(
           setError({
             statusCode: error.response.status,
-            message: error.response.data.error,
-            action: Action.SCHOOL,
+            message: error.response.data.error
           })
         );
       } else {
@@ -77,7 +74,7 @@ const Header = () => {
           Order History
         </Link>
 
-        <Link to={CART}>
+        <Link to={`${CART}/abc`}>
           {" "}
           <CiShoppingCart className='text-4xl relative' />
         </Link>

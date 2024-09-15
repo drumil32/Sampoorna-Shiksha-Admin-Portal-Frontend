@@ -1,4 +1,3 @@
-import Error from './ErrorHandler/Error'
 import Loading from './Loading/Loading'
 import { ShowVendorOrder } from '../types/VendorOrder';
 import {RootState} from '../redux/store'
@@ -12,7 +11,7 @@ const CartItems : React.FC = () => {
     const dispatch = useDispatch();
 
     return (
-      <Error>
+      // <Error>
         <Loading>
           <div className='item-details flex flex-col items-center gap-3  flex-1'>
             {vendorCartItems?.map((item) => {
@@ -70,7 +69,7 @@ const CartItems : React.FC = () => {
             })}
           </div>
         </Loading>
-      </Error>
+      // </Error>
     );
 }
 

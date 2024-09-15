@@ -5,7 +5,6 @@ import { UPDATE_SCHOOL_ORDER } from "../../utils/restEndPoints";
 import { useDispatch } from "react-redux";
 import { setError, setLoading } from "../../redux/slices/statusSlice";
 import { toast } from "react-toastify";
-import { Action } from "../../types/error";
 
 interface ModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,8 +34,7 @@ const Modal: React.FC<ModalProps> = ({
         dispatch(
           setError({
             statusCode: error.response.status,
-            message: error.response.data.error,
-            action: Action.UPDATE_SCHOOL_ORDER,
+            message: error.response.data.error
           })
         );
       } else {

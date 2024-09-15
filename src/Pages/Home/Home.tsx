@@ -3,11 +3,9 @@ import { setError, setLoading } from "../../redux/slices/statusSlice";
 import axiosInstance from "../../utils/axiosInstance";
 import { TOYS } from "../../utils/restEndPoints";
 import { IToy } from "../../types/School";
-import { Action } from "../../types/error";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import Loading from "../../Components/Loading/Loading";
-import Error from "../../Components/ErrorHandler/Error";
 import ToyTable from "../../Components/ToyTable";
 
 const Home: React.FC = () => {
@@ -25,8 +23,7 @@ const Home: React.FC = () => {
           dispatch(
             setError({
               statusCode: error.response.status,
-              message: error.response.data.error,
-              action: Action.GET_VENDOR_ORDER,
+              message: error.response.data.error
             })
           );
         } else {
@@ -43,9 +40,7 @@ const Home: React.FC = () => {
 
   return (
     <Loading>
-      <Error>
         <ToyTable toys={toys.map(toy => ({ toy }))} />
-      </Error>
     </Loading>
   );
 }

@@ -15,7 +15,7 @@ import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
 import SchoolDetail from "./Pages/School Detail/SchoolDetail";
 import ProtectedRoute from "./Components/ProtectedRouter";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Home from "./Pages/Home/Home";
 import Cart from "./Pages/cart/Cart";
 import OrderHistory from "./Pages/Order History/OrderHistory";
@@ -23,7 +23,29 @@ import OrderDetails from "./Pages/Order Details/OrderDetails";
 import AddToy from "./Pages/AddToy/AddToy";
 import UpdateToy from "./Pages/Update Toy/UpdateToy";
 import Stock from "./Pages/Stock/Stock";
+import { IBackEndError } from "./types/error";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./redux/store";
+import { useEffect } from "react";
+import { clearError } from "./redux/slices/statusSlice";
+import Backdrop from "./Components/Backdrop/Backdrop";
+
 function App() {
+
+  const error: IBackEndError = useSelector((state: RootState) => state.status.error);
+  // const navigate = useNavigate();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+      // if (401 == error.statusCode) {
+      //   navigate(SIGNIN)
+      // }
+      dispatch(clearError());
+    }
+  }, [error]);
+  const backdrop = useSelector((state: RootState) => state.status.backdrop);
+
   const router = createBrowserRouter([
     {
       path: HOME,
@@ -53,7 +75,7 @@ function App() {
           ),
         },
         {
-          path: CART,
+          path: `${CART}/:fromStock`,
           element: (
             <ProtectedRoute> <Cart /></ProtectedRoute>
           ),
@@ -109,6 +131,7 @@ function App() {
         draggable
         pauseOnHover
         theme="colored" />
+      {backdrop && <Backdrop />}
     </>
   )
 }

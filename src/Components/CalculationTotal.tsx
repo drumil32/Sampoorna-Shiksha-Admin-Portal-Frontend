@@ -5,15 +5,14 @@ import { RootState } from "../redux/store";
 import { CHECK_AVAILABLE_STOCK, VENDOR_ORDER } from "../utils/restEndPoints";
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
-import { Action } from "../types/error";
 import { setError, setBackdrop } from "../redux/slices/statusSlice";
 import { clearCart, setUpdateQty } from "../redux/slices/cartSlice";
 
-const Calculation: React.FC = () => {
+const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp, to: toProp }) => {
   const [total, setTotal] = useState<number>(0);
-  const [from, setFrom] = useState<string>('vendor');
-  const [to, setTo] = useState<string>('ngo');
-  const [schoolId, setSchoolId] = useState<string | undefined>(undefined);
+  const [from, setFrom] = useState<string>(fromProp ?? 'vendor');
+  const [to, setTo] = useState<string>(toProp ?? 'ngo');
+  const [schoolId, setSchoolId] = useState<string | null>(null);
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
   const dispatch = useDispatch();
 
@@ -33,14 +32,16 @@ const Calculation: React.FC = () => {
 
   // place order function
   const placeOrder = async () => {
+    if (from == to) {
+      toast.error("From and To cannot be same");
+      return;
+    }
     if (schoolId && schoolId.length == 0) {
       toast.error("School ID is required");
       return;
     }
     try {
-      // dispatch(setLoading(true)); // loading should be there in btn for this will add loading on btn and have id for each btn
       dispatch(setBackdrop(true));
-
       if (from == 'ngo') {
         await axiosInstance.post(CHECK_AVAILABLE_STOCK, { cart: orderItems });
       }
@@ -61,8 +62,7 @@ const Calculation: React.FC = () => {
         dispatch(
           setError({
             statusCode: error.response.status,
-            message: error.response.data.error,
-            action: Action.PLACE_VENDOR_ORDER,
+            message: error.response.data.error
           })
         );
       } else {
@@ -126,41 +126,45 @@ const Calculation: React.FC = () => {
         <div className='grid grid-cols-2 gap-3 w-full'>
           <div className="">
             <label htmlFor=''>From</label>
-            <select
-              name='from'
-              className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
-              onChange={(e) =>
-                setFrom(e.target.value)
-              }
-              value={from}
-            >
-              <option value='vendor'>vendor</option>
-              <option value='ngo'>ngo</option>
-            </select>
+            {fromProp ??
+              <select
+                name='from'
+                className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
+                onChange={(e) =>
+                  setFrom(e.target.value)
+                }
+                value={from}
+              >
+                <option value='vendor'>vendor</option>
+                <option value='ngo'>ngo</option>
+              </select>
+            }
           </div>
 
           <div>
             <label htmlFor=''>To</label>
-            <select
-              name='to'
-              id=''
-              className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
-              onChange={(e) =>
-                setTo(e.target.value)
-              }
-              value={to}
-            >
-              <option value='ngo'>ngo</option>
-              <option value='school'>school</option>
-            </select>
+            {toProp ??
+              <select
+                name='to'
+                id=''
+                className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
+                onChange={(e) =>
+                  setTo(e.target.value)
+                }
+                value={to}
+              >
+                <option value='ngo'>ngo</option>
+                <option value='school'>school</option>
+              </select>
+            }
           </div>
         </div>
         <input
           type='text'
           placeholder='Enter your School Id'
           className='border rounded-md shadow-md w-full p-3 text-xs outline-none'
-          onChange={(e) => setSchoolId(e.target.value == "" ? undefined : e.target.value)}
-          value={schoolId}
+          onChange={(e) => setSchoolId(e.target.value == "" ? null : e.target.value)}
+          value={schoolId ?? ''}
         />
         <button
           onClick={placeOrder}
