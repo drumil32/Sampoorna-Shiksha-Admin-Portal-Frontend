@@ -71,11 +71,11 @@ export interface IProduct {
 }
 
 export enum Level {
+    ALL = 'ALL',
     PRIMARY = 'PRIMARY',
     SECONDARY = 'SECONDARY',
     SENIOR_SECONDARY = 'SENIOR_SECONDARY',
     MIX = 'MIX',
-    ALL = 'ALL'
 };
 
 export interface InfoItem {

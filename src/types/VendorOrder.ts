@@ -34,19 +34,23 @@ export interface VendorOrderStatusInfo{
 }
 
 export interface VendorOrder {
-    id: string;
-    listOfToysSentLink: [{
-        toy: IToy;
-        quantity: number;
-        price: number;
-    }],
-    brand: string;
-    subBrand: string;
-    address: string;
-    type: VendorOrderType;
-    description: string;
-    from:string,
-    to:string,
-    school:string,
-    status: VendorOrderStatusInfo[];
+  id: string;
+  listOfToysSentLink: [
+    {
+      toy: IToy;
+      quantity: number;
+      price: number;
+    }
+  ];
+  brand: string;
+  subBrand: string;
+  address: string;
+  isPresentInStock : boolean;
+  type: VendorOrderType;
+  description: string;
+  from: string;
+  to: string;
+  school: string;
+  quantity : number;
+  status: VendorOrderStatusInfo[];
 }

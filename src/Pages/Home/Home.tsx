@@ -10,13 +10,12 @@ import { useDispatch } from "react-redux";
 import Loading from "../../Components/Loading/Loading";
 import Error from "../../Components/ErrorHandler/Error";
 import Card from "../../Components/Card";
-import Backdrop from "../../Components/Backdrop/Backdrop";
+
+
 const Home: React.FC = () => {
   const [toys, setToys] = useState<IToy[]>([]);
-
-
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     const fetchToys = async () => {
       try {
@@ -43,13 +42,11 @@ const Home: React.FC = () => {
   }, []);
 
 
+
   return (
     <Loading>
       <Error>
-        {/* <div className="mt-3 gap-y-8 grid sm:grid-cols-3 grid-cols-2 bg-red-300 max-w-6xl m-auto pb-20"> */}
-        <div className="w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10">
-          {toys?.map((toy) => (<Card key={toy.id} toy={toy} />))}
-        </div>
+         <Card toys={toys} />
       </Error>
     </Loading>
   );

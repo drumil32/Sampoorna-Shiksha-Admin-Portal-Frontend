@@ -4,8 +4,8 @@ import { FaFilter } from "react-icons/fa";
 
 const OrderHistoryFilters: React.FC<{orders: VendorOrder[];setFilterOrders: React.Dispatch<React.SetStateAction<VendorOrder[]>>}> = ({ orders, setFilterOrders }) => {
 
-  const [to, setTo] = useState<string>("");
-  const [fromTo, setFromTo] = useState<string>("");
+  const [to, setTo] = useState<string>("all");
+  const [fromTo, setFromTo] = useState<string>("all");
   const [orderStatus, setOrderStatus] = useState<VendorOrderStatus | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -21,7 +21,7 @@ const OrderHistoryFilters: React.FC<{orders: VendorOrder[];setFilterOrders: Reac
       orders.filter(
         (order) =>
           (matchOrderBrandOrSubBrand(order.brand) || matchOrderBrandOrSubBrand(order.subBrand)) &&
-          (orderStatus === undefined ||(order.status.length > 0? order.status[order.status.length - 1].status === orderStatus: true)) &&
+          (orderStatus === undefined ||(order.status.length > 0 ? order.status[order.status.length - 1].status === orderStatus: false)) &&
           (fromTo === "all" || order.from === fromTo) &&
           (to === "all" || order.to === to)
       )

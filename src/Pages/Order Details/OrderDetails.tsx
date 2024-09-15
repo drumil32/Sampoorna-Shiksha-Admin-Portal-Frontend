@@ -7,15 +7,21 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Action } from "../../types/error";
-import { GET_VENDOR_ORDER_BY_ID, UPDATE_VENDOR_ORDER } from "../../utils/restEndPoints";
+import { GET_VENDOR_ORDER_BY_ID, UPDATE_VENDOR_ORDER , STOCK } from "../../utils/restEndPoints";
 import { setLoading, setError } from "../../redux/slices/statusSlice";
 import { useNavigate } from "react-router-dom";
+
+interface TOY {
+  objectId : string,
+  quantity : number,
+}
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [orderDetails, setOrderDetails] = useState<VendorOrder | null>(null);
   const [newStatus, setNewStatus] = useState<VendorOrderStatusInfo>({ timestamps: '', personName: '', contactNumber: '', status: VendorOrderStatus.PENDING });
+  const [toy , setToys] = useState<TOY>([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -25,6 +31,7 @@ const OrderDetails: React.FC = () => {
       const response = await axiosInstance.get(`${GET_VENDOR_ORDER_BY_ID}/${id}`);
       console.log(response.data);
       setOrderDetails(response.data);
+      console.log(orderDetails);
     }
     fetchData();
   }, []);
@@ -56,6 +63,7 @@ const OrderDetails: React.FC = () => {
     }
   };
 
+
   const addNewStatus = async () => {
     try {
       dispatch(setLoading(true));
@@ -83,6 +91,34 @@ const OrderDetails: React.FC = () => {
     }
   }
 
+  const addToStock = async() => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.post(STOCK, {
+        toys: [{toy : id , quantity : 1}]
+      });
+      // setOrderDetails(response.data.order);
+      console.log(response.data);
+      toast.success(response.data.message);
+    } catch (error: any) {
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+            action: Action.VENDOR_ORDER_HISTORY,
+          })
+        );
+      } else {
+        toast.error("Server is Down.");
+      }
+    } finally {
+      setEditMode(false);
+      dispatch(setLoading(false));
+    }
+
+  }
+
   const handleStatusUpdate = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>, index: number) => {
     const { name, value } = e.target;
     setOrderDetails(prevValue => {
@@ -92,6 +128,7 @@ const OrderDetails: React.FC = () => {
       return { ...prevValue, status };
     });
   }
+  
   const handleToyArrayChanges = (index: number, value: number, fieldName: string) => {
     setOrderDetails(prevValue => {
       if (!prevValue) return prevValue;
@@ -138,19 +175,55 @@ const OrderDetails: React.FC = () => {
               </p>
 
               <p className='p-1 font-[300] flex flex-col items-start'>
-                {orderDetails && <strong>School </strong>}
-
-                {orderDetails?.school ? (
+                <strong>School</strong>
+                {/* {!editMode ? (
                   <button
-                    onClick={() => navigate(`/school/${orderDetails.school}`)}
-                    className='text-xs border bg-green-500 flex flex-cols items-start p-2 text-white rounded-md'
+                    onClick={() => navigate(`/school/${orderDetails?.school}`)}
+                    className='text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md'
                   >
                     Visit School
                   </button>
                 ) : (
-                  "Not Provided"
+                  <input
+                    type='text'
+                    placeholder='school'
+                    name='school'
+                    value={orderDetails?.school}
+                    className="w-full p-1 border outline-none"
+                    onChange={(e) => setOrderDetails((prev) => ({...prev , school : e.target.value}))}
+                  /> */}
+                {/* )} */}
+                {orderDetails?.to == "ngo" && (
+                  <button
+                    onClick={() => addToStock()}
+                    className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
+                    disabled={orderDetails?.isPresentInStock}
+                  >
+                    {orderDetails?.isPresentInStock ? "Added" : "Add To stock"}
+                  </button>
+                )}
+
+                {orderDetails?.to == "school" && (
+                  <button
+                    onClick={() => navigate(`/school/${orderDetails?.school}`)}
+                    className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
+                    disabled={orderDetails?.isPresentInStock}
+                  >
+                    Visit to school
+                  </button>
                 )}
               </p>
+             
+             {orderDetails?.to == "school" &&
+              <p className='p-1 font-[300] flex flex-col'>
+                <strong>School Id </strong>
+                {!editMode ? <span className='text-sm'>{orderDetails?.id}</span> 
+                : <input type="text" placeholder="School id" name="id" className="border outline-none rounded-md text-sm p-2" 
+                 onChange={(e) => setOrderDetails((prev) => ({...prev , id : e.target.value}))}/>
+                }
+               
+              </p>
+             }
             </div>
           </div>
 
@@ -169,8 +242,9 @@ const OrderDetails: React.FC = () => {
                 {orderDetails?.status?.map((item, index: number) => {
                   return (
                     <tr
-                      className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
-                        } hover:bg-gray-200 cursor-pointer`}
+                      className={`border text-center text-sm ${
+                        index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                     >
                       <td className='border p-2'>
                         {!editMode ? (
@@ -242,9 +316,14 @@ const OrderDetails: React.FC = () => {
                       className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
                       type='text'
                       placeholder='TimeStamps'
-                      name="timestamps"
+                      name='timestamps'
                       value={newStatus.timestamps}
-                      onChange={(e) => setNewStatus(prev => ({ ...prev, timestamps: e.target.value }))}
+                      onChange={(e) =>
+                        setNewStatus((prev) => ({
+                          ...prev,
+                          timestamps: e.target.value,
+                        }))
+                      }
                     />
                   </td>
                   <td>
@@ -252,9 +331,14 @@ const OrderDetails: React.FC = () => {
                       className='border border-gray-300 w-full  rounded-sm p-3 text-sm outline-none'
                       type='text'
                       placeholder='Person name'
-                      name="personName"
+                      name='personName'
                       value={newStatus.personName}
-                      onChange={(e) => setNewStatus(prev => ({ ...prev, personName: e.target.value }))}
+                      onChange={(e) =>
+                        setNewStatus((prev) => ({
+                          ...prev,
+                          personName: e.target.value,
+                        }))
+                      }
                     />
                   </td>
                   <td>
@@ -264,7 +348,12 @@ const OrderDetails: React.FC = () => {
                       placeholder='Contact number'
                       name='contactNumber'
                       value={newStatus.contactNumber}
-                      onChange={(e) => setNewStatus(prev => ({ ...prev, contactNumber: e.target.value }))}
+                      onChange={(e) =>
+                        setNewStatus((prev) => ({
+                          ...prev,
+                          contactNumber: e.target.value,
+                        }))
+                      }
                     />
                   </td>
                   <td>
@@ -272,7 +361,15 @@ const OrderDetails: React.FC = () => {
                       name='status'
                       className='text-sm border border-gray-300 w-full p-3'
                       value={newStatus.status}
-                      onChange={(e) => setNewStatus(prev => ({ ...prev, status: VendorOrderStatus[e.target.value as keyof typeof VendorOrderStatus] }))}
+                      onChange={(e) =>
+                        setNewStatus((prev) => ({
+                          ...prev,
+                          status:
+                            VendorOrderStatus[
+                              e.target.value as keyof typeof VendorOrderStatus
+                            ],
+                        }))
+                      }
                     >
                       {Object.keys(VendorOrderStatus).map((orderType) => (
                         <option key={orderType} value={orderType}>
@@ -285,7 +382,10 @@ const OrderDetails: React.FC = () => {
 
                 <tr>
                   <td colSpan={4} className='text-center'>
-                    <button className='bg-green-400 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3' onClick={addNewStatus}>
+                    <button
+                      className='bg-green-400 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3'
+                      onClick={addNewStatus}
+                    >
                       Add Status
                     </button>
                   </td>
@@ -317,8 +417,9 @@ const OrderDetails: React.FC = () => {
                 return (
                   <tr
                     key={toy.id}
-                    className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-sm ${
+                      index % 2 !== 0 ? "bg-gray-100" : ""
+                    } hover:bg-gray-200 cursor-pointer`}
                   >
                     <td className='border p-1'>{toy.id}</td>
                     <td className='border p-1'>{toy.name}</td>

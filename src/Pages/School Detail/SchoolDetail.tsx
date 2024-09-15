@@ -62,6 +62,7 @@ const SchoolDetail: React.FC = () => {
   }, []); 
 
   const schoolPersonInfo: InfoItem[] = [
+    { label: "School Id", value: schoolData.id },
     { label: "Principal", value: schoolData.nameOfPrincipalAndManagement },
     { label: "Principal Contact", value: schoolData.contactNumberOfPrincipalManagement },
     { label: "Library Coordinator", value: schoolData.nameOfCoordinatorForLibrary },

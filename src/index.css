@@ -16,4 +16,8 @@
   -moz-appearance: textfield;
 }
 
+tr:nth-child(2n) {
+    @apply bg-gray-100; /* Replace with your desired Tailwind color */
+}
+
        

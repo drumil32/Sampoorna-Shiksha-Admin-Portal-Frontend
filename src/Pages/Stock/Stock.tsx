@@ -11,7 +11,8 @@ import Error from '../../Components/ErrorHandler/Error';
 import Card from '../../Components/Card';
 
 const Stock: React.FC = () => {
-    const [toys, setToys] = useState<{ toy: IToy, quantity: string }[]>([]);
+        const [toys, setToys] = useState<{ toy: IToy; quantity: string }[]>([]);
+
 
     const dispatch = useDispatch();
 
@@ -20,8 +21,9 @@ const Stock: React.FC = () => {
             try {
                 dispatch(setLoading(true));
                 const response = await axiosInstance.get(GET_ALL_TOYS_FROM_STOCK);
-                console.log(response.data);
-                setToys(response.data.toys.map((item: any) => ({ quantity: item.quantity, toy: item.toy })));
+                // setToys(response.data.toys);
+               setToys(response.data.toys.map((item: any) => ({ quantity: item.quantity, toy: item.toy })));
+
             } catch (error: any) {
                 if (error.response) {
                     dispatch(
@@ -41,13 +43,11 @@ const Stock: React.FC = () => {
         fetchToys();
     }, []);
     return (
-        <Loading>
-            <Error>
-            <div  className="w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10">
-                {toys?.map(item => <Card toy={item.toy} quantity={item.quantity} />)};
-            </div>
-            </Error>
-        </Loading>
+      <Loading>
+        <Error>
+          <Card toys={toys.map(toy => toy.toy)}  />);
+        </Error>
+      </Loading>
     );
 }
 
