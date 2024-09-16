@@ -10,7 +10,9 @@ import { removeItemFromStockCart } from '../redux/slices/stockCartSlice';
 
 
 const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
-  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
+  const homeCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.homeCartItems);
+  const stockCartItems: ShowVendorOrder[] = useSelector((state: RootState)=> state.cart.stockCartItems);
+  
   const [selectedToy, setSelectedToy] = useState<{ toy: IToy; } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
   const dispatch = useDispatch();
