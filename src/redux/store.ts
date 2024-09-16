@@ -2,7 +2,7 @@
 import { configureStore, Store } from "@reduxjs/toolkit";
 import statusReducer from "./slices/statusSlice";
 
-import cartReducer from './slices/cartSlice'
+import cartReducer from './slices/homeCartSlice'
 
 const store: Store = configureStore({
     reducer: {

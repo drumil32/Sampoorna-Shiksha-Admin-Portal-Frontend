@@ -1,28 +1,48 @@
 import { useSelector } from 'react-redux';
-import { ShowVendorOrder } from '../../types/VendorOrder';
 import { CiShoppingCart } from "react-icons/ci";
 import { RootState } from '../../redux/store';
 import Loading from '../../Components/Loading/Loading';
 import CartItems from '../../Components/CartItems';
 import Calculation from '../../Components/CalculationTotal';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const Cart: React.FC = () => {
-  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
-  const { fromStock } = useParams();
-  console.log(fromStock)
-  if (vendorCartItems.length <= 0) return (
-    <div className='w-full flex calc-height items-center justify-center text-2xl font-[400]'>
-      Please add some toys <CiShoppingCart className='mt-2 w-[30px]' />
-    </div>
-  );
-  
+  const [currentCart, setCurrentCart] = useState('Home');
+  const [vendorCartItems, setVendorCartItems] = useSelector((state: RootState) => state.cart.homeCartItems);
+
+  useEffect(() => {
+    currentCart == 'Home' ? setVendorCartItems(useSelector((state: RootState) => state.cart.homeCartItems)) :
+      setVendorCartItems(useSelector((state: RootState) => state.cart.stockCartItems));
+  }, [currentCart]);
+
+  const handleCartChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrentCart(e.target.value);
+  };
+
   return (
     <Loading>
       <div className='max-w-7xl m-auto mt-6  bg-white flex sm:flex-cols flex-row shadow-xl gap-3 p-4'>
-        <CartItems />
-        {fromStock && <Calculation from='ngo' to='school' />}
-        {!fromStock && <Calculation />}
+        <div className='flex justify-end w-full mb-4'>
+          <select
+            value={currentCart}
+            onChange={handleCartChange}
+            className='border border-gray-300 p-2 rounded-md'
+          >
+            <option value="Home">Home</option>
+            <option value="Stock">Stock</option>
+          </select>
+        </div>
+        {
+          vendorCartItems.length == 0 ? (
+            <div className='w-full flex calc-height items-center justify-center text-2xl font-[400]'>
+              Please add some toys <CiShoppingCart className='mt-2 w-[30px]' />
+            </div>
+          ) :
+            <>
+              <CartItems currentCart={currentCart} />
+              <Calculation currentCart={currentCart} />
+            </>
+        }
       </div>
     </Loading>
   );

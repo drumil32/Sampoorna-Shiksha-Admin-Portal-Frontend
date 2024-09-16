@@ -1,23 +1,23 @@
 import { IToy, Level } from "../types/School";
 import { useDispatch, useSelector } from "react-redux";
 import { ShowVendorOrder } from "../types/VendorOrder";
-import { removeItemToCart, setItemToCart } from "../redux/slices/cartSlice";
 import { RootState } from "../redux/store";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CART } from "../utils/routes";
 import { CiShoppingCart } from "react-icons/ci";
+import { removeItemFromHomeCart, setItemToHomeCart } from "../redux/slices/homeCartSlice";
+import { removeItemFromStockCart, setItemToStockCart } from "../redux/slices/stockCartSlice";
 
 interface MyComponentProps {
   toys: { toy: IToy; quantity?: string }[];
-  isFrom : string
+  from: string
 }
 
-const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
-  console.log(isFrom)
-  const [selectedToy, setSelectedToy] = useState<{toy: IToy;quantity?: string;} | null>(null);
+const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
+  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string; } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
-  const vendorCartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.cartItems);
+  const vendorCartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.homeCart);
 
   const [inputValue, setInputValue] = useState<string>("");
   const [levelValue, setLevelValue] = useState<string>("all");
@@ -28,7 +28,9 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
     if (toy) {
       const isExists = vendorCartItems.find((item) => item.toy.id === toy.id);
       if (!isExists) {
-        dispatch(setItemToCart({ toy, quantity: 1 }));
+        from == 'Stock' ?
+          dispatch(setItemToStockCart({ toy, quantity: 1 }))
+          : dispatch(setItemToHomeCart({ toy, quantity: 1 }));
       }
     }
   };
@@ -52,16 +54,16 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
 
   // keyevent for close the popup
   useEffect(() => {
-    function handleKeyUp(e){
-       if(e.key == "Escape"){
-         setShowModel(false);
-       }
+    function handleKeyUp(e) {
+      if (e.key == "Escape") {
+        setShowModel(false);
+      }
     }
-    window.addEventListener('keyup' , handleKeyUp);
+    window.addEventListener('keyup', handleKeyUp);
     // clean up function
-    return () => window.removeEventListener('keyup' , handleKeyUp) 
+    return () => window.removeEventListener('keyup', handleKeyUp)
 
-  },[])
+  }, [])
 
   return (
     <>
@@ -84,7 +86,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
             </option>
           ))}
         </select>
-        <Link to={`${CART}/${isFrom}`}>
+        <Link to={`${CART}`}>
           <CiShoppingCart className='text-4xl relative' />
         </Link>
         {vendorCartItems.length > 0 && (
@@ -116,9 +118,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
               return (
                 <tr
                   key={item.toy.id}
-                  className={`border text-center text-xs cursor-pointer ${
-                    isInCart ? "!bg-green-200" : ""
-                  }`}
+                  className={`border text-center text-xs cursor-pointer ${isInCart ? "!bg-green-200" : ""
+                    }`}
                   onClick={() => showToyDetails(item.toy, item.quantity)}
                 >
                   <td className='border p-2'>{item.toy.id}</td>
@@ -140,9 +141,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
       </div>
       {/* Modal */}
       <div
-        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${
-          showModel ? "block" : "hidden"
-        }`}
+        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${showModel ? "block" : "hidden"
+          }`}
         onClick={() => setShowModel(false)}
       >
         <div
@@ -200,9 +200,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
               </p>
               <p className='font-[300] flex justify-between items-center'>
                 <strong
-                  className={`text-[16px] font-semibold ${
-                    !selectedToy?.quantity && "hidden"
-                  }`}
+                  className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
+                    }`}
                 >
                   Quantity:{" "}
                   <span className='font-[300]'>{selectedToy?.quantity}</span>
@@ -237,7 +236,10 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
               ) ? (
                 <button
                   onClick={() =>
-                    dispatch(removeItemToCart(selectedToy?.toy?.id ?? ""))
+                    from == 'Stock' ?
+                      dispatch(removeItemFromStockCart(selectedToy?.toy?.id ?? ""))
+                      : dispatch(removeItemFromHomeCart(selectedToy?.toy?.id ?? ""))
+
                   }
                   className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
                 >
@@ -254,7 +256,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys , isFrom }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };

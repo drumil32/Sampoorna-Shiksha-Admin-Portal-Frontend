@@ -6,12 +6,14 @@ import { CHECK_AVAILABLE_STOCK, VENDOR_ORDER } from "../utils/restEndPoints";
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 import { setError, setBackdrop } from "../redux/slices/statusSlice";
-import { clearCart, setUpdateQty } from "../redux/slices/cartSlice";
+import { clearHomeCart, setUpdateQtyToHomeCart } from "../redux/slices/homeCartSlice";
+import { clearStockCart, setUpdateQtyToStockCart } from "../redux/slices/stockCartSlice";
 
-const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp, to: toProp }) => {
+const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
+
   const [total, setTotal] = useState<number>(0);
-  const [from, setFrom] = useState<string>(fromProp ?? 'vendor');
-  const [to, setTo] = useState<string>(toProp ?? 'ngo');
+  const [from, setFrom] = useState<string>('vendor');
+  const [to, setTo] = useState<string>('ngo');
   const [schoolId, setSchoolId] = useState<string | null>(null);
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
   const dispatch = useDispatch();
@@ -55,7 +57,7 @@ const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp,
       toast.success(response.data.message);
       // TODO: why we are using setTimeout here?
       setTimeout(() => {
-        dispatch(clearCart([]));
+        currentCart == 'Home' ? dispatch(clearHomeCart([])) : dispatch(clearStockCart([]));
       }, 2000)
     } catch (error: any) {
       if (error.response) {
@@ -97,12 +99,19 @@ const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp,
                     className='border p-1 outline-none'
                     min={1}
                     onChange={(e) =>
-                      dispatch(
-                        setUpdateQty({
-                          toy: item.toy,
-                          quantity: parseInt(e.target.value),
-                        })
-                      )
+                      currentCart === 'Home' ?
+                        dispatch(
+                          setUpdateQtyToHomeCart({
+                            toy: item.toy,
+                            quantity: parseInt(e.target.value),
+                          })
+                        ) :
+                        dispatch(
+                          setUpdateQtyToStockCart({
+                            toy: item.toy,
+                            quantity: parseInt(e.target.value),
+                          })
+                        )
                     }
                     value={item.quantity}
                   />
@@ -127,7 +136,7 @@ const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp,
           <div className="">
             <label htmlFor=''>From</label>
             {" "}
-            {fromProp ??
+            {currentCart == 'Home' ?
               <select
                 name='from'
                 className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
@@ -138,14 +147,14 @@ const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp,
               >
                 <option value='vendor'>vendor</option>
                 <option value='ngo'>ngo</option>
-              </select>
+              </select> : 'ngo'
             }
           </div>
 
           <div>
             <label htmlFor=''>To</label>
             {" "}
-            {toProp ??
+            {currentCart == 'Home' ?
               <select
                 name='to'
                 id=''
@@ -158,6 +167,7 @@ const Calculation: React.FC<{ from?: string, to?: string }> = ({ from: fromProp,
                 <option value='ngo'>ngo</option>
                 <option value='school'>school</option>
               </select>
+              : 'School'
             }
           </div>
         </div>

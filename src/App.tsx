@@ -75,7 +75,7 @@ function App() {
           ),
         },
         {
-          path: `${CART}/:fromStock`,
+          path: `${CART}`,
           element: (
             <ProtectedRoute> <Cart /></ProtectedRoute>
           ),
