@@ -17,9 +17,7 @@ const OrderHistory: React.FC = () => {
       try {
         dispatch(setLoading(true));
         const response = await axiosInstance.get(GET_ALL_VENDOR_ORDER);
-        console.log(response.data)
         setOrders(response.data);
-        //   setFilterOrders(response.data);
       } catch (error: any) {
         if (error.response) {
           dispatch(

@@ -55,7 +55,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
 
     const matchesLevel = levelValue.toLowerCase() === "all" ||
       item.toy.level?.toLowerCase() === levelValue.toLowerCase();
-    return matchesInput && matchesLevel;
+      return matchesInput && matchesLevel;
   });
 
   useEffect(() => {

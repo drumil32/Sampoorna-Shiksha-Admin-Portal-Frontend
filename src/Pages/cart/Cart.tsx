@@ -11,8 +11,9 @@ const Cart: React.FC = () => {
   const homeCartItems = useSelector((state: RootState) => state.home.homeCartItems) || [];
   const stockCartItems = useSelector((state: RootState) => state.stock.stockCartItems) || [];
   const [vendorCartItems, setVendorCartItems] = useState(homeCartItems);
+ 
 
-  useEffect(() => {
+  useEffect(() => {  
     if (currentCart === "Home") {
       setVendorCartItems(homeCartItems);
     } else {

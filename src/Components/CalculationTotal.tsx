@@ -22,7 +22,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
         ? state.home.homeCartItems
         : state.stock.stockCartItems
   );
-  console.log(vendorCartItems)
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -62,10 +62,15 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
         to
       });
       toast.success(response.data.message);
-      // TODO: why we are using setTimeout here?
+
       setTimeout(() => {
-        currentCart == 'Home' ? dispatch(clearHomeCart([])) : dispatch(clearStockCart([]));
+        if(currentCart == "Home"){
+          dispatch(clearHomeCart([]));
+        }else{
+          dispatch(clearStockCart([]));
+        }
       }, 2000)
+
     } catch (error: any) {
       if (error.response) {
         dispatch(

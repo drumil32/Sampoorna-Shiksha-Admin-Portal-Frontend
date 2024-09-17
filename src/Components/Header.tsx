@@ -1,10 +1,9 @@
 import { Link, } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK } from '../utils/routes';
+import { HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK , SCHOOL } from '../utils/routes';
 import { FaPlus } from "react-icons/fa6";
 import { setBackdrop, setError } from "../redux/slices/statusSlice";
 import axiosInstance from "../utils/axiosInstance";
-import { SCHOOL } from "../utils/restEndPoints";
 import { toast } from "react-toastify";
 
 const Header = () => {
@@ -39,9 +38,7 @@ const Header = () => {
         Sampooran Shiksha
       </Link>
 
-      <button onClick={addNewSchoolData}>
-        add new Schools
-      </button>
+      <button onClick={addNewSchoolData}>add new Schools</button>
 
       <div className='flex gap-4 items-center'>
         <Link
@@ -50,6 +47,14 @@ const Header = () => {
         >
           <span>Stock</span>
         </Link>
+
+        <Link
+          to={SCHOOL}
+          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+        >
+          <span>Schools</span>
+        </Link>
+
         <Link
           to={ADD_TOY}
           className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
@@ -70,8 +75,6 @@ const Header = () => {
         >
           Order History
         </Link>
-
-
         {/*  */}
       </div>
     </div>

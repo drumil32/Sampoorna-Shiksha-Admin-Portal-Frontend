@@ -30,7 +30,6 @@ const SchoolDetail: React.FC = () => {
       console.log("School data:", response.data);
       setSchoolData(response.data.school);
       const orderResponse = await axiosInstance.get(`${SCHOOL_ORDER}/${id}`);
-      
       console.log("School orders:", orderResponse.data.orders);
       setSchoolOrder(orderResponse.data.orders);
     } catch (error: any) {

@@ -40,7 +40,6 @@ const UpdateToy: React.FC = () => {
 
 
   return (
-    // <Error>
       <Loading>
         <div className='w-full flex items-center justify-center mt-3'>
           <div className='w-[48%] flex items-center border bg-white justify-between p-2 rounded-md shadow-lg focus:bg-red-300 '>
@@ -58,7 +57,6 @@ const UpdateToy: React.FC = () => {
         </div>
         {toy && <ToyForm title="Update Toy" toy={toy} setToy={setToy} />}
       </Loading>
-    // </Error>
   );
 };
 

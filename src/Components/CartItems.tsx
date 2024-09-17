@@ -9,11 +9,7 @@ import { IToy } from '../types/School';
 import { removeItemFromStockCart } from '../redux/slices/stockCartSlice';
 
 const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
-  const vendorCartItems: ShowVendorOrder[] = useSelector(
-    (state: RootState) =>
-      currentCart === "Home"
-        ? state.home.homeCartItems
-        : state.stock.stockCartItems
+  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>currentCart === "Home"? state.home.homeCartItems: state.stock.stockCartItems
   );
   
   const [selectedToy, setSelectedToy] = useState<{ toy: IToy; } | null>(null);
@@ -21,7 +17,8 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
   const dispatch = useDispatch();
 
   const showToyDetails = (e: React.MouseEvent<HTMLButtonElement>, toy: IToy,) => {
-    if (e?.target.id !== "trash-btn") {
+    const target = e.target as HTMLButtonElement;
+    if (target.id !== "trash-btn") {
       setSelectedToy({ toy });
       setShowModel(true);
     }
@@ -40,7 +37,6 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
   }, []);
 
   return (
-    // <Error>
     <Loading>
       <div className='item-details flex flex-col items-center gap-3  flex-1'>
         <table className='p-4 w-full text-sm'>

@@ -23,7 +23,6 @@ const OrderDetails: React.FC = () => {
     const fetchData = async () => {
       const response = await axiosInstance.get(`${GET_VENDOR_ORDER_BY_ID}/${id}`);
       const clonedData = _.cloneDeep(response.data);
-      console.log(response.data);
       setOrderDetails(response.data);
       orderRef.current = clonedData;
     }
@@ -43,7 +42,6 @@ const OrderDetails: React.FC = () => {
       });
       setOrderDetails(response.data.order);
       orderRef.current = _.cloneDeep(response.data.order)
-      console.log(response.data.order)
       toast.success(response.data.message);
     } catch (error: any) {
       if (error.response) {
@@ -71,7 +69,6 @@ const OrderDetails: React.FC = () => {
         order: { ...orderDetails, status: [...(orderDetails?.status ?? []), newStatus] }
       });
       setOrderDetails(response.data.order);
-      console.log(response.data.order)
       toast.success(response.data.message);
       setNewStatus({ timestamps: '', personName: '', contactNumber: '', status: VendorOrderStatus.PENDING });
     } catch (error: any) {

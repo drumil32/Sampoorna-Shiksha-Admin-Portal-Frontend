@@ -110,7 +110,6 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
   };
 
   return (
-    // <Error>
     <Loading>
       <div className='w-full pb-10'>
         <div
@@ -300,7 +299,6 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
         </div>
       </div>
     </Loading>
-    // </Error>
   );
 }
 
