@@ -51,7 +51,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
             </tr>
           </thead>
           <tbody>
-            {vendorCartItems?.map((item) => {
+            {homeCartItems?.map((item) => {
               return (
                 <tr
                   key={item.toy.id}
@@ -62,13 +62,16 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                   <td className='border p-2'>{item.toy.brand}</td>
                   <td className='border p-2'>{item.toy.subBrand}</td>
                   <td className='border p-2'>{item.toy.price}</td>
-                  <td className='text-center flex items-center justify-center mt-2' id='trash-btn'>
+                  <td
+                    className='text-center flex items-center justify-center mt-2'
+                    id='trash-btn'
+                  >
                     <CiTrash
                       className='cursor-pointer text-lg text-red-400'
                       onClick={() =>
-                        currentCart == 'Home' ?
-                          dispatch(removeItemFromHomeCart(item.toy.id ?? "")) :
-                          dispatch(removeItemFromStockCart(item.toy.id ?? ""))
+                        currentCart == "Home"
+                          ? dispatch(removeItemFromHomeCart(item.toy.id ?? ""))
+                          : dispatch(removeItemFromStockCart(item.toy.id ?? ""))
                       }
                     />
                   </td>
@@ -81,7 +84,9 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
 
       {/* model */}
       <div
-        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${showModel ? "block" : "hidden"}`}
+        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${
+          showModel ? "block" : "hidden"
+        }`}
         onClick={() => setShowModel(false)}
       >
         <div
@@ -105,9 +110,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
               <p className='font-[300] flex justify-between items-center'>
                 <strong className='text-[16px] font-semibold'>
                   Price:{" "}
-                  <span className='font-[300]'>
-                    {selectedToy?.toy?.price}
-                  </span>
+                  <span className='font-[300]'>{selectedToy?.toy?.price}</span>
                 </strong>
                 <strong className='text-[16px] font-semibold'>
                   Category:{" "}
@@ -119,9 +122,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
               <p className='font-[300] flex justify-between items-center'>
                 <strong className='text-[16px] font-semibold'>
                   Brand:{" "}
-                  <span className='font-[300]'>
-                    {selectedToy?.toy?.brand}
-                  </span>
+                  <span className='font-[300]'>{selectedToy?.toy?.brand}</span>
                 </strong>
                 <strong className='text-[16px] font-semibold'>
                   Level:{" "}
@@ -151,8 +152,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
               </p>
               <p className='font-[300] flex justify-between items-center'>
                 <strong className='text-[16px] font-semibold'>
-                  ID:{" "}
-                  <span className='font-[300]'>{selectedToy?.toy?.id}</span>
+                  ID: <span className='font-[300]'>{selectedToy?.toy?.id}</span>
                 </strong>
               </p>
             </div>

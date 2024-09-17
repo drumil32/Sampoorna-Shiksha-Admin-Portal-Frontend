@@ -1,7 +1,6 @@
 import { Link, } from 'react-router-dom';
-import { useDispatch, useSelector, } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK } from '../utils/routes';
-import { RootState } from '../redux/store';
 import { FaPlus } from "react-icons/fa6";
 import { setBackdrop, setError } from "../redux/slices/statusSlice";
 import axiosInstance from "../utils/axiosInstance";

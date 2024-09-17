@@ -8,12 +8,17 @@ import { useEffect, useState } from 'react';
 
 const Cart: React.FC = () => {
   const [currentCart, setCurrentCart] = useState('Home');
-  const [vendorCartItems, setVendorCartItems] = useSelector((state: RootState) => state.cart.homeCartItems);
+  const homeCartItems = useSelector((state: RootState) => state.cart.homeCartItems) || [];
+  const stockCartItems = useSelector((state: RootState) => state.cart.stockCartItems) || [];
+  const [vendorCartItems, setVendorCartItems] = useState(homeCartItems);
 
   useEffect(() => {
-    currentCart == 'Home' ? setVendorCartItems(useSelector((state: RootState) => state.cart.homeCartItems)) :
-      setVendorCartItems(useSelector((state: RootState) => state.cart.stockCartItems));
-  }, [currentCart]);
+    if (currentCart === "Home") {
+      setVendorCartItems(homeCartItems);
+    } else {
+      setVendorCartItems(stockCartItems);
+    }
+  }, [currentCart, homeCartItems, stockCartItems]);
 
   const handleCartChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrentCart(e.target.value);
@@ -21,7 +26,7 @@ const Cart: React.FC = () => {
 
   return (
     <Loading>
-      <div className='max-w-7xl m-auto mt-6  bg-white flex sm:flex-cols flex-row shadow-xl gap-3 p-4'>
+      <div className='max-w-7xl m-auto mt-6 bg-white shadow-xl gap-3 p-4'>
         <div className='flex justify-end w-full mb-4'>
           <select
             value={currentCart}
@@ -32,20 +37,23 @@ const Cart: React.FC = () => {
             <option value="Stock">Stock</option>
           </select>
         </div>
+        <div className='flex gap-10'>
         {
-          vendorCartItems.length == 0 ? (
-            <div className='w-full flex calc-height items-center justify-center text-2xl font-[400]'>
+          vendorCartItems.length === 0 ? (
+            <div className='w-full flex  calc-height items-center justify-center text-2xl font-[400]'>
               Please add some toys <CiShoppingCart className='mt-2 w-[30px]' />
             </div>
-          ) :
+          ) : (
             <>
               <CartItems currentCart={currentCart} />
               <Calculation currentCart={currentCart} />
             </>
+          )
         }
+        </div>
       </div>
     </Loading>
   );
 }
 
-export default Cart
+export default Cart;

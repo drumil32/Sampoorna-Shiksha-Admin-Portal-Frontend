@@ -41,7 +41,7 @@ const Stock: React.FC = () => {
     }, []);
     return (
         <Loading>
-            <ToyTable toys={toys.map(toy => ({ toy: toy.toy, quantity: toy.quantity }))} isFrom={"isStock"} />;
+            <ToyTable toys={toys.map(toy => ({ toy: toy.toy, quantity: toy.quantity }))} />;
         </Loading>
     );
 }

@@ -2,7 +2,7 @@ import { IToy, Level } from "../types/School";
 import { useDispatch, useSelector } from "react-redux";
 import { ShowVendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CART } from "../utils/routes";
 import { CiShoppingCart } from "react-icons/ci";
@@ -11,13 +11,21 @@ import { removeItemFromStockCart, setItemToStockCart } from "../redux/slices/sto
 
 interface MyComponentProps {
   toys: { toy: IToy; quantity?: string }[];
-  from: string
+  from?: string;
 }
 
 const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
-  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string; } | null>(null);
+  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
-  const vendorCartItems: ShowVendorOrder[] = useSelector((store: RootState) => store.cart.homeCart);
+  const [currentCart, setCurrentCart] = useState('Home');
+
+  const homeCartItems = useSelector((state: RootState) => state.cart.homeCartItems);
+  const stockCartItems = useSelector((state: RootState) => state.cart.stockCartItems);
+   const vendorCartItems = useSelector((state: RootState) =>
+     currentCart === "Home"
+       ? state.cart.homeCartItems
+       : state.cart.stockCartItems
+   );
 
   const [inputValue, setInputValue] = useState<string>("");
   const [levelValue, setLevelValue] = useState<string>("all");
@@ -28,9 +36,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
     if (toy) {
       const isExists = vendorCartItems.find((item) => item.toy.id === toy.id);
       if (!isExists) {
-        from == 'Stock' ?
-          dispatch(setItemToStockCart({ toy, quantity: 1 }))
-          : dispatch(setItemToHomeCart({ toy, quantity: 1 }));
+        if (currentCart === 'Home') {
+          dispatch(setItemToHomeCart({ toy, quantity: 1 }));
+        } else {
+          dispatch(setItemToStockCart({ toy, quantity: 1 }));
+        }
       }
     }
   };
@@ -46,24 +56,20 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
       item.toy.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.toy.subBrand?.toLowerCase().includes(inputValue.toLowerCase());
 
-    const matchesLevel =
-      levelValue.toLowerCase() === "all" ||
+    const matchesLevel = levelValue.toLowerCase() === "all" ||
       item.toy.level?.toLowerCase() === levelValue.toLowerCase();
     return matchesInput && matchesLevel;
   });
 
-  // keyevent for close the popup
   useEffect(() => {
-    function handleKeyUp(e) {
-      if (e.key == "Escape") {
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
         setShowModel(false);
       }
-    }
+    };
     window.addEventListener('keyup', handleKeyUp);
-    // clean up function
-    return () => window.removeEventListener('keyup', handleKeyUp)
-
-  }, [])
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  }, []);
 
   return (
     <>
@@ -90,7 +96,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
           <CiShoppingCart className='text-4xl relative' />
         </Link>
         {vendorCartItems.length > 0 && (
-          <div className='quantity w-[20px] h-[20px] bg-gray-400 rounded-full absolute top-20  right-20 flex items-center justify-center font-bold text-xs text-white'>
+          <div className='quantity w-[20px] h-[20px] bg-gray-400 rounded-full absolute top-20 right-20 flex items-center justify-center font-bold text-xs text-white'>
             {vendorCartItems.length}
           </div>
         )}
@@ -112,14 +118,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
           </thead>
           <tbody>
             {filteredToys?.map((item) => {
-              const isInCart = vendorCartItems?.some(
-                (cartItem) => cartItem.toy.id === item.toy.id
-              );
+              const isInCart = vendorCartItems.some((cartItem) => cartItem.toy.id === item.toy.id);
               return (
                 <tr
                   key={item.toy.id}
-                  className={`border text-center text-xs cursor-pointer ${isInCart ? "!bg-green-200" : ""
-                    }`}
+                  className={`border text-center text-xs cursor-pointer ${isInCart ? "!bg-green-200" : ""}`}
                   onClick={() => showToyDetails(item.toy, item.quantity)}
                 >
                   <td className='border p-2'>{item.toy.id}</td>
@@ -128,7 +131,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                   <td className='border p-2'>{item.toy.subBrand}</td>
                   <td className='border p-2'>{item.toy.price}</td>
                   <td className='border p-2'>
-                    {item.toy.level ? item.toy.level : "Not Provided"}
+                    {item.toy.level || "Not Provided"}
                   </td>
                   {pathname !== "/" && (
                     <td className='border p-2'>{item.quantity}</td>
@@ -140,88 +143,83 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
         </table>
       </div>
       {/* Modal */}
-      <div
-        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${showModel ? "block" : "hidden"
-          }`}
-        onClick={() => setShowModel(false)}
-      >
+      {showModel && (
         <div
-          className='max-w-5xl h-auto border rounded-md relative'
-          onClick={(e) => e.stopPropagation()}
+          className='fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2'
+          onClick={() => setShowModel(false)}
         >
           <div
-            className='absolute right-2 top-2 border p-1 cursor-pointer rounded-md text-xs'
-            onClick={() => setShowModel(false)}
+            className='max-w-5xl h-auto border rounded-md relative'
+            onClick={(e) => e.stopPropagation()}
           >
-            Close
-          </div>
-          <div
-            className='single-toy border rounded-md shadow-md sm:w-[500px] p-8 bg-white h-auto'
-            key={selectedToy?.toy?.id}
-          >
-            <h1 className='font-[400] text-2xl text-center mb-3'>
-              {selectedToy?.toy?.name}
-            </h1>
-            <div className='flex flex-col gap-2 p-2'>
-              <p className='font-[300] flex justify-between items-center'>
-                <strong className='text-[16px] font-semibold'>
-                  Price:{" "}
-                  <span className='font-[300]'>{selectedToy?.toy?.price}</span>
-                </strong>
-                <strong className='text-[16px] font-semibold'>
-                  Category:{" "}
-                  <span className='font-[300]'>
-                    {selectedToy?.toy?.category}
-                  </span>
-                </strong>
-              </p>
-              <p className='font-[300] flex justify-between items-center'>
-                <strong className='text-[16px] font-semibold'>
-                  Brand:{" "}
-                  <span className='font-[300]'>{selectedToy?.toy?.brand}</span>
-                </strong>
-                <strong className='text-[16px] font-semibold'>
-                  Level:{" "}
-                  <span className='font-[300] text-sm'>
-                    {selectedToy?.toy?.level ?? "Not Provided"}
-                  </span>
-                </strong>
-              </p>
-              <hr />
-              <p className='font-[300] flex justify-between items-center'>
-                <strong className='text-[16px] font-semibold'>
-                  Learn:{" "}
-                  <span className='font-[300]'>
-                    {selectedToy?.toy?.learn?.length !== 0
-                      ? selectedToy?.toy?.learn?.join(", ")
-                      : "Not Provided"}
-                  </span>
-                </strong>
-              </p>
-              <p className='font-[300] flex justify-between items-center'>
-                <strong
-                  className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
-                    }`}
-                >
-                  Quantity:{" "}
-                  <span className='font-[300]'>{selectedToy?.quantity}</span>
-                </strong>
-                <strong className='text-[16px] font-semibold'>
-                  SubBrand:{" "}
-                  <span className='font-[300]'>
-                    {selectedToy?.toy?.subBrand}
-                  </span>
-                </strong>
-              </p>
-              <p className='font-[300] flex justify-between items-center'>
-                <strong className='text-[16px] font-semibold'>
-                  ID: <span className='font-[300]'>{selectedToy?.toy?.id}</span>
-                </strong>
-              </p>
+            <div
+              className='absolute right-2 top-2 border p-1 cursor-pointer rounded-md text-xs'
+              onClick={() => setShowModel(false)}
+            >
+              Close
             </div>
-            <div className='w-[95%] m-auto flex items-center gap-2 justify-between pt-2 text-xs'>
-              {selectedToy?.toy?.link &&
-                selectedToy?.toy?.link !== "Not Provided" && (
+            <div className='single-toy border rounded-md shadow-md sm:w-[500px] p-8 bg-white h-auto'>
+              <h1 className='font-[400] text-2xl text-center mb-3'>
+                {selectedToy?.toy?.name}
+              </h1>
+              <div className='flex flex-col gap-2 p-2'>
+                <p className='font-[300] flex justify-between items-center'>
+                  <strong className='text-[16px] font-semibold'>
+                    Price:{" "}
+                    <span className='font-[300]'>{selectedToy?.toy?.price}</span>
+                  </strong>
+                  <strong className='text-[16px] font-semibold'>
+                    Category:{" "}
+                    <span className='font-[300]'>
+                      {selectedToy?.toy?.category}
+                    </span>
+                  </strong>
+                </p>
+                <p className='font-[300] flex justify-between items-center'>
+                  <strong className='text-[16px] font-semibold'>
+                    Brand:{" "}
+                    <span className='font-[300]'>{selectedToy?.toy?.brand}</span>
+                  </strong>
+                  <strong className='text-[16px] font-semibold'>
+                    Level:{" "}
+                    <span className='font-[300] text-sm'>
+                      {selectedToy?.toy?.level ?? "Not Provided"}
+                    </span>
+                  </strong>
+                </p>
+                <hr />
+                <p className='font-[300] flex justify-between items-center'>
+                  <strong className='text-[16px] font-semibold'>
+                    Learn:{" "}
+                    <span className='font-[300]'>
+                      {selectedToy?.toy?.learn?.length ? selectedToy?.toy?.learn.join(", ") : "Not Provided"}
+                    </span>
+                  </strong>
+                </p>
+                <p className='font-[300] flex justify-between items-center'>
+                  <strong
+                    className={`text-[16px] font-semibold ${
+                      !selectedToy?.quantity && "hidden"
+                    }`}
+                  >
+                    Quantity:{" "}
+                    <span className='font-[300]'>{selectedToy?.quantity}</span>
+                  </strong>
+                  <strong className='text-[16px] font-semibold'>
+                    SubBrand:{" "}
+                    <span className='font-[300]'>
+                      {selectedToy?.toy?.subBrand}
+                    </span>
+                  </strong>
+                </p>
+                <p className='font-[300] flex justify-between items-center'>
+                  <strong className='text-[16px] font-semibold'>
+                    ID: <span className='font-[300]'>{selectedToy?.toy?.id}</span>
+                  </strong>
+                </p>
+              </div>
+              <div className='w-[95%] m-auto flex items-center gap-2 justify-between pt-2 text-xs'>
+                {selectedToy?.toy?.link && selectedToy?.toy?.link !== "Not Provided" && (
                   <a
                     href={selectedToy?.toy?.link}
                     className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium'
@@ -231,32 +229,30 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                     Video Link
                   </a>
                 )}
-              {vendorCartItems?.some(
-                (item) => item.toy.id === selectedToy?.toy?.id
-              ) ? (
-                <button
-                  onClick={() =>
-                    from == 'Stock' ?
-                      dispatch(removeItemFromStockCart(selectedToy?.toy?.id ?? ""))
-                      : dispatch(removeItemFromHomeCart(selectedToy?.toy?.id ?? ""))
-
-                  }
-                  className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
-                >
-                  Remove From Cart
-                </button>
-              ) : (
-                <button
-                  onClick={() => addToCart(selectedToy?.toy ?? undefined)}
-                  className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
-                >
-                  Add To Cart
-                </button>
-              )}
+                {vendorCartItems.some(item => item.toy.id === selectedToy?.toy?.id) ? (
+                  <button
+                    onClick={() =>
+                      from === "Stock"
+                        ? dispatch(removeItemFromStockCart(selectedToy?.toy?.id ?? ""))
+                        : dispatch(removeItemFromHomeCart(selectedToy?.toy?.id ?? ""))
+                    }
+                    className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
+                  >
+                    Remove From Cart
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => addToCart(selectedToy?.toy ?? undefined)}
+                    className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
+                  >
+                    Add To Cart
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div >
+      )}
     </>
   );
 };

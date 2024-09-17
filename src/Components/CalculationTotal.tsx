@@ -15,14 +15,14 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
   const [from, setFrom] = useState<string>('vendor');
   const [to, setTo] = useState<string>('ngo');
   const [schoolId, setSchoolId] = useState<string | null>(null);
-  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.cartItems);
+  const homeCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.homeCartItems);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setTotal(vendorCartItems.reduce((acc, curr) => acc + (curr.toy.price ?? 0) * curr.quantity, 0));
-  }, [vendorCartItems]);
+    setTotal(homeCartItems.reduce((acc, curr) => acc + (curr.toy.price ?? 0) * curr.quantity, 0));
+  }, [homeCartItems]);
 
-  const orderItems = vendorCartItems?.map((item) => {
+  const orderItems = homeCartItems?.map((item) => {
     return {
       toyId: item.toy.id,
       price: item.toy.price,
@@ -56,9 +56,9 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
       });
       toast.success(response.data.message);
       // TODO: why we are using setTimeout here?
-      setTimeout(() => {
-        currentCart == 'Home' ? dispatch(clearHomeCart([])) : dispatch(clearStockCart([]));
-      }, 2000)
+      // setTimeout(() => {
+      //   currentCart == 'Home' ? dispatch(clearHomeCart([])) : dispatch(clearStockCart([]));
+      // }, 2000)
     } catch (error: any) {
       if (error.response) {
         dispatch(
@@ -87,7 +87,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
         </thead>
 
         <tbody>
-          {vendorCartItems?.map((item, index) => {
+          {homeCartItems?.map((item, index) => {
             return (
               <tr key={item.toy.id} className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""}`}>
                 <td className='border p-2'>{item.toy.name}</td>
