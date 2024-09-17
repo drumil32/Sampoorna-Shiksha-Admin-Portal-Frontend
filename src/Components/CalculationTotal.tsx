@@ -12,17 +12,24 @@ import { clearStockCart, setUpdateQtyToStockCart } from "../redux/slices/stockCa
 const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
 
   const [total, setTotal] = useState<number>(0);
-  const [from, setFrom] = useState<string>('vendor');
-  const [to, setTo] = useState<string>('ngo');
+  const [from, _] = useState<string>(currentCart == 'Home' ? 'vendor' : 'ngo');
+  const [to, setTo] = useState<string>(currentCart == 'Home' ? 'ngo' : 'school');
   const [schoolId, setSchoolId] = useState<string | null>(null);
-  const homeCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.homeCartItems);
+
+  const vendorCartItems: ShowVendorOrder[] = useSelector(
+    (state: RootState) =>
+      currentCart === "Home"
+        ? state.home.homeCartItems
+        : state.stock.stockCartItems
+  );
+  console.log(vendorCartItems)
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setTotal(homeCartItems.reduce((acc, curr) => acc + (curr.toy.price ?? 0) * curr.quantity, 0));
-  }, [homeCartItems]);
+    setTotal(vendorCartItems.reduce((acc, curr) => acc + (curr.toy.price ?? 0) * curr.quantity, 0));
+  }, [vendorCartItems]);
 
-  const orderItems = homeCartItems?.map((item) => {
+  const orderItems = vendorCartItems?.map((item) => {
     return {
       toyId: item.toy.id,
       price: item.toy.price,
@@ -56,9 +63,9 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
       });
       toast.success(response.data.message);
       // TODO: why we are using setTimeout here?
-      // setTimeout(() => {
-      //   currentCart == 'Home' ? dispatch(clearHomeCart([])) : dispatch(clearStockCart([]));
-      // }, 2000)
+      setTimeout(() => {
+        currentCart == 'Home' ? dispatch(clearHomeCart([])) : dispatch(clearStockCart([]));
+      }, 2000)
     } catch (error: any) {
       if (error.response) {
         dispatch(
@@ -87,7 +94,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
         </thead>
 
         <tbody>
-          {homeCartItems?.map((item, index) => {
+          {vendorCartItems?.map((item, index) => {
             return (
               <tr key={item.toy.id} className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""}`}>
                 <td className='border p-2'>{item.toy.name}</td>
@@ -135,20 +142,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
         <div className='grid grid-cols-2 gap-3 w-full'>
           <div className="">
             <label htmlFor=''>From</label>
-            {" "}
-            {currentCart == 'Home' ?
-              <select
-                name='from'
-                className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
-                onChange={(e) =>
-                  setFrom(e.target.value)
-                }
-                value={from}
-              >
-                <option value='vendor'>vendor</option>
-                <option value='ngo'>ngo</option>
-              </select> : 'ngo'
-            }
+            {" " + from}
           </div>
 
           <div>
@@ -167,7 +161,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                 <option value='ngo'>ngo</option>
                 <option value='school'>school</option>
               </select>
-              : 'School'
+              : to
             }
           </div>
         </div>

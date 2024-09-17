@@ -11,22 +11,19 @@ import { removeItemFromStockCart, setItemToStockCart } from "../redux/slices/sto
 
 interface MyComponentProps {
   toys: { toy: IToy; quantity?: string }[];
-  from?: string;
+  from: string;
 }
 
 const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
-  const [currentCart, setCurrentCart] = useState('Home');
-
-  const homeCartItems = useSelector((state: RootState) => state.cart.homeCartItems);
-  const stockCartItems = useSelector((state: RootState) => state.cart.stockCartItems);
-   const vendorCartItems = useSelector((state: RootState) =>
-     currentCart === "Home"
-       ? state.cart.homeCartItems
-       : state.cart.stockCartItems
-   );
-
+  console.log(from)
+  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>
+    from === "Home"
+      ? state.home.homeCartItems
+      : state.stock.stockCartItems
+  );
+  console.log(vendorCartItems)
   const [inputValue, setInputValue] = useState<string>("");
   const [levelValue, setLevelValue] = useState<string>("all");
   const { pathname } = useLocation();
@@ -36,7 +33,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
     if (toy) {
       const isExists = vendorCartItems.find((item) => item.toy.id === toy.id);
       if (!isExists) {
-        if (currentCart === 'Home') {
+        if (from === 'Home') {
           dispatch(setItemToHomeCart({ toy, quantity: 1 }));
         } else {
           dispatch(setItemToStockCart({ toy, quantity: 1 }));
@@ -95,11 +92,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
         <Link to={`${CART}`}>
           <CiShoppingCart className='text-4xl relative' />
         </Link>
-        {vendorCartItems.length > 0 && (
+        {/* {vendorCartItems.length > 0 && (
           <div className='quantity w-[20px] h-[20px] bg-gray-400 rounded-full absolute top-20 right-20 flex items-center justify-center font-bold text-xs text-white'>
             {vendorCartItems.length}
           </div>
-        )}
+        )} */}
       </div>
       <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
         <table className='p-4 w-full text-sm'>
@@ -198,9 +195,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                 </p>
                 <p className='font-[300] flex justify-between items-center'>
                   <strong
-                    className={`text-[16px] font-semibold ${
-                      !selectedToy?.quantity && "hidden"
-                    }`}
+                    className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
+                      }`}
                   >
                     Quantity:{" "}
                     <span className='font-[300]'>{selectedToy?.quantity}</span>

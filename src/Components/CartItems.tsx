@@ -8,10 +8,13 @@ import { useEffect, useState } from 'react';
 import { IToy } from '../types/School';
 import { removeItemFromStockCart } from '../redux/slices/stockCartSlice';
 
-
 const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
-  const homeCartItems: ShowVendorOrder[] = useSelector((state: RootState) => state.cart.homeCartItems);
-  const stockCartItems: ShowVendorOrder[] = useSelector((state: RootState)=> state.cart.stockCartItems);
+  const vendorCartItems: ShowVendorOrder[] = useSelector(
+    (state: RootState) =>
+      currentCart === "Home"
+        ? state.home.homeCartItems
+        : state.stock.stockCartItems
+  );
   
   const [selectedToy, setSelectedToy] = useState<{ toy: IToy; } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
@@ -51,7 +54,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
             </tr>
           </thead>
           <tbody>
-            {homeCartItems?.map((item) => {
+            {vendorCartItems?.map((item) => {
               return (
                 <tr
                   key={item.toy.id}
@@ -84,9 +87,8 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
 
       {/* model */}
       <div
-        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${
-          showModel ? "block" : "hidden"
-        }`}
+        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${showModel ? "block" : "hidden"
+          }`}
         onClick={() => setShowModel(false)}
       >
         <div

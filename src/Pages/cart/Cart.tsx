@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 
 const Cart: React.FC = () => {
   const [currentCart, setCurrentCart] = useState('Home');
-  const homeCartItems = useSelector((state: RootState) => state.cart.homeCartItems) || [];
-  const stockCartItems = useSelector((state: RootState) => state.cart.stockCartItems) || [];
+  const homeCartItems = useSelector((state: RootState) => state.home.homeCartItems) || [];
+  const stockCartItems = useSelector((state: RootState) => state.stock.stockCartItems) || [];
   const [vendorCartItems, setVendorCartItems] = useState(homeCartItems);
 
   useEffect(() => {

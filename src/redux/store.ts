@@ -8,8 +8,8 @@ import stockReducer from './slices/stockCartSlice'
 const store: Store = configureStore({
     reducer: {
         status: statusReducer,
-        cart : cartReducer,
-        stock : stockReducer
+        home: cartReducer,
+        stock: stockReducer
     },
 });
 
