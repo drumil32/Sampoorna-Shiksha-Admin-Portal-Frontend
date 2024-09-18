@@ -1,10 +1,11 @@
 import { Link, } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK , SCHOOL } from '../utils/routes';
+import { HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK , SCHOOL, CART } from '../utils/routes';
 import { FaPlus } from "react-icons/fa6";
 import { setBackdrop, setError } from "../redux/slices/statusSlice";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
+import { CiShoppingCart } from 'react-icons/ci';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -38,9 +39,13 @@ const Header = () => {
         Sampooran Shiksha
       </Link>
 
-      <button onClick={addNewSchoolData}>add new Schools</button>
-
       <div className='flex gap-4 items-center'>
+        <button
+          onClick={addNewSchoolData}
+          className='border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+        >
+          Add new Schools
+        </button>
         <Link
           to={STOCK}
           className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
@@ -75,6 +80,14 @@ const Header = () => {
         >
           Order History
         </Link>
+        <Link to={`${CART}`}>
+          <CiShoppingCart className='text-4xl relative' />
+        </Link>
+        {/* {vendorCartItems.length > 0 && (
+          <div className='quantity w-[20px] h-[20px] bg-gray-400 rounded-full absolute top-20 right-20 flex items-center justify-center font-bold text-xs text-white'>
+            {vendorCartItems.length}
+          </div>
+        )} */}
         {/*  */}
       </div>
     </div>

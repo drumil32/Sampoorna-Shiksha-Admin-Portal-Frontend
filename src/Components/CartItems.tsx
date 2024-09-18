@@ -83,8 +83,9 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
 
       {/* model */}
       <div
-        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${showModel ? "block" : "hidden"
-          }`}
+        className={`fixed bg-[rgba(0,0,0,0.6)] z-10 inset-0 p-3 flex items-center justify-center gap-2 ${
+          showModel ? "block" : "hidden"
+        }`}
         onClick={() => setShowModel(false)}
       >
         <div
@@ -163,7 +164,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                     target='_blank'
                     rel='noopener noreferrer'
                   >
-                    Video Link
+                    Video Link h
                   </a>
                 )}
             </div>

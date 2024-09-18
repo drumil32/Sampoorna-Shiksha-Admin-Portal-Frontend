@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ShowVendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { CART } from "../utils/routes";
-import { CiShoppingCart } from "react-icons/ci";
+import {useLocation } from "react-router-dom";
 import { removeItemFromHomeCart, setItemToHomeCart } from "../redux/slices/homeCartSlice";
 import { removeItemFromStockCart, setItemToStockCart } from "../redux/slices/stockCartSlice";
 
@@ -17,7 +15,7 @@ interface MyComponentProps {
 const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
-  console.log(from)
+
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>
     from === "Home"
       ? state.home.homeCartItems
@@ -48,13 +46,13 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   };
 
   const filteredToys = toys?.filter((item) => {
+    console.log(item)
     const matchesInput =
-      item.toy.brand?.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.toy.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
+      item.toy.brand?.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.toy.subBrand?.toLowerCase().includes(inputValue.toLowerCase());
 
-    const matchesLevel = levelValue.toLowerCase() === "all" ||
-      item.toy.level?.toLowerCase() === levelValue.toLowerCase();
+     const matchesLevel = levelValue.toLowerCase() === "all" || item.toy.level?.toLowerCase() === levelValue.toLowerCase();
       return matchesInput && matchesLevel;
   });
 
@@ -74,7 +72,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
         <input
           type='text'
           className='p-2 text-sm w-full outline-none'
-          placeholder='Brand or SubBrand'
+          placeholder='Name Brand or SubBrand  '
           onChange={(e) => setInputValue(e.target.value)}
         />
         <span>Level</span>
@@ -89,14 +87,6 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             </option>
           ))}
         </select>
-        <Link to={`${CART}`}>
-          <CiShoppingCart className='text-4xl relative' />
-        </Link>
-        {/* {vendorCartItems.length > 0 && (
-          <div className='quantity w-[20px] h-[20px] bg-gray-400 rounded-full absolute top-20 right-20 flex items-center justify-center font-bold text-xs text-white'>
-            {vendorCartItems.length}
-          </div>
-        )} */}
       </div>
       <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
         <table className='p-4 w-full text-sm'>
@@ -104,6 +94,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             <tr className='border p-3 font-[400]'>
               <th className='p-3 font-[600] border'>Toy Id</th>
               <th className='p-3 font-[600] border'>Name</th>
+              <th className='p-3 font-[600] border'>Code Name</th>
               <th className='p-3 font-[600] border'>Brand</th>
               <th className='p-3 font-[600] border'>SubBrand</th>
               <th className='p-3 font-[600] border'>Price</th>
@@ -115,15 +106,20 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
           </thead>
           <tbody>
             {filteredToys?.map((item) => {
-              const isInCart = vendorCartItems.some((cartItem) => cartItem.toy.id === item.toy.id);
+              const isInCart = vendorCartItems.some(
+                (cartItem) => cartItem.toy.id === item.toy.id
+              );
               return (
                 <tr
                   key={item.toy.id}
-                  className={`border text-center text-xs cursor-pointer ${isInCart ? "!bg-green-200" : ""}`}
+                  className={`border text-center text-xs cursor-pointer ${
+                    isInCart ? "!bg-green-200" : ""
+                  }`}
                   onClick={() => showToyDetails(item.toy, item.quantity)}
                 >
                   <td className='border p-2'>{item.toy.id}</td>
                   <td className='border p-2'>{item.toy.name}</td>
+                  <td className='border p-2'>{item.toy.codeName}</td>
                   <td className='border p-2'>{item.toy.brand}</td>
                   <td className='border p-2'>{item.toy.subBrand}</td>
                   <td className='border p-2'>{item.toy.price}</td>
@@ -163,7 +159,9 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                 <p className='font-[300] flex justify-between items-center'>
                   <strong className='text-[16px] font-semibold'>
                     Price:{" "}
-                    <span className='font-[300]'>{selectedToy?.toy?.price}</span>
+                    <span className='font-[300]'>
+                      {selectedToy?.toy?.price}
+                    </span>
                   </strong>
                   <strong className='text-[16px] font-semibold'>
                     Category:{" "}
@@ -175,7 +173,9 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                 <p className='font-[300] flex justify-between items-center'>
                   <strong className='text-[16px] font-semibold'>
                     Brand:{" "}
-                    <span className='font-[300]'>{selectedToy?.toy?.brand}</span>
+                    <span className='font-[300]'>
+                      {selectedToy?.toy?.brand}
+                    </span>
                   </strong>
                   <strong className='text-[16px] font-semibold'>
                     Level:{" "}
@@ -189,14 +189,17 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                   <strong className='text-[16px] font-semibold'>
                     Learn:{" "}
                     <span className='font-[300]'>
-                      {selectedToy?.toy?.learn?.length ? selectedToy?.toy?.learn.join(", ") : "Not Provided"}
+                      {selectedToy?.toy?.learn?.length
+                        ? selectedToy?.toy?.learn.join(", ")
+                        : "Not Provided"}
                     </span>
                   </strong>
                 </p>
                 <p className='font-[300] flex justify-between items-center'>
                   <strong
-                    className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
-                      }`}
+                    className={`text-[16px] font-semibold ${
+                      !selectedToy?.quantity && "hidden"
+                    }`}
                   >
                     Quantity:{" "}
                     <span className='font-[300]'>{selectedToy?.quantity}</span>
@@ -209,28 +212,43 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                   </strong>
                 </p>
                 <p className='font-[300] flex justify-between items-center'>
+                  <p className='font-[300] flex justify-between items-center'>
                   <strong className='text-[16px] font-semibold'>
-                    ID: <span className='font-[300]'>{selectedToy?.toy?.id}</span>
+                    CatelougePageNumber: <span className='font-[300]'>{selectedToy?.toy?.cataloguePgNo}</span>
+                  </strong>
+                </p>
+                </p>
+                <p className='font-[300] flex justify-between items-center'>
+                  <strong className='text-[16px] font-semibold'>
+                    ID:{" "}
+                    <span className='font-[300]'>{selectedToy?.toy?.id}</span>
                   </strong>
                 </p>
               </div>
               <div className='w-[95%] m-auto flex items-center gap-2 justify-between pt-2 text-xs'>
-                {selectedToy?.toy?.link && selectedToy?.toy?.link !== "Not Provided" && (
-                  <a
-                    href={selectedToy?.toy?.link}
-                    className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    Video Link
-                  </a>
-                )}
-                {vendorCartItems.some(item => item.toy.id === selectedToy?.toy?.id) ? (
+                {selectedToy?.toy?.link &&
+                  selectedToy?.toy?.link !== "Not Provided" && (
+                    <a
+                      href={selectedToy?.toy?.link}
+                      className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      Video Link
+                    </a>
+                  )}
+                {vendorCartItems.some(
+                  (item) => item.toy.id === selectedToy?.toy?.id
+                ) ? (
                   <button
                     onClick={() =>
                       from === "Stock"
-                        ? dispatch(removeItemFromStockCart(selectedToy?.toy?.id ?? ""))
-                        : dispatch(removeItemFromHomeCart(selectedToy?.toy?.id ?? ""))
+                        ? dispatch(
+                            removeItemFromStockCart(selectedToy?.toy?.id ?? "")
+                          )
+                        : dispatch(
+                            removeItemFromHomeCart(selectedToy?.toy?.id ?? "")
+                          )
                     }
                     className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
                   >

@@ -145,13 +145,13 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
 
       <div className='place-order mt-4 w-full flex flex-col gap-2'>
         <div className='grid grid-cols-2 gap-3 w-full'>
-          <div className="">
-            <label htmlFor=''>From</label>
-            {" " + from}
+          <div className="flex flex-col">
+            <label htmlFor='' className="text-gray-600">From</label>
+            <span className="text-sm font-bold">{from}</span>
           </div>
 
-          <div>
-            <label htmlFor=''>To</label>
+          <div className="flex items-center gap-2">
+            <label htmlFor='' className="font-bold text-sm">To</label>
             {" "}
             {currentCart == 'Home' ?
               <select

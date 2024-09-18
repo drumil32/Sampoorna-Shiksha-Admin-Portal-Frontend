@@ -47,7 +47,7 @@ function App() {
   const backdrop = useSelector((state: RootState) => state.status.backdrop);
 
   const router = createBrowserRouter([
-    {
+     {
       path: HOME,
       element: <Layout />,
       // errorElement: <ErrorPage />,
