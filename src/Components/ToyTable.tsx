@@ -1,11 +1,15 @@
 import { IToy, Level } from "../types/School";
 import { useDispatch, useSelector } from "react-redux";
-import { ShowVendorOrder } from "../types/VendorOrder";
+import { ShowVendorOrder, VendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
 import React, { useEffect, useState } from "react";
 import {useLocation } from "react-router-dom";
 import { removeItemFromHomeCart, setItemToHomeCart } from "../redux/slices/homeCartSlice";
 import { removeItemFromStockCart, setItemToStockCart } from "../redux/slices/stockCartSlice";
+import { setError, setLoading } from "../redux/slices/statusSlice";
+import axiosInstance from "../utils/axiosInstance";
+import { toast } from "react-toastify";
+import { UPDATE_STOCK } from "../utils/restEndPoints";
 
 interface MyComponentProps {
   toys: { toy: IToy; quantity?: string }[];
@@ -13,19 +17,54 @@ interface MyComponentProps {
 }
 
 const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
-  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string } | null>(null);
+  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity? : string } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
+  const [editQuantity, setEditQuantity] = useState<boolean>(false);
+  const [newQuantity, setNewQuantity] = useState<number>();
+
 
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>
-    from === "Home"
-      ? state.home.homeCartItems
-      : state.stock.stockCartItems
+    from === "Home"? state.home.homeCartItems: state.stock.stockCartItems
   );
-  console.log(vendorCartItems)
   const [inputValue, setInputValue] = useState<string>("");
   const [levelValue, setLevelValue] = useState<string>("all");
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+
+  const handleEdit = () => {
+      setEditQuantity(true);
+      setNewQuantity(Number(selectedToy?.quantity) || 0);
+
+    };
+
+    const handleQtyUpdate = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.post(UPDATE_STOCK, {
+            toyId: selectedToy?.toy.id,
+            quantity: newQuantity,
+          }
+        );
+        console.log(response.data);
+        toast.success(response.data.message);
+        setEditQuantity(false);
+      } catch (error: any) {
+        if (error.response) {
+          dispatch(
+            setError({
+              statusCode: error.response.status,
+              message: error.response.data.error,
+            })
+          );
+        } else {
+          toast.error("Server is Down.");
+        }
+      } finally {
+         setLoading(false);
+      }
+    };
+  
+
 
   const addToCart = (toy: IToy | undefined) => {
     if (toy) {
@@ -46,9 +85,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   };
 
   const filteredToys = toys?.filter((item) => {
-    console.log(item)
-    const matchesInput =
-      item.toy.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
+      const matchesInput = 
+      item.toy.name?.toLowerCase().includes(inputValue.toLowerCase())||
       item.toy.brand?.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.toy.subBrand?.toLowerCase().includes(inputValue.toLowerCase());
 
@@ -71,8 +109,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
       <div className='filters w-[90%] m-auto mt-4 border p-2 flex gap-2 items-center rounded-md'>
         <input
           type='text'
-          className='p-2 text-sm w-full outline-none'
-          placeholder='Name Brand or SubBrand  '
+          className='p-2 text-sm w-full outline-none placeholder:font-semibold'
+          placeholder='Name , Brand or SubBrand'
           onChange={(e) => setInputValue(e.target.value)}
         />
         <span>Level</span>
@@ -112,7 +150,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
               return (
                 <tr
                   key={item.toy.id}
-                  className={`border text-center text-xs cursor-pointer ${
+                  className={`border text-center text-sm cursor-pointer ${
                     isInCart ? "!bg-green-200" : ""
                   }`}
                   onClick={() => showToyDetails(item.toy, item.quantity)}
@@ -134,6 +172,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             })}
           </tbody>
         </table>
+         {filteredToys?.length === 0 && (
+          <div className='w-full h-full flex justify-center items-center'>
+            <h1 className='text-xl font-semibold'>No Items Found</h1>
+          </div>
+        )}  
       </div>
       {/* Modal */}
       {showModel && (
@@ -195,14 +238,46 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                     </span>
                   </strong>
                 </p>
-                <p className='font-[300] flex justify-between items-center'>
+                <p
+                  className={`font-[300] flex justify-between ${
+                    editQuantity ? "items-start" : "items-center"
+                  } `}
+                >
                   <strong
                     className={`text-[16px] font-semibold ${
                       !selectedToy?.quantity && "hidden"
                     }`}
                   >
                     Quantity:{" "}
-                    <span className='font-[300]'>{selectedToy?.quantity}</span>
+                    <span className='font-[300]'>
+                      {editQuantity ? (
+                        <>
+                          <input
+                            type='number'
+                            value={newQuantity ?? selectedToy?.quantity ?? ""}
+                            onChange={(e) =>
+                              setNewQuantity(Number(e.target.value))
+                            }
+                            className='border p-1 rounded-md w-20'
+                          />
+                          <br />
+                          <button
+                            onClick={() => setEditQuantity(false)}
+                            className='bg-red-400 text-xs border p-1 rounded-md text-white'
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        selectedToy?.quantity
+                      )}
+                      <button
+                        onClick={editQuantity ? handleQtyUpdate : handleEdit}
+                        className='border text-xs bg-green-400 ml-3 mt-3 p-1 rounded-md text-white'
+                      >
+                        {editQuantity ? "Save" : "updateQty"}
+                      </button>
+                    </span>
                   </strong>
                   <strong className='text-[16px] font-semibold'>
                     SubBrand:{" "}
@@ -213,10 +288,13 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                 </p>
                 <p className='font-[300] flex justify-between items-center'>
                   <p className='font-[300] flex justify-between items-center'>
-                  <strong className='text-[16px] font-semibold'>
-                    CatelougePageNumber: <span className='font-[300]'>{selectedToy?.toy?.cataloguePgNo}</span>
-                  </strong>
-                </p>
+                    <strong className='text-[16px] font-semibold'>
+                      CatelougePageNumber:{" "}
+                      <span className='font-[300]'>
+                        {selectedToy?.toy?.cataloguePgNo}
+                      </span>
+                    </strong>
+                  </p>
                 </p>
                 <p className='font-[300] flex justify-between items-center'>
                   <strong className='text-[16px] font-semibold'>

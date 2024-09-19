@@ -11,7 +11,6 @@ import ToyTable from '../../Components/ToyTable';
 const Stock: React.FC = () => {
     const [toys, setToys] = useState<{ toy: IToy; quantity: string }[]>([]);
 
-
     const dispatch = useDispatch();
 
     useEffect(() => {

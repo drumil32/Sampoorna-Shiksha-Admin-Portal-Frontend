@@ -53,7 +53,7 @@ const School: React.FC = () => {
   }, []);
 
 
-    const filteredToys = schoolList?.filter((school) => {
+    const filteredSchool = schoolList?.filter((school) => {
      return school.nameOfSchoolInstitution?.toLowerCase().includes(searchType.toLowerCase()) 
   });
 
@@ -64,11 +64,11 @@ const School: React.FC = () => {
         <div className='filter w-[90%] m-auto mt-3 border p-2 rounded-md flex items-center'>
           <input
             type='text'
-            className='p-2 text-sm w-full outline-none'
-            placeholder='Name of School  '
+            className='p-2 text-sm w-full outline-none placeholder:font-semibold'
+            placeholder='Name of School...'
             onChange={(e) => setSearchType(e.target.value)}
           />
-          <BiSearch className="text-2xl"/>
+          <BiSearch className='text-2xl' />
         </div>
         <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
           <table className='p-4 w-full text-sm'>
@@ -80,11 +80,11 @@ const School: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredToys?.map((school) => {
+              {filteredSchool?.map((school) => {
                 return (
                   <tr
                     key={school._id}
-                    className={`border text-center text-xs cursor-pointer $`}
+                    className={`border text-center text-sm cursor-pointer $`}
                     onClick={() => navigate(`/school/${school._id}`)}
                   >
                     <td className='border p-2'>{school.code}</td>
@@ -99,6 +99,11 @@ const School: React.FC = () => {
               })}
             </tbody>
           </table>
+          {filteredSchool.length === 0 && (
+            <div className='w-full flex justify-center items-center'>
+              <h1 className='text-2xl font-bold'>No School Found</h1>
+            </div>
+          )}
         </div>
       </>
     </Loading>
