@@ -36,11 +36,9 @@ function App() {
   // const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
+    console.log(error);
     if (error) {
       toast.error(error.message);
-      // if (401 == error.statusCode) {
-      //   navigate(SIGNIN)
-      // }
       dispatch(clearError());
     }
   }, [error]);
