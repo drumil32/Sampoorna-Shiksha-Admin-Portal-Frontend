@@ -1,10 +1,17 @@
 import { Link, } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK , SCHOOL } from '../utils/routes';
+import { HOME, ORDER_HISTORY, ADD_TOY, UPDATE_TOY, STOCK , SCHOOL, CART } from '../utils/routes';
 import { FaPlus } from "react-icons/fa6";
 import { setBackdrop, setError } from "../redux/slices/statusSlice";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
+import { CiShoppingCart } from 'react-icons/ci';
+import { LuSchool } from "react-icons/lu";
+import { MdOutlineEdit } from "react-icons/md";
+import { CiBoxes } from "react-icons/ci";
+
+
+
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -30,7 +37,7 @@ const Header = () => {
   }
 
   return (
-    <div className='bg-gray-200 shadow-md p-3 font-[300] text-gray-600 flex items-center justify-between'>
+    <div className='bg-gray-100 shadow-md p-3 font-[300] text-gray-600 flex items-center justify-between'>
       <Link
         to={HOME}
         className='font-semibold text-md text-gray-700 border-r-5 p-1 border-gray-900'
@@ -38,26 +45,33 @@ const Header = () => {
         Sampooran Shiksha
       </Link>
 
-      <button onClick={addNewSchoolData}>add new Schools</button>
-
       <div className='flex gap-4 items-center'>
+        <button
+          onClick={addNewSchoolData}
+          className='border flex gap-1 border-gray-400 p-2 text-xs items-center rounded-md bg-white text-gray-700 font-medium'
+        >
+          Add new Schools
+          <LuSchool className='relative' />
+        </button>
         <Link
           to={STOCK}
-          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-white text-gray-700  font-medium'
         >
           <span>Stock</span>
+          <CiBoxes className='relative' />
         </Link>
 
         <Link
           to={SCHOOL}
-          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-white text-gray-700  font-medium'
         >
           <span>Schools</span>
+          <LuSchool className='relative' />
         </Link>
 
         <Link
           to={ADD_TOY}
-          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-white text-gray-700  font-medium'
         >
           <span>Add Toy</span>
           <FaPlus className=' relative' />
@@ -65,9 +79,10 @@ const Header = () => {
 
         <Link
           to={UPDATE_TOY}
-          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-green-500 text-white font-medium'
+          className='flex gap-1 border border-gray-400 p-2 text-xs items-center rounded-md bg-white text-gray-700  font-medium'
         >
           <span>Update Toy</span>
+          <MdOutlineEdit className='relative' />
         </Link>
         <Link
           to={ORDER_HISTORY}
@@ -75,7 +90,9 @@ const Header = () => {
         >
           Order History
         </Link>
-        {/*  */}
+        <Link to={`${CART}`}>
+          <CiShoppingCart className='text-4xl relative' />
+        </Link>
       </div>
     </div>
   );

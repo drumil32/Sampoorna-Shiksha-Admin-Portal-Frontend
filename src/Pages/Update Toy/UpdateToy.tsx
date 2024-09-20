@@ -40,23 +40,26 @@ const UpdateToy: React.FC = () => {
 
 
   return (
-      <Loading>
-        <div className='w-full flex items-center justify-center mt-3'>
-          <div className='w-[48%] flex items-center border bg-white justify-between p-2 rounded-md shadow-lg focus:bg-red-300 '>
-            <input
-              type='search'
-              placeholder='Find Toy By Id...'
-              className='p-2 w-[90%]  outline-none'
-              onChange={(e) => setToyId(e.target.value)}
-            />
-            <button className="border p-2 bg-green-500 text-white flex items-center text-sm gap-1" onClick={findToy}>
-              <span>Search</span>
-              <CiSearch className="mt-1" />
-            </button>
-          </div>
+    <Loading>
+      <div className={`w-full flex items-center justify-center mt-3  ${!toy && 'calc-height'}`}>
+        <div className='w-[42%] flex items-center border bg-white justify-between p-2 rounded-md shadow-lg focus:bg-red-300 '>
+          <input
+            type='search'
+            placeholder='Find Toy By Id...'
+            className='p-2 w-[90%]  outline-none'
+            onChange={(e) => setToyId(e.target.value)}
+          />
+          <button
+            className='border p-2 bg-green-500 text-white flex items-center text-sm gap-1'
+            onClick={findToy}
+          >
+            {/* <span>Search</span> */}
+            <CiSearch className='mt-1 text-2xl rounded-md' />
+          </button>
         </div>
-        {toy && <ToyForm title="Update Toy" toy={toy} setToy={setToy} />}
-      </Loading>
+      </div>
+      {toy && <ToyForm title='Update Toy' toy={toy} setToy={setToy} />}
+    </Loading>
   );
 };
 

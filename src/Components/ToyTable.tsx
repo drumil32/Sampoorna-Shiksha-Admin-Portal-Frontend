@@ -1,13 +1,15 @@
 import { IToy, Level } from "../types/School";
 import { useDispatch, useSelector } from "react-redux";
-import { ShowVendorOrder } from "../types/VendorOrder";
+import { ShowVendorOrder, VendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { CART } from "../utils/routes";
-import { CiShoppingCart } from "react-icons/ci";
+import {useLocation } from "react-router-dom";
 import { removeItemFromHomeCart, setItemToHomeCart } from "../redux/slices/homeCartSlice";
 import { removeItemFromStockCart, setItemToStockCart } from "../redux/slices/stockCartSlice";
+import { setError, setLoading } from "../redux/slices/statusSlice";
+import axiosInstance from "../utils/axiosInstance";
+import { toast } from "react-toastify";
+import { UPDATE_STOCK } from "../utils/restEndPoints";
 
 interface MyComponentProps {
   toys: { toy: IToy; quantity?: string }[];
@@ -15,19 +17,54 @@ interface MyComponentProps {
 }
 
 const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
-  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string } | null>(null);
+  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity? : string } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
-  console.log(from)
+  const [editQuantity, setEditQuantity] = useState<boolean>(false);
+  const [newQuantity, setNewQuantity] = useState<number>();
+
+
   const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>
-    from === "Home"
-      ? state.home.homeCartItems
-      : state.stock.stockCartItems
+    from === "Home"? state.home.homeCartItems: state.stock.stockCartItems
   );
-  console.log(vendorCartItems)
   const [inputValue, setInputValue] = useState<string>("");
   const [levelValue, setLevelValue] = useState<string>("all");
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+
+  const handleEdit = () => {
+      setEditQuantity(true);
+      setNewQuantity(Number(selectedToy?.quantity) || 0);
+
+    };
+
+    const handleQtyUpdate = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.post(UPDATE_STOCK, {
+            toyId: selectedToy?.toy.id,
+            quantity: newQuantity,
+          }
+        );
+        console.log(response.data);
+        toast.success(response.data.message);
+        setEditQuantity(false);
+      } catch (error: any) {
+        if (error.response) {
+          dispatch(
+            setError({
+              statusCode: error.response.status,
+              message: error.response.data.error,
+            })
+          );
+        } else {
+          toast.error("Server is Down.");
+        }
+      } finally {
+         setLoading(false);
+      }
+    };
+  
+
 
   const addToCart = (toy: IToy | undefined) => {
     if (toy) {
@@ -48,13 +85,12 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   };
 
   const filteredToys = toys?.filter((item) => {
-    const matchesInput =
+      const matchesInput = 
+      item.toy.name?.toLowerCase().includes(inputValue.toLowerCase())||
       item.toy.brand?.toLowerCase().includes(inputValue.toLowerCase()) ||
-      item.toy.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.toy.subBrand?.toLowerCase().includes(inputValue.toLowerCase());
 
-    const matchesLevel = levelValue.toLowerCase() === "all" ||
-      item.toy.level?.toLowerCase() === levelValue.toLowerCase();
+     const matchesLevel = levelValue.toLowerCase() === "all" || item.toy.level?.toLowerCase() === levelValue.toLowerCase();
       return matchesInput && matchesLevel;
   });
 
@@ -73,8 +109,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
       <div className='filters w-[90%] m-auto mt-4 border p-2 flex gap-2 items-center rounded-md'>
         <input
           type='text'
-          className='p-2 text-sm w-full outline-none'
-          placeholder='Brand or SubBrand'
+          className='p-2 text-sm w-full outline-none placeholder:font-semibold'
+          placeholder='Name , Brand or SubBrand'
           onChange={(e) => setInputValue(e.target.value)}
         />
         <span>Level</span>
@@ -89,14 +125,6 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             </option>
           ))}
         </select>
-        <Link to={`${CART}`}>
-          <CiShoppingCart className='text-4xl relative' />
-        </Link>
-        {/* {vendorCartItems.length > 0 && (
-          <div className='quantity w-[20px] h-[20px] bg-gray-400 rounded-full absolute top-20 right-20 flex items-center justify-center font-bold text-xs text-white'>
-            {vendorCartItems.length}
-          </div>
-        )} */}
       </div>
       <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
         <table className='p-4 w-full text-sm'>
@@ -104,6 +132,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             <tr className='border p-3 font-[400]'>
               <th className='p-3 font-[600] border'>Toy Id</th>
               <th className='p-3 font-[600] border'>Name</th>
+              <th className='p-3 font-[600] border'>Code Name</th>
               <th className='p-3 font-[600] border'>Brand</th>
               <th className='p-3 font-[600] border'>SubBrand</th>
               <th className='p-3 font-[600] border'>Price</th>
@@ -115,15 +144,20 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
           </thead>
           <tbody>
             {filteredToys?.map((item) => {
-              const isInCart = vendorCartItems.some((cartItem) => cartItem.toy.id === item.toy.id);
+              const isInCart = vendorCartItems.some(
+                (cartItem) => cartItem.toy.id === item.toy.id
+              );
               return (
                 <tr
                   key={item.toy.id}
-                  className={`border text-center text-xs cursor-pointer ${isInCart ? "!bg-green-200" : ""}`}
+                  className={`border text-center text-sm cursor-pointer ${
+                    isInCart ? "!bg-green-200" : ""
+                  }`}
                   onClick={() => showToyDetails(item.toy, item.quantity)}
                 >
                   <td className='border p-2'>{item.toy.id}</td>
                   <td className='border p-2'>{item.toy.name}</td>
+                  <td className='border p-2'>{item.toy.codeName}</td>
                   <td className='border p-2'>{item.toy.brand}</td>
                   <td className='border p-2'>{item.toy.subBrand}</td>
                   <td className='border p-2'>{item.toy.price}</td>
@@ -138,6 +172,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             })}
           </tbody>
         </table>
+         {filteredToys?.length === 0 && (
+          <div className='w-full h-full flex justify-center items-center'>
+            <h1 className='text-xl font-semibold'>No Items Found</h1>
+          </div>
+        )}  
       </div>
       {/* Modal */}
       {showModel && (
@@ -163,7 +202,9 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                 <p className='font-[300] flex justify-between items-center'>
                   <strong className='text-[16px] font-semibold'>
                     Price:{" "}
-                    <span className='font-[300]'>{selectedToy?.toy?.price}</span>
+                    <span className='font-[300]'>
+                      {selectedToy?.toy?.price}
+                    </span>
                   </strong>
                   <strong className='text-[16px] font-semibold'>
                     Category:{" "}
@@ -175,7 +216,9 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                 <p className='font-[300] flex justify-between items-center'>
                   <strong className='text-[16px] font-semibold'>
                     Brand:{" "}
-                    <span className='font-[300]'>{selectedToy?.toy?.brand}</span>
+                    <span className='font-[300]'>
+                      {selectedToy?.toy?.brand}
+                    </span>
                   </strong>
                   <strong className='text-[16px] font-semibold'>
                     Level:{" "}
@@ -189,17 +232,52 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                   <strong className='text-[16px] font-semibold'>
                     Learn:{" "}
                     <span className='font-[300]'>
-                      {selectedToy?.toy?.learn?.length ? selectedToy?.toy?.learn.join(", ") : "Not Provided"}
+                      {selectedToy?.toy?.learn?.length
+                        ? selectedToy?.toy?.learn.join(", ")
+                        : "Not Provided"}
                     </span>
                   </strong>
                 </p>
-                <p className='font-[300] flex justify-between items-center'>
+                <p
+                  className={`font-[300] flex justify-between ${
+                    editQuantity ? "items-start" : "items-center"
+                  } `}
+                >
                   <strong
-                    className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
-                      }`}
+                    className={`text-[16px] font-semibold ${
+                      !selectedToy?.quantity && "hidden"
+                    }`}
                   >
                     Quantity:{" "}
-                    <span className='font-[300]'>{selectedToy?.quantity}</span>
+                    <span className='font-[300]'>
+                      {editQuantity ? (
+                        <>
+                          <input
+                            type='number'
+                            value={newQuantity ?? selectedToy?.quantity ?? ""}
+                            onChange={(e) =>
+                              setNewQuantity(Number(e.target.value))
+                            }
+                            className='border p-1 rounded-md w-20'
+                          />
+                          <br />
+                          <button
+                            onClick={() => setEditQuantity(false)}
+                            className='bg-red-400 text-xs border p-1 rounded-md text-white'
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        selectedToy?.quantity
+                      )}
+                      <button
+                        onClick={editQuantity ? handleQtyUpdate : handleEdit}
+                        className='border text-xs bg-green-400 ml-3 mt-3 p-1 rounded-md text-white'
+                      >
+                        {editQuantity ? "Save" : "updateQty"}
+                      </button>
+                    </span>
                   </strong>
                   <strong className='text-[16px] font-semibold'>
                     SubBrand:{" "}
@@ -209,28 +287,46 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                   </strong>
                 </p>
                 <p className='font-[300] flex justify-between items-center'>
+                  <p className='font-[300] flex justify-between items-center'>
+                    <strong className='text-[16px] font-semibold'>
+                      CatelougePageNumber:{" "}
+                      <span className='font-[300]'>
+                        {selectedToy?.toy?.cataloguePgNo}
+                      </span>
+                    </strong>
+                  </p>
+                </p>
+                <p className='font-[300] flex justify-between items-center'>
                   <strong className='text-[16px] font-semibold'>
-                    ID: <span className='font-[300]'>{selectedToy?.toy?.id}</span>
+                    ID:{" "}
+                    <span className='font-[300]'>{selectedToy?.toy?.id}</span>
                   </strong>
                 </p>
               </div>
               <div className='w-[95%] m-auto flex items-center gap-2 justify-between pt-2 text-xs'>
-                {selectedToy?.toy?.link && selectedToy?.toy?.link !== "Not Provided" && (
-                  <a
-                    href={selectedToy?.toy?.link}
-                    className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    Video Link
-                  </a>
-                )}
-                {vendorCartItems.some(item => item.toy.id === selectedToy?.toy?.id) ? (
+                {selectedToy?.toy?.link &&
+                  selectedToy?.toy?.link !== "Not Provided" && (
+                    <a
+                      href={selectedToy?.toy?.link}
+                      className='text-blue-400 border p-2 rounded-md hover:bg-gray-200 font-medium'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      Video Link
+                    </a>
+                  )}
+                {vendorCartItems.some(
+                  (item) => item.toy.id === selectedToy?.toy?.id
+                ) ? (
                   <button
                     onClick={() =>
                       from === "Stock"
-                        ? dispatch(removeItemFromStockCart(selectedToy?.toy?.id ?? ""))
-                        : dispatch(removeItemFromHomeCart(selectedToy?.toy?.id ?? ""))
+                        ? dispatch(
+                            removeItemFromStockCart(selectedToy?.toy?.id ?? "")
+                          )
+                        : dispatch(
+                            removeItemFromHomeCart(selectedToy?.toy?.id ?? "")
+                          )
                     }
                     className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
                   >

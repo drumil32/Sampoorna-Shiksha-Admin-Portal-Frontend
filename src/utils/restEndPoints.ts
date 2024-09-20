@@ -14,3 +14,4 @@ export const GET_ALL_TOYS_FROM_STOCK = 'stock';
 export const STOCK = 'stock';
 export const REMOVE_FROM_STOCK = 'stock/remove';
 export const CHECK_AVAILABLE_STOCK = 'stock/check-available';
+export const UPDATE_STOCK = 'stock/assign-quantity';
