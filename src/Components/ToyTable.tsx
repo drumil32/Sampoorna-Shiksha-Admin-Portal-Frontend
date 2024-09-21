@@ -21,15 +21,20 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   const [showModel, setShowModel] = useState<boolean>(false);
   const [editQuantity, setEditQuantity] = useState<boolean>(false);
   const [newQuantity, setNewQuantity] = useState<number>();
+  const [totalToysQuantity, setTotalToysQuantity] = useState<number>(0);
 
 
-  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>
-    from === "Home"? state.home.homeCartItems: state.stock.stockCartItems
-  );
+  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>from === "Home"? state.home.homeCartItems: state.stock.stockCartItems);
   const [inputValue, setInputValue] = useState<string>("");
   const [levelValue, setLevelValue] = useState<string>("all");
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+  
+
+  useEffect(() => {
+    const totalQuantity = toys.reduce((total, toy) => total + (Number(toy.quantity) || 0), 0);
+    setTotalToysQuantity(totalQuantity);
+  }, [toys]);
 
   const handleEdit = () => {
       setEditQuantity(true);
@@ -108,7 +113,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
       <div className='filters w-[90%] m-auto mt-4 border p-2 flex gap-2 items-center rounded-md'>
         <input
           type='text'
-          className='p-2 text-sm w-full outline-none placeholder:font-semibold'
+          className='p-2 text-sm w-[77%] outline-none placeholder:font-semibold'
           placeholder='Name , Brand or SubBrand'
           onChange={(e) => setInputValue(e.target.value)}
         />
@@ -124,11 +129,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             </option>
           ))}
         </select>
-         {pathname !== "/" && (
-          <div className='size-10 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
-            {toys?.length && toys.length}
+        {pathname !== "/" && (
+          <div className='size-30 p-1 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
+            {toys?.length && toys.length} - {totalToysQuantity}
           </div>
-        )} 
+        )}
       </div>
       <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
         <table className='p-4 w-full text-sm'>

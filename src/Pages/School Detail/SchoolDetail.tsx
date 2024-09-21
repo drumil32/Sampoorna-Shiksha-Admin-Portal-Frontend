@@ -22,13 +22,24 @@ const SchoolDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
 
+  const [totalToysQuantity, setTotalToysQuantity] = useState<number>(0);
+
+  useEffect(() => {
+    setTotalToysQuantity(schoolOrders.reduce((acc, order) => acc + order.listOfToysSentLink.reduce((acc, toy) => acc + toy.quantity, 0), 0));
+  },[schoolOrders]) 
+
+
+
+
+
+
   const fetchData = async () => {
     console.log('afsd')
     try {
       dispatch(setLoading(true));
       const response = await axiosInstance.get(`${SCHOOL}/${id}`);
-      console.log("School data:", response.data);
       setSchoolData(response.data.school);
+      console.log("School data:", response.data.school);
       const orderResponse = await axiosInstance.get(`${SCHOOL_ORDER}/${id}`);
       console.log("School orders:", orderResponse.data);
       setSchoolOrder(orderResponse.data);
@@ -48,11 +59,6 @@ const SchoolDetail: React.FC = () => {
     }
   };
 
-  const handleModalClick = (order: ISchoolOrder) => {
-    console.log(order)
-    setCurrentOrder(order)
-    setShowModal(!showModal)
-  }
 
   useEffect(() => {
     console.log(schoolData);
@@ -120,11 +126,11 @@ const SchoolDetail: React.FC = () => {
       </div>
       <div className='max-w-5xl p-2 m-auto flex items-center justify-between'>
         <h2 className='text-2xl font-bold flex-col'>Orders</h2>
-        {schoolOrders?.length > 0 &&
-          <div className='size-10 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
-            {schoolOrders?.length && schoolOrders.length}
+        {schoolOrders?.length > 0 && (
+          <div className='w-30 h-10 p-2 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
+            {schoolOrders?.length && schoolOrders.length} - {totalToysQuantity}
           </div>
-        }
+        )}
       </div>
       <OrderHistoryTable orders={schoolOrders} />
     </Loading>
