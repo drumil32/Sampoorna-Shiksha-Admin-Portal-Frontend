@@ -112,32 +112,32 @@ const OrderDetails: React.FC = () => {
     }
   }
 
-  const removeToStock = async () => {
-    if (orderDetails?.to == 'ngo' && orderDetails.isAddedOrRemovedFromTheStock == false) {
-      try {
-        dispatch(setBackdrop(true));
-        const response = await axiosInstance.post(REMOVE_FROM_STOCK, {
-          toys: orderDetails?.listOfToysSentLink.map(toy => ({ toy: toy.toy.id, quantity: toy.quantity })),
-          orderId: id
-        });
-        toast.success(response.data.message);
-        setOrderDetails(response.data.order);
-      } catch (error: any) {
-        if (error.response) {
-          dispatch(
-            setError({
-              statusCode: error.response.status,
-              message: error.response.data.error
-            })
-          );
-        } else {
-          toast.error("Server is Down.");
-        }
-      } finally {
-        dispatch(setBackdrop(false));
-      }
-    }
-  }
+  // const removeToStock = async () => {
+  //   if (orderDetails?.to == 'ngo' && orderDetails.isAddedOrRemovedFromTheStock == false) {
+  //     try {
+  //       dispatch(setBackdrop(true));
+  //       const response = await axiosInstance.post(REMOVE_FROM_STOCK, {
+  //         toys: orderDetails?.listOfToysSentLink.map(toy => ({ toy: toy.toy.id, quantity: toy.quantity })),
+  //         orderId: id
+  //       });
+  //       toast.success(response.data.message);
+  //       setOrderDetails(response.data.order);
+  //     } catch (error: any) {
+  //       if (error.response) {
+  //         dispatch(
+  //           setError({
+  //             statusCode: error.response.status,
+  //             message: error.response.data.error
+  //           })
+  //         );
+  //       } else {
+  //         toast.error("Server is Down.");
+  //       }
+  //     } finally {
+  //       dispatch(setBackdrop(false));
+  //     }
+  //   }
+  // }
 
   const handleStatusUpdate = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>, index: number) => {
     const { name, value } = e.target;
@@ -221,7 +221,7 @@ const OrderDetails: React.FC = () => {
                     </button>
                   </>
                 )}
-                {orderDetails?.from == "ngo" && (
+                {/* {orderDetails?.from == "ngo" && (
                   <button
                     onClick={() => removeToStock()}
                     className={`text-xs border bg-orange-500 flex items-start t p-2 text-white rounded-md  }`}
@@ -231,7 +231,7 @@ const OrderDetails: React.FC = () => {
                       ? "Removed"
                       : "Remove From stock"}
                   </button>
-                )}
+                )} */}
               </p>
 
               {orderDetails?.to == "school" && (

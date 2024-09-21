@@ -148,7 +148,24 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                     {selectedToy?.toy?.subBrand}
                   </span>
                 </strong>
+
+                <strong className='text-[16px] font-semibold'>
+                  cataloguePageNumber:{" "}
+                  <span className='font-[300]'>
+                    {selectedToy?.toy?.cataloguePgNo}
+                  </span>
+                </strong>
               </p>
+
+              <p className='font-[300] flex justify-between items-center'>
+                <strong className='text-[16px] font-semibold'>
+                  CodeName:{" "}
+                  <span className='font-[300]'>
+                    {selectedToy?.toy?.codeName}
+                  </span>
+                </strong>
+              </p>
+
               <p className='font-[300] flex justify-between items-center'>
                 <strong className='text-[16px] font-semibold'>
                   ID: <span className='font-[300]'>{selectedToy?.toy?.id}</span>

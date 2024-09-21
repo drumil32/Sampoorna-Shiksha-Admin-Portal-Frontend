@@ -91,29 +91,42 @@ const SchoolDetail: React.FC = () => {
 
   return (
     <Loading>
-      {showModal && <Modal setShowModal={setShowModal} currentOrder={currentOrder} setCurrentOrder={setCurrentOrder} />}
-      <div className="p-8 bg-[#f5f5f5] h-[100vh] overflow-y-auto flex gap-8">
-        <div className="w-2/5 h-full flex items-center justify-center gap-8 bg-white">
-          <img src={school} className="max-h-[80vh]" alt="" />
+      {showModal && (
+        <Modal
+          setShowModal={setShowModal}
+          currentOrder={currentOrder}
+          setCurrentOrder={setCurrentOrder}
+        />
+      )}
+      <div className='p-8 bg-[#f5f5f5] h-[100vh] overflow-y-auto flex gap-8'>
+        <div className='w-2/5 h-full flex items-center justify-center gap-8 bg-white'>
+          <img src={school} className='max-h-[80vh]' alt='' />
         </div>
-        <div className="w-3/5 overflow-y-auto bg-white h-full p-7">
-          <div id="main">
-            <h1 className="text-3xl font-bold mb-4">
+        <div className='w-3/5 overflow-y-auto bg-white h-full p-7'>
+          <div id='main'>
+            <h1 className='text-3xl font-bold mb-4'>
               {schoolData.nameOfSchoolInstitution}{" "}
               <span>({schoolData.typeOfInstitutionSchool})</span>
             </h1>
 
-            <div className="flex flex-col gap-7 h-full">
+            <div className='flex flex-col gap-7 h-full'>
               <InfoSection title="School Person's" info={schoolPersonInfo} />
-              <InfoSection title="School Address" info={schoolAddressInfo} />
-              <InfoSection title="Class" info={classInfo} />
-              <InfoSection title="Other Details" info={otherDetailsInfo} />
+              <InfoSection title='School Address' info={schoolAddressInfo} />
+              <InfoSection title='Class' info={classInfo} />
+              <InfoSection title='Other Details' info={otherDetailsInfo} />
             </div>
           </div>
         </div>
       </div>
-      <h2 className="text-2xl font-bold ml-[4rem]">Orders</h2>
-        <OrderHistoryTable orders={schoolOrders} />
+      <div className='max-w-5xl p-2 m-auto flex items-center justify-between'>
+        <h2 className='text-2xl font-bold flex-col'>Orders</h2>
+        {schoolOrders?.length > 0 &&
+          <div className='size-10 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
+            {schoolOrders?.length && schoolOrders.length}
+          </div>
+        }
+      </div>
+      <OrderHistoryTable orders={schoolOrders} />
     </Loading>
   );
 };

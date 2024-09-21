@@ -45,7 +45,6 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             quantity: newQuantity,
           }
         );
-        console.log(response.data);
         toast.success(response.data.message);
         setEditQuantity(false);
       } catch (error: any) {
@@ -125,6 +124,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             </option>
           ))}
         </select>
+         {pathname !== "/" && (
+          <div className='size-10 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
+            {toys?.length && toys.length}
+          </div>
+        )} 
       </div>
       <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
         <table className='p-4 w-full text-sm'>
@@ -172,11 +176,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
             })}
           </tbody>
         </table>
-         {filteredToys?.length === 0 && (
+        {filteredToys?.length === 0 && (
           <div className='w-full h-full flex justify-center items-center'>
             <h1 className='text-xl font-semibold'>No Items Found</h1>
           </div>
-        )}  
+        )}
       </div>
       {/* Modal */}
       {showModel && (

@@ -101,7 +101,12 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
         <tbody>
           {vendorCartItems?.map((item, index) => {
             return (
-              <tr key={item.toy.id} className={`border text-center text-xs ${index % 2 !== 0 ? "bg-gray-100" : ""}`}>
+              <tr
+                key={item.toy.id}
+                className={`border text-center text-xs ${
+                  index % 2 !== 0 ? "bg-gray-100" : ""
+                }`}
+              >
                 <td className='border p-2'>{item.toy.name}</td>
                 <td className='border p-2'>{item.toy.price}</td>
                 <td className='border p-2'>
@@ -111,19 +116,19 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                     className='border p-1 outline-none'
                     min={1}
                     onChange={(e) =>
-                      currentCart === 'Home' ?
-                        dispatch(
-                          setUpdateQtyToHomeCart({
-                            toy: item.toy,
-                            quantity: parseInt(e.target.value),
-                          })
-                        ) :
-                        dispatch(
-                          setUpdateQtyToStockCart({
-                            toy: item.toy,
-                            quantity: parseInt(e.target.value),
-                          })
-                        )
+                      currentCart === "Home"
+                        ? dispatch(
+                            setUpdateQtyToHomeCart({
+                              toy: item.toy,
+                              quantity: parseInt(e.target.value),
+                            })
+                          )
+                        : dispatch(
+                            setUpdateQtyToStockCart({
+                              toy: item.toy,
+                              quantity: parseInt(e.target.value),
+                            })
+                          )
                     }
                     value={item.quantity}
                   />
@@ -145,37 +150,41 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
 
       <div className='place-order mt-4 w-full flex flex-col gap-2'>
         <div className='grid grid-cols-2 gap-3 w-full'>
-          <div className="flex flex-col">
-            <label htmlFor='' className="text-gray-600">From</label>
-            <span className="text-sm font-bold">{from}</span>
+          <div className='flex flex-col gap-1'>
+            <label htmlFor='' className='text-gray-600 font-bold'>
+              From
+            </label>
+            <span className='text-xs'>{from}</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <label htmlFor='' className="font-bold text-sm">To</label>
-            {" "}
-            {currentCart == 'Home' ?
+          <div className='flex gap-2 flex-col'>
+            <label htmlFor='' className='font-bold text-sm'>
+              To
+            </label>{" "}
+            {currentCart == "Home" ? (
               <select
                 name='to'
                 id=''
-                className='border rounded-md shadow-md block w-full p-3 text-xs outline-none'
-                onChange={(e) =>
-                  setTo(e.target.value)
-                }
+                className='border rounded-md shadow-sm block w-[100px] p-3 text-xs outline-none'
+                onChange={(e) => setTo(e.target.value)}
                 value={to}
               >
                 <option value='ngo'>ngo</option>
                 <option value='school'>school</option>
               </select>
-              : to
-            }
+            ) : (
+              to
+            )}
           </div>
         </div>
         <input
           type='text'
           placeholder='Enter your School Id'
           className='border rounded-md shadow-md w-full p-3 text-xs outline-none'
-          onChange={(e) => setSchoolId(e.target.value == "" ? null : e.target.value)}
-          value={schoolId ?? ''}
+          onChange={(e) =>
+            setSchoolId(e.target.value == "" ? null : e.target.value)
+          }
+          value={schoolId ?? ""}
         />
         <button
           onClick={placeOrder}
