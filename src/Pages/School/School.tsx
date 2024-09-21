@@ -61,7 +61,7 @@ const School: React.FC = () => {
   return (
     <Loading>
       <>
-        <div className='filter w-[90%] m-auto mt-3 border p-2 rounded-md flex items-center'>
+        <div className='filter w-[90%] m-auto mt-20 border p-2 rounded-md flex items-center '>
           <input
             type='text'
             className='p-2 text-sm w-full outline-none placeholder:font-semibold'

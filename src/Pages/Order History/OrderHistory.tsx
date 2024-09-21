@@ -39,7 +39,7 @@ const OrderHistory: React.FC = () => {
 
   return (
     <Loading>
-      <div>
+      <div className="mt-20">
         <OrderHistoryTable orders={orders} />
       </div>
     </Loading>

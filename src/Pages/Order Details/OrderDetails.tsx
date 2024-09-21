@@ -140,7 +140,7 @@ const OrderDetails: React.FC = () => {
 
   return (
     <Loading>
-      <div className='pb-10'>
+      <div className='pb-10 mt-24'>
         <div className='toys-details-container grid grid-cols-1 mt-4 max-w-[90%] gap-4 m-auto pb-8'>
           <div className=' shadow-lg rounded-md border p-8 bg-blue-50 max-w-xl'>
             <div className='flex justify-between items-center'>

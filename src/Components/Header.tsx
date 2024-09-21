@@ -49,7 +49,7 @@ const Header = () => {
 
 
   return (
-    <div className='bg-gray-100 shadow-md p-3 font-[300] text-gray-600 flex items-center justify-between'>
+    <div className='bg-white fixed w-full top-0 shadow-md p-3 font-[300] text-gray-600 flex items-center justify-between'>
       <Link
         to={HOME}
         className={`font-semibold text-md text-gray-700 p-1`}
@@ -60,7 +60,7 @@ const Header = () => {
       <div className='flex gap-4 items-center'>
         <button
           onClick={addNewSchoolData}
-          className={`border flex gap-1 border-gray-400 p-2 text-xs items-center rounded-md bg-white text-gray-700 font-medium}`}
+          className={`border flex gap-1 border-gray-400 font-semibold p-2 text-xs items-center rounded-md bg-white text-gray-700 font-medium}`}
         >
           Add new Schools
           <LuSchool className='relative' />
@@ -100,7 +100,7 @@ const Header = () => {
 
         <Link
           to={ORDER_HISTORY}
-          className={`border-2 p-2  rounded-md text-xs bg-white border-gray-400  ${handleActive(ORDER_HISTORY)}`}
+          className={`border-2 p-2  rounded-md text-xs bg-white border-gray-400 font-semibold  ${handleActive(ORDER_HISTORY)}`}
         >
           Order History
         </Link>

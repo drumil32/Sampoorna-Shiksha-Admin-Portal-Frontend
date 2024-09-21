@@ -41,7 +41,7 @@ const UpdateToy: React.FC = () => {
 
   return (
     <Loading>
-      <div className={`w-full flex items-center justify-center mt-3  ${!toy && 'calc-height'}`}>
+      <div className={`w-full flex items-center justify-center mt-10  ${!toy && 'calc-height'}`}>
         <div className='w-[42%] flex items-center border bg-white justify-between p-2 rounded-md shadow-lg focus:bg-red-300 '>
           <input
             type='search'

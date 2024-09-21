@@ -27,7 +27,7 @@ const Cart: React.FC = () => {
 
   return (
     <Loading>
-      <div className='max-w-7xl m-auto mt-6 bg-white shadow-xl gap-3 p-4'>
+      <div className='max-w-7xl m-auto mt-20 bg-white shadow-xl gap-3 p-4'>
         <div className='flex justify-end w-full mb-4'>
           <select
             value={currentCart}

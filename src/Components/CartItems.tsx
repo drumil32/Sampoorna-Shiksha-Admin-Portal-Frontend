@@ -181,7 +181,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                     target='_blank'
                     rel='noopener noreferrer'
                   >
-                    Video Link h
+                    Video Link 
                   </a>
                 )}
             </div>
