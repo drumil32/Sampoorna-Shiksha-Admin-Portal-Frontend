@@ -23,7 +23,7 @@ const Header = () => {
   const location = useLocation(); // Get current location
 
   const handleActive = (path: string) => {
-    return location.pathname == path ? "bg-gray-500 text-white font-bold" : ""; // Dynamically set active class
+    return location.pathname == path ? "border-2 border-blue-500 text-blue-500 font-bold" : ""; // Dynamically set active class
   };
 
   const addNewSchoolData = async () => {
@@ -52,7 +52,7 @@ const Header = () => {
     <div className='bg-white sticky w-[100%]  top-0 shadow-md p-2 font-[300] text-gray-600 flex gap-1  items-center justify-between'>
       <Link
         to={HOME}
-        className={`font-semibold sm:text-md text-xs text-gray-700 p-1`}
+        className={`font-semibold sm:text-md text-xs text-gray-700 p-1 py-2 border rounded-md  ${handleActive(HOME)}`}
       >
         Sampooran Shiksha
       </Link>
@@ -60,7 +60,7 @@ const Header = () => {
       <div className='flex gap-2 items-center'>
         <button
           onClick={addNewSchoolData}
-          className={`border flex gap-2 border-gray-400  sm:p-2   sm:text-xs items-center rounded-md bg-white text-gray-700 font-semibold }`}
+          className={`border flex gap-2 border-gray-400  sm:p-2   sm:text-xs items-center rounded-md  text-gray-700 font-semibold }`}
         >
           Add new Schools
           <LuSchool className='relative' />
@@ -68,7 +68,7 @@ const Header = () => {
 
         <Link
           to={STOCK}
-          className={`flex gap-2 border border-gray-400 sm:p-2 sm:text-xs items-center rounded-md bg-white text-gray-700 font-medium ${handleActive(STOCK)}`}
+          className={`flex gap-2 border border-gray-400 sm:p-2 sm:text-xs items-center rounded-md  text-gray-700 font-medium ${handleActive(STOCK)}`}
         >
           <span>Stock</span>
           <CiBoxes className='relative' />
@@ -76,7 +76,7 @@ const Header = () => {
 
         <Link
           to={SCHOOL}
-          className={`flex gap-2 border border-gray-400 sm:p-2  sm:text-xs items-center rounded-md bg-white text-gray-700 font-medium ${handleActive(SCHOOL)}`}
+          className={`flex gap-2 border border-gray-400 sm:p-2  sm:text-xs items-center rounded-md  text-gray-700 font-medium ${handleActive(SCHOOL)}`}
         >
           <span>Schools</span>
           <LuSchool className='relative' />
@@ -84,7 +84,7 @@ const Header = () => {
 
         <Link
           to={ADD_TOY}
-          className={`flex gap-2 border border-gray-400 sm:p-2  sm:text-xs items-center rounded-md bg-white text-gray-700 font-medium ${handleActive(ADD_TOY)}`}
+          className={`flex gap-2 border border-gray-400 sm:p-2  sm:text-xs items-center rounded-md  text-gray-700 font-medium ${handleActive(ADD_TOY)}`}
         >
           <span>Add Toy</span>
           <FaPlus className='relative' />
@@ -92,7 +92,7 @@ const Header = () => {
 
         <Link
           to={UPDATE_TOY}
-          className={`flex gap-2 border border-gray-400 sm:p-2 sm:text-xs items-center rounded-md bg-white text-gray-700 font-medium ${handleActive(UPDATE_TOY)}`}
+          className={`flex gap-2 border border-gray-400 sm:p-2 sm:text-xs items-center rounded-md  text-gray-700 font-medium ${handleActive(UPDATE_TOY)}`}
         >
           <span>Update Toy</span>
           <MdOutlineEdit className='relative' />

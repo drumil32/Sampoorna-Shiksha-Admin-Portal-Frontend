@@ -74,7 +74,7 @@ const OrderDetails: React.FC = () => {
 
   //  add other product by id
     const addOtherProduct = async () => {
-       if(!newOtherProduct.item || !newOtherProduct.quantity || !newOtherProduct.order) {
+       if(!newOtherProduct.item || !newOtherProduct.quantity) {
          toast.error("Name and quantity are required");
          return;
        }
@@ -564,7 +564,7 @@ const OrderDetails: React.FC = () => {
           </div>
         </div>
 
-        <div className='table-container-details sm:max-w-8xl m-auto mt-1 w-[90%] shadow-lg rounded-md border bg-blue-50 p-8'>
+        <div className='table-container-details overflow-scroll overflow-y-hidden m-auto mt-1 w-[90%] shadow-lg rounded-md border bg-blue-50 sm:p-4 p-2'>
           <h2 className='text-xl mb-3'>Toys Details</h2>
           <table className='p-4 w-full text-sm bg-white'>
             <thead>
