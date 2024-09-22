@@ -16,7 +16,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
   const [showModel, setShowModel] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const showToyDetails = (e: React.MouseEvent<HTMLButtonElement>, toy: IToy,) => {
+  const showToyDetails = (e: React.MouseEvent<HTMLTableRowElement>, toy: IToy,) => {
     const target = e.target as HTMLButtonElement;
     if (target.id !== "trash-btn") {
       setSelectedToy({ toy });

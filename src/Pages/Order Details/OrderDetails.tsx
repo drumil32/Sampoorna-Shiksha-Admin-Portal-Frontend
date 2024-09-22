@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { GET_VENDOR_ORDER_BY_ID, UPDATE_VENDOR_ORDER, STOCK, CHECK_AVAILABLE_STOCK } from "../../utils/restEndPoints";
 import { setError, setBackdrop } from "../../redux/slices/statusSlice";
 import { useNavigate } from "react-router-dom";
-import _ from 'loadsh';
+import _ from 'lodash';
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();

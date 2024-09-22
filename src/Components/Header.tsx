@@ -22,8 +22,8 @@ const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation(); // Get current location
 
-  const handleActive = (path) => {
-    return location.pathname === path ? "bg-gray-700 text-white font-bold" : ""; // Dynamically set active class
+  const handleActive = (path: string) => {
+    return location.pathname == path ? "bg-gray-700 text-white font-bold" : ""; // Dynamically set active class
   };
 
   const addNewSchoolData = async () => {
@@ -60,7 +60,7 @@ const Header = () => {
       <div className='flex gap-4 items-center'>
         <button
           onClick={addNewSchoolData}
-          className={`border flex gap-1 border-gray-400 font-semibold p-2 text-xs items-center rounded-md bg-white text-gray-700 font-medium}`}
+          className={`border flex gap-1 border-gray-400  p-2 text-xs items-center rounded-md bg-white text-gray-700 font-medium}`}
         >
           Add new Schools
           <LuSchool className='relative' />

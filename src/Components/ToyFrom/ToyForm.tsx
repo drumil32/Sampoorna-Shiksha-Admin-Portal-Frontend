@@ -76,13 +76,20 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
     })
   }
 
-  function validateToyDetails(toy: IToy | undefined) {
-    for (const key in toy) {
+  function validateToyDetails(toy: IToy | undefined): boolean {
+    if (!toy) {
+      toast.error("Toy details are undefined");
+      return false; // Return false if toy is undefined
+    }
+
+    // Iterate over the keys of IToy
+    for (const key of Object.keys(toy) as Array<keyof IToy>) {
       if (toy[key] === "") {
         toast.error("Please enter toy details for " + key);
         return false; // Return false to indicate validation failure
       }
     }
+
     return true; // Return true if all details are valid
   }
 
