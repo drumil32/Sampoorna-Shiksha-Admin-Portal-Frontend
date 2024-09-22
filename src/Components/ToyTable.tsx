@@ -81,7 +81,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
         toast.error("Server is Down.");
       }
     } finally {
-      dispatch(setBackdrop(true));
+      dispatch(setBackdrop(false));
     }
   };
 
@@ -276,7 +276,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
                     } `}
                 >
                   <strong
-                    className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
+                    className={`text-[16px] font-semibold ${selectedToy?.quantity==undefined && "hidden"
                       }`}
                   >
                     Quantity:{" "}
