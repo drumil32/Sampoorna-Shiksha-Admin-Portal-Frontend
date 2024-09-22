@@ -112,6 +112,32 @@ const OrderDetails: React.FC = () => {
     }
   }
 
+  const removeToStock = async () => {
+    if (orderDetails?.to == 'ngo' && orderDetails.isAddedOrRemovedFromTheStock == false) {
+      try {
+        dispatch(setBackdrop(true));
+        const response = await axiosInstance.post(REMOVE_FROM_STOCK, {
+          toys: orderDetails?.listOfToysSentLink.map(toy => ({ toy: toy.toy.id, quantity: toy.quantity })),
+          orderId: id
+        });
+        toast.success(response.data.message);
+        setOrderDetails(response.data.order);
+      } catch (error: any) {
+        if (error.response) {
+          dispatch(
+            setError({
+              statusCode: error.response.status,
+              message: error.response.data.error
+            })
+          );
+        } else {
+          toast.error("Server is Down.");
+        }
+      } finally {
+        dispatch(setBackdrop(false));
+      }
+    }
+  }
 
   const handleStatusUpdate = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>, index: number) => {
     const { name, value } = e.target;
@@ -140,7 +166,7 @@ const OrderDetails: React.FC = () => {
 
   return (
     <Loading>
-      <div className='pb-10 mt-24'>
+      <div className='pb-10'>
         <div className='toys-details-container grid grid-cols-1 mt-4 max-w-[90%] gap-4 m-auto pb-8'>
           <div className=' shadow-lg rounded-md border p-8 bg-blue-50 max-w-xl'>
             <div className='flex justify-between items-center'>
@@ -195,6 +221,17 @@ const OrderDetails: React.FC = () => {
                     </button>
                   </>
                 )}
+                {orderDetails?.from == "ngo" && (
+                  <button
+                    onClick={() => removeToStock()}
+                    className={`text-xs border bg-orange-500 flex items-start t p-2 text-white rounded-md  }`}
+                    disabled={orderDetails?.isAddedOrRemovedFromTheStock}
+                  >
+                    {orderDetails?.isAddedOrRemovedFromTheStock
+                      ? "Removed"
+                      : "Remove From stock"}
+                  </button>
+                )}
               </p>
 
               {orderDetails?.to == "school" && (
@@ -235,13 +272,12 @@ const OrderDetails: React.FC = () => {
                 {orderDetails?.status?.map((item, index: number) => {
                   return (
                     <tr
-                      className={`border text-center text-sm ${
-                        index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
+                      className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
+                        } hover:bg-gray-200 cursor-pointer`}
                     >
                       <td className='border p-2'>
                         {!editMode ? (
-                          <span>{item.timestamps}</span>
+                          <span>{item.timestamps || 'Not Provided'}</span>
                         ) : (
                           <input
                             type='datetime-local'
@@ -255,7 +291,7 @@ const OrderDetails: React.FC = () => {
 
                       <td className='border p-1'>
                         {!editMode ? (
-                          <span>{item.personName}</span>
+                          <span>{item.personName || 'Not Provided'}</span>
                         ) : (
                           <input
                             type='text'
@@ -269,7 +305,7 @@ const OrderDetails: React.FC = () => {
 
                       <td className='border p-1'>
                         {!editMode ? (
-                          <span>{item.contactNumber}</span>
+                          <span>{item.contactNumber || 'Not Provided'}</span>
                         ) : (
                           <input
                             type='text'
@@ -359,7 +395,7 @@ const OrderDetails: React.FC = () => {
                           ...prev,
                           status:
                             VendorOrderStatus[
-                              e.target.value as keyof typeof VendorOrderStatus
+                            e.target.value as keyof typeof VendorOrderStatus
                             ],
                         }))
                       }
@@ -410,9 +446,8 @@ const OrderDetails: React.FC = () => {
                 return (
                   <tr
                     key={toy.id}
-                    className={`border text-center text-sm ${
-                      index % 2 !== 0 ? "bg-gray-100" : ""
-                    } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                   >
                     <td className='border p-1'>{toy.id}</td>
                     <td className='border p-1'>{toy.name}</td>

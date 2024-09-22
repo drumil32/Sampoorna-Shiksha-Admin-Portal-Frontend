@@ -38,6 +38,7 @@ function App() {
   useEffect(() => {
     console.log(error);
     if (error) {
+      console.log(error.message)
       toast.error(error.message);
       dispatch(clearError());
     }
