@@ -102,14 +102,15 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
     }
   };
 
-  const showToyDetails = (e: React.MouseEvent<HTMLTableRowElement>,toy: IToy, quantity?: string) => {
-     const target = e.target as HTMLTableCellElement;
-    if (target.id !== "trash-btn") {
+  const showToyDetails = (e: React.MouseEvent<HTMLTableRowElement>, toy: IToy, quantity?: string) => {
+    const target = e.target as HTMLTableCellElement;
+    if (target.id !== "trash-btn" && target.id !== "delete-btn") {
+      console.log(target)
+      console.log("added");
       setSelectedToy({ toy, quantity });
       setShowModel(true);
     }
   };
-
   const filteredToys = toys?.filter((item) => {
     const matchesInput =
       item.toy.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
@@ -203,11 +204,14 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
                   )}
                   {deleteToyFromStock && (
                     <td
-                      onClick={() => deleteToyFromStock(item.toy.id ?? "")}
                       className='p-3 font-[600] flex items-center justify-center'
                       id='trash-btn'
                     >
-                      <CiTrash className='text-center text-red-600' />
+                      <CiTrash
+                        className='text-center text-red-600 '
+                        id='delete-btn'
+                        onClick={() => deleteToyFromStock(item.toy.id ?? "")}
+                      />
                     </td>
                   )}
                 </tr>

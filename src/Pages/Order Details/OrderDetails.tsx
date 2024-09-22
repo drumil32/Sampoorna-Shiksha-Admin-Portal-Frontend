@@ -28,7 +28,7 @@ const OrderDetails: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<VendorOrder | null>(null);
   const [newStatus, setNewStatus] = useState<VendorOrderStatusInfo>({ timestamps: '', personName: '', contactNumber: '', status: VendorOrderStatus.PENDING });
   const [otherProducts, setOtherProducts] = useState<IOtherProduct[]>([]);
-  const [newOtherProduct, setNewOtherProduct] = useState<IOtherProduct>({ item: '', quantity: '', order: '' });
+  const [newOtherProduct, setNewOtherProduct] = useState<IOtherProduct>({ item: '', quantity: 0, order: '' });
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const orderRef = useRef<VendorOrder | null>(null);
@@ -83,7 +83,7 @@ const OrderDetails: React.FC = () => {
       const response = await axiosInstance.post(`${ADD_OTHER_PRODUCT_BY_ORDER_ID}/${id}`, { ...newOtherProduct, order: id });
       setOtherProducts([...otherProducts, response.data.otherProduct]);
       console.log(response.data.otherProduct);
-      setNewOtherProduct({ item: '', quantity: '', order: '' });
+      setNewOtherProduct({ item: '', quantity: 0, order: '' });
       toast.success("Other product added successfully");
     } catch (error: any) {
       dispatch(setLoading(false));
@@ -371,7 +371,7 @@ const OrderDetails: React.FC = () => {
                         <td className="border p-1">
                           <input
                             className='border border-gray-300 w-full  rounded-md p-2  text-sm outline-none placeholder:font-semibold'
-                            type='text'
+                            type='number'
                             placeholder='Quantity'
                             name='quantity'
                             value={newOtherProduct?.quantity}
@@ -556,8 +556,9 @@ const OrderDetails: React.FC = () => {
                 <tr>
                   <td colSpan={4} className='text-center'>
                     <button
-                      className='bg-green-500 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3'
+                      className={`bg-green-500 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3 disabled:cursor-not-allowed`}
                       onClick={addNewStatus}
+                      disabled={!editMode ? false : true}
                     >
                       Add Status
                     </button>

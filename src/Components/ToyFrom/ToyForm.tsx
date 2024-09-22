@@ -46,9 +46,26 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
 
   const createToy = async () => {
     try {
+      if(!validateToyDetails(toy)) return;
       dispatch(setLoading(true));
       await axiosInstance.post(ADD_TOY, { toy });
       toast.success("Toy added successfully!");
+       setToy({
+         name: "",
+         brand: "",
+         price: 0,
+         category: "",
+         codeName: "",
+         cataloguePgNo: 0,
+         subBrand: "",
+         level: Level.ALL,
+         learn: [],
+         link: "",
+       });
+
+       // Also clear the input value for the learn field
+       setInputValue("");
+
     } catch (error: any) {
       if (error.response) {
         dispatch(
@@ -79,24 +96,47 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
   function validateToyDetails(toy: IToy | undefined): boolean {
     if (!toy) {
       toast.error("Toy details are undefined");
-      return false; // Return false if toy is undefined
+      return false;
     }
 
-    // Iterate over the keys of IToy
-    for (const key of Object.keys(toy) as Array<keyof IToy>) {
-      if (toy[key] === "") {
-        toast.error("Please enter toy details for " + key);
-        return false; // Return false to indicate validation failure
+    const requiredFields: (keyof IToy)[] = ['name', 'brand', 'price', 'category', 'codeName', 'cataloguePgNo', 'subBrand', 'level', 'link'];
+
+    for (const field of requiredFields) {
+      if (!toy[field] || (typeof toy[field] === 'string' && toy[field].trim() === '')) {
+        toast.error(`Please enter toy details for ${field}`);
+        return false;
       }
     }
 
-    return true; // Return true if all details are valid
-  }
+    if (!toy.learn || toy.learn.length === 0) {
+      toast.error("Please add at least one learning topic");
+      return false;
+    }
+
+    return true;
+}
+
+  // function validateToyDetails(toy: IToy | undefined): boolean {
+  //   if (!toy) {
+  //     toast.error("Toy details are undefined");
+  //     return false; // Return false if toy is undefined
+  //   }
+
+  //   // Iterate over the keys of IToy
+  //   for (const key of Object.keys(toy) as Array<keyof IToy>) {
+  //     if (toy[key] === "") {
+  //       toast.error("Please enter toy details for " + key);
+  //       return false; // Return false to indicate validation failure
+  //     }
+  //   }
+
+  //   return true; // Return true if all details are valid
+  // }
 
   //  update toy by id
   const updateToy = async () => {
     try {
-      validateToyDetails(toy);
+      if(!validateToyDetails(toy)) return;
       dispatch(setLoading(true));
       await axiosInstance.put(`${UPDATE_TOY_BY_ID}`, { toy: { ...toy } });
       toast.success("Toy updated successfully!");

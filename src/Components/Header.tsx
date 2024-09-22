@@ -100,7 +100,7 @@ const Header = () => {
 
         <Link
           to={ORDER_HISTORY}
-          className={` border p-2  rounded-md text-xs bg-white border-gray-400 font-semibold  ${handleActive(ORDER_HISTORY)}`}
+          className={` border p-2  rounded-md text-xs  border-gray-400 font-semibold  ${handleActive(ORDER_HISTORY)}`}
         >
           Order History
         </Link>
