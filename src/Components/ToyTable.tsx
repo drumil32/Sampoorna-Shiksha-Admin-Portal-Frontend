@@ -1,12 +1,12 @@
 import { IToy, Level } from "../types/School";
 import { useDispatch, useSelector } from "react-redux";
-import { ShowVendorOrder, VendorOrder } from "../types/VendorOrder";
+import { ShowVendorOrder } from "../types/VendorOrder";
 import { RootState } from "../redux/store";
 import React, { useEffect, useState } from "react";
-import {useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { removeItemFromHomeCart, setItemToHomeCart } from "../redux/slices/homeCartSlice";
 import { removeItemFromStockCart, setItemToStockCart } from "../redux/slices/stockCartSlice";
-import { setError, setLoading } from "../redux/slices/statusSlice";
+import { setBackdrop, setError } from "../redux/slices/statusSlice";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { UPDATE_STOCK } from "../utils/restEndPoints";
@@ -14,22 +14,27 @@ import { UPDATE_STOCK } from "../utils/restEndPoints";
 interface MyComponentProps {
   toys: { toy: IToy; quantity?: string }[];
   from: string;
+  setToys?: React.Dispatch<React.SetStateAction<{
+    toy: IToy;
+    quantity: string;
+  }[]>>;
+  deleteToyFromStock?: (id: string) => Promise<void>
 }
 
-const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
-  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity? : string } | null>(null);
+const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFromStock }) => {
+  const [selectedToy, setSelectedToy] = useState<{ toy: IToy; quantity?: string } | null>(null);
   const [showModel, setShowModel] = useState<boolean>(false);
   const [editQuantity, setEditQuantity] = useState<boolean>(false);
   const [newQuantity, setNewQuantity] = useState<number>();
   const [totalToysQuantity, setTotalToysQuantity] = useState<number>(0);
 
 
-  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) =>from === "Home"? state.home.homeCartItems: state.stock.stockCartItems);
+  const vendorCartItems: ShowVendorOrder[] = useSelector((state: RootState) => from === "Home" ? state.home.homeCartItems : state.stock.stockCartItems);
   const [inputValue, setInputValue] = useState<string>("");
   const [levelValue, setLevelValue] = useState<string>("all");
   const { pathname } = useLocation();
   const dispatch = useDispatch();
-  
+
 
   useEffect(() => {
     const totalQuantity = toys.reduce((total, toy) => total + (Number(toy.quantity) || 0), 0);
@@ -37,37 +42,49 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   }, [toys]);
 
   const handleEdit = () => {
-      setEditQuantity(true);
-      setNewQuantity(Number(selectedToy?.quantity) || 0);
+    setEditQuantity(true);
+    setNewQuantity(Number(selectedToy?.quantity) || 0);
 
-    };
+  };
 
-    const handleQtyUpdate = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.post(UPDATE_STOCK, {
-            toyId: selectedToy?.toy.id,
-            quantity: newQuantity,
-          }
-        );
-        toast.success(response.data.message);
-        setEditQuantity(false);
-      } catch (error: any) {
-        if (error.response) {
-          dispatch(
-            setError({
-              statusCode: error.response.status,
-              message: error.response.data.error,
-            })
-          );
-        } else {
-          toast.error("Server is Down.");
-        }
-      } finally {
-         setLoading(false);
+  const handleQtyUpdate = async () => {
+    try {
+      dispatch(setBackdrop(true));
+      const response = await axiosInstance.post(UPDATE_STOCK, {
+        toyId: selectedToy?.toy.id,
+        quantity: newQuantity,
       }
-    };
-  
+      );
+      console.log(response.data);
+      toast.success(response.data.message);
+      setEditQuantity(false);
+      if (setToys) {
+        setToys(prevList => {
+          console.log(prevList.map(toy =>
+            toy.toy.id == response.data.stock.toy ? { toy: toy.toy, quantity: response.data.stock.quantity } : toy
+          ));
+          return prevList.map(toy =>
+            toy.toy.id == response.data.stock.toy ? { toy: toy.toy, quantity: response.data.stock.quantity } : toy
+          )
+        });
+        setSelectedToy(prev => prev ? ({ ...prev, quantity: response.data.stock.quantity }) : prev);
+      }
+    } catch (error: any) {
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+          })
+        );
+      } else {
+        toast.error("Server is Down.");
+      }
+    } finally {
+      dispatch(setBackdrop(true));
+    }
+  };
+
 
 
   const addToCart = (toy: IToy | undefined) => {
@@ -89,13 +106,13 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
   };
 
   const filteredToys = toys?.filter((item) => {
-      const matchesInput = 
-      item.toy.name?.toLowerCase().includes(inputValue.toLowerCase())||
+    const matchesInput =
+      item.toy.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.toy.brand?.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.toy.subBrand?.toLowerCase().includes(inputValue.toLowerCase());
 
-     const matchesLevel = levelValue.toLowerCase() === "all" || item.toy.level?.toLowerCase() === levelValue.toLowerCase();
-      return matchesInput && matchesLevel;
+    const matchesLevel = levelValue.toLowerCase() === "all" || item.toy.level?.toLowerCase() === levelValue.toLowerCase();
+    return matchesInput && matchesLevel;
   });
 
   useEffect(() => {
@@ -149,6 +166,10 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
               {pathname !== "/" && (
                 <th className='p-3 font-[600] border'>Quantity</th>
               )}
+              {
+                deleteToyFromStock &&
+                <th className='p-3 font-[600] border'>Action</th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -159,9 +180,8 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
               return (
                 <tr
                   key={item.toy.id}
-                  className={`border text-center text-sm cursor-pointer ${
-                    isInCart ? "!bg-green-200" : ""
-                  }`}
+                  className={`border text-center text-sm cursor-pointer ${isInCart ? "!bg-green-200" : ""
+                    }`}
                   onClick={() => showToyDetails(item.toy, item.quantity)}
                 >
                   <td className='border p-2'>{item.toy.id}</td>
@@ -176,6 +196,10 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                   {pathname !== "/" && (
                     <td className='border p-2'>{item.quantity}</td>
                   )}
+                  {
+                    deleteToyFromStock &&
+                    <td onClick={() => deleteToyFromStock(item.toy.id ?? '')} className='p-3 font-[600] border'>Delete</td>
+                  }
                 </tr>
               );
             })}
@@ -248,14 +272,12 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                   </strong>
                 </p>
                 <p
-                  className={`font-[300] flex justify-between ${
-                    editQuantity ? "items-start" : "items-center"
-                  } `}
+                  className={`font-[300] flex justify-between ${editQuantity ? "items-start" : "items-center"
+                    } `}
                 >
                   <strong
-                    className={`text-[16px] font-semibold ${
-                      !selectedToy?.quantity && "hidden"
-                    }`}
+                    className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
+                      }`}
                   >
                     Quantity:{" "}
                     <span className='font-[300]'>
@@ -331,11 +353,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from }) => {
                     onClick={() =>
                       from === "Stock"
                         ? dispatch(
-                            removeItemFromStockCart(selectedToy?.toy?.id ?? "")
-                          )
+                          removeItemFromStockCart(selectedToy?.toy?.id ?? "")
+                        )
                         : dispatch(
-                            removeItemFromHomeCart(selectedToy?.toy?.id ?? "")
-                          )
+                          removeItemFromHomeCart(selectedToy?.toy?.id ?? "")
+                        )
                     }
                     className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
                   >
