@@ -16,3 +16,6 @@ export const REMOVE_FROM_STOCK = 'stock/remove';
 export const CHECK_AVAILABLE_STOCK = 'stock/check-available';
 export const UPDATE_STOCK = 'stock/assign-quantity';
 export const DELETE_TOY_FROM_STOCK_BY_ID = 'stock'
+export const GET_OTHER_PRODUCTS_BY_ORDER_ID = 'other-products';
+export const ADD_OTHER_PRODUCT_BY_ORDER_ID = 'other-products';
+export const DELETE_OTHER_PRODUCT_BY_ID = 'other-products';

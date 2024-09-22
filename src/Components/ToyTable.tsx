@@ -10,6 +10,8 @@ import { setBackdrop, setError } from "../redux/slices/statusSlice";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { UPDATE_STOCK } from "../utils/restEndPoints";
+import { CiTrash } from "react-icons/ci";
+
 
 interface MyComponentProps {
   toys: { toy: IToy; quantity?: string }[];
@@ -100,9 +102,12 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
     }
   };
 
-  const showToyDetails = (toy: IToy, quantity?: string) => {
-    setSelectedToy({ toy, quantity });
-    setShowModel(true);
+  const showToyDetails = (e: React.MouseEvent<HTMLTableRowElement>,toy: IToy, quantity?: string) => {
+     const target = e.target as HTMLTableCellElement;
+    if (target.id !== "trash-btn") {
+      setSelectedToy({ toy, quantity });
+      setShowModel(true);
+    }
   };
 
   const filteredToys = toys?.filter((item) => {
@@ -127,10 +132,10 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
 
   return (
     <>
-      <div className='filters w-[90%] m-auto mt-20 border p-2 flex gap-2 items-center rounded-md '>
+      <div className='filters w-[90%] m-auto mt-4 border p-2 flex gap-2 items-center rounded-md '>
         <input
           type='text'
-          className='p-2 text-sm w-[77%] outline-none placeholder:font-semibold'
+          className={`p-2 text-sm flex-1 outline-none placeholder:font-semibold`}
           placeholder='Name , Brand or SubBrand'
           onChange={(e) => setInputValue(e.target.value)}
         />
@@ -147,29 +152,28 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
           ))}
         </select>
         {pathname !== "/" && (
-          <div className='size-30 p-1 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
-            {toys?.length && toys.length} - {totalToysQuantity}
+          <div
+            className={`p-2 border shadow-sm items-center flex text-sm font-semibold justify-center rounded-md ${
+              pathname === "/stock" ? "w-fit" : "w-full" // Adjust width for different routes
+            }`}
+          >
+            {toys?.length && `${toys.length} - ${totalToysQuantity}`}
           </div>
         )}
       </div>
       <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
         <table className='p-4 w-full text-sm'>
           <thead>
-            <tr className='border p-3 font-[400]'>
-              <th className='p-3 font-[600] border'>Toy Id</th>
-              <th className='p-3 font-[600] border'>Name</th>
-              <th className='p-3 font-[600] border'>Code Name</th>
-              <th className='p-3 font-[600] border'>Brand</th>
-              <th className='p-3 font-[600] border'>SubBrand</th>
-              <th className='p-3 font-[600] border'>Price</th>
-              <th className='p-3 font-[600] border'>Level</th>
-              {pathname !== "/" && (
-                <th className='p-3 font-[600] border'>Quantity</th>
-              )}
-              {
-                deleteToyFromStock &&
-                <th className='p-3 font-[600] border'>Action</th>
-              }
+            <tr className='border p-3 font-[600]'>
+              <th className='p-3  border'>Toy Id </th>
+              <th className='p-3  border'>Name</th>
+              <th className='p-3  border'>Code Name</th>
+              <th className='p-3  border'>Brand</th>
+              <th className='p-3  border'>SubBrand</th>
+              <th className='p-3  border'>Price</th>
+              <th className='p-3  border'>Level</th>
+              {pathname !== "/" && <th className='p-3 border'>Quantity</th>}
+              {deleteToyFromStock && <th className='p-3 border'>Action</th>}
             </tr>
           </thead>
           <tbody>
@@ -180,9 +184,10 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
               return (
                 <tr
                   key={item.toy.id}
-                  className={`border text-center text-sm cursor-pointer ${isInCart ? "!bg-green-200" : ""
-                    }`}
-                  onClick={() => showToyDetails(item.toy, item.quantity)}
+                  className={`border text-center text-sm cursor-pointer ${
+                    isInCart ? "!bg-green-200" : ""
+                  }`}
+                  onClick={(e) => showToyDetails(e, item.toy, item.quantity)}
                 >
                   <td className='border p-2'>{item.toy.id}</td>
                   <td className='border p-2'>{item.toy.name}</td>
@@ -196,10 +201,15 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
                   {pathname !== "/" && (
                     <td className='border p-2'>{item.quantity}</td>
                   )}
-                  {
-                    deleteToyFromStock &&
-                    <td onClick={() => deleteToyFromStock(item.toy.id ?? '')} className='p-3 font-[600] border'>Delete</td>
-                  }
+                  {deleteToyFromStock && (
+                    <td
+                      onClick={() => deleteToyFromStock(item.toy.id ?? "")}
+                      className='p-3 font-[600] flex items-center justify-center'
+                      id='trash-btn'
+                    >
+                      <CiTrash className='text-center text-red-600' />
+                    </td>
+                  )}
                 </tr>
               );
             })}
@@ -272,12 +282,14 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
                   </strong>
                 </p>
                 <p
-                  className={`font-[300] flex justify-between ${editQuantity ? "items-start" : "items-center"
-                    } `}
+                  className={`font-[300] flex justify-between ${
+                    editQuantity ? "items-start" : "items-center"
+                  } `}
                 >
                   <strong
-                    className={`text-[16px] font-semibold ${!selectedToy?.quantity && "hidden"
-                      }`}
+                    className={`text-[16px] font-semibold ${
+                      !selectedToy?.quantity && "hidden"
+                    }`}
                   >
                     Quantity:{" "}
                     <span className='font-[300]'>
@@ -353,11 +365,11 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
                     onClick={() =>
                       from === "Stock"
                         ? dispatch(
-                          removeItemFromStockCart(selectedToy?.toy?.id ?? "")
-                        )
+                            removeItemFromStockCart(selectedToy?.toy?.id ?? "")
+                          )
                         : dispatch(
-                          removeItemFromHomeCart(selectedToy?.toy?.id ?? "")
-                        )
+                            removeItemFromHomeCart(selectedToy?.toy?.id ?? "")
+                          )
                     }
                     className='bg-gray-200 p-2 ml rounded-md w-fit hover:bg-gray-800 hover:text-white font-medium'
                   >

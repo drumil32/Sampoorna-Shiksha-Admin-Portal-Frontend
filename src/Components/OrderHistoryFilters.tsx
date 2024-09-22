@@ -34,7 +34,7 @@ const OrderHistoryFilters: React.FC<{orders: VendorOrder[];setFilterOrders: Reac
   },[searchQuery , fromTo , orderStatus , to])
 
   return (
-    <div className='filters flex sm:flex-row flex-col mt-3 sm:max-w-5xl m-auto gap-2 w-[90%] justify-between'>
+    <div className='filters flex sm:flex-row flex-col mt-2 sm:max-w-5xl m-auto gap-2 w-[90%] justify-between'>
       <div className='pl-2 flex gap-2'>
         <input
           type='text'

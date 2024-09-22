@@ -61,7 +61,7 @@ const School: React.FC = () => {
   return (
     <Loading>
       <>
-        <div className='filter w-[90%] m-auto mt-20 border p-2 rounded-md flex items-center '>
+        <div className='filter w-[90%] m-auto mt-3 border p-2 rounded-md flex items-center '>
           <input
             type='text'
             className='p-2 text-sm w-full outline-none placeholder:font-semibold'
@@ -73,10 +73,10 @@ const School: React.FC = () => {
         <div className='w-[90%] m-auto flex flex-wrap gap-5 mt-5 pb-10'>
           <table className='p-4 w-full text-sm'>
             <thead>
-              <tr className='border p-3 font-[400]'>
-                <th className='p-3 font-[600] border'>Code Name</th>
-                <th className='p-3 font-[600] border'>School Name</th>
-                <th className='p-3 font-[600] border'>Address</th>
+              <tr className='border p-2 font-[400]'>
+                <th className='p-2 font-[600] border'>Code Name</th>
+                <th className='p-2 font-[600] border'>School Name</th>
+                <th className='p-2 font-[600] border'>Address</th>
               </tr>
             </thead>
             <tbody>

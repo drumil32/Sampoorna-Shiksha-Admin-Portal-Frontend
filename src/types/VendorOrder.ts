@@ -54,3 +54,10 @@ export interface VendorOrder {
     quantity: number;
     status: VendorOrderStatusInfo[];
 }
+
+
+export interface IOtherProduct {
+  order: string;
+  item: string;  
+  quantity: string;
+}

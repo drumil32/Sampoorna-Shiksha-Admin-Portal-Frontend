@@ -54,62 +54,60 @@ const Login: React.FC = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center h-(calc[100vh - 100px]) w-screen">
-        <section className="rounded-md bg-black/70 p-2 min-w-1/2 scale-70 mt-10 xl:scale-95 2xl:scale-150 ">
-          <div className="flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
-            <div className="xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md">
-              <h2 className="text-4xl font-bold leading-tight text-black">
-                Sign in to your account
-              </h2>
-              <form action="#" method="POST" className="mt-8 space-y-5">
+      <div className='flex justify-center items-center calc-height w-full mt-2'>
+        <section className='rounded-md bg-black/70 p-2 min-w-1/2 '>
+          <div className='flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8'>
+            <div className='xl:mx-auto xl:w-full xl:max-w-sm 2xl:max-w-md'>
+              <h2 className='text-4xl font-bold leading-tight text-black'>Sign in to your account</h2>
+              <form action='#' method='POST' className='mt-8 space-y-5'>
                 <div>
                   <label
-                    htmlFor="email"
-                    className="text-xl font-medium text-gray-900"
+                    htmlFor='email'
+                    className='text-xl font-medium text-gray-900'
                   >
                     Email address
                   </label>
-                  <div className="mt-2">
+                  <div className='mt-2'>
                     <Input
-                      type="email"
-                      placeholder="Email"
+                      type='email'
+                      placeholder='Email'
                       value={formData.email}
                       onChange={handleEmailChange}
-                      name="email"
+                      name='email'
                     />
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between">
+                  <div className='flex items-center justify-between'>
                     <label
-                      htmlFor="password"
-                      className="text-xl font-medium text-gray-900"
+                      htmlFor='password'
+                      className='text-xl font-medium text-gray-900'
                     >
                       Password
                     </label>
                     <a
-                      href="#"
-                      title=""
-                      className="text-lg font-semibold text-black hover:underline"
+                      href='#'
+                      title=''
+                      className='text-lg font-semibold text-black hover:underline'
                     >
                       Forgot password?
                     </a>
                   </div>
-                  <div className="mt-2">
+                  <div className='mt-2'>
                     <Input
-                      type="password"
-                      placeholder="Password"
+                      type='password'
+                      placeholder='Password'
                       value={formData.password}
                       onChange={handlePasswordChange}
-                      name="password"
+                      name='password'
                     />
                   </div>
                 </div>
                 <div>
                   <button
-                    type="button"
+                    type='button'
                     onClick={handleSignInClick}
-                    className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                    className='inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80'
                   >
                     Sign in
                   </button>
@@ -120,7 +118,7 @@ const Login: React.FC = () => {
         </section>
 
         <ToastContainer
-          position="bottom-right"
+          position='bottom-right'
           autoClose={2000}
           hideProgressBar={false}
           newestOnTop={false}
@@ -129,12 +127,10 @@ const Login: React.FC = () => {
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          theme="colored"
+          theme='colored'
         />
       </div>
-
     </>
-
   );
 };
 

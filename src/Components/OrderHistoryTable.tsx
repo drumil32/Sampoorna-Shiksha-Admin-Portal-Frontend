@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { VendorOrder } from "../types/VendorOrder";
 import OrderHistoryFilters from "./OrderHistoryFilters";
 
+
 interface MyComponentProps {
   orders?: VendorOrder[];
 }
@@ -13,12 +14,16 @@ const OrderHistoryTable: React.FC<MyComponentProps> = ({ orders = [] }) => {
   const currentUrl = window.location.href;
   const url = new URL(currentUrl);
   const params = url.pathname.split("/")[1];
+  console.log(params);
 
   useEffect(() => {
     if (JSON.stringify(filterOrders) !== JSON.stringify(orders)) {
       setFilterOrders(orders);
     }
   }, [orders]);
+
+
+
 
   return (
     <div className='pb-10'>
