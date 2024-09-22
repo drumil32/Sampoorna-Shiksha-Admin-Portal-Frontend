@@ -118,7 +118,7 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
 
   return (
     <Loading>
-      <div className='w-full pb-10 mt-20'>
+      <div className='w-full pb-10'>
         <div
           className={`${title === "Add Toy" ? "mt-6" : "mt-3"
             } p-8 border-2  shadow-xl rounded-xl max-w-xl m-auto`}

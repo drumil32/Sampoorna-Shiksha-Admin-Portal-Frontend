@@ -41,12 +41,12 @@ const UpdateToy: React.FC = () => {
 
   return (
     <Loading>
-      <div className={`w-full flex items-center justify-center mt-10  ${!toy && 'calc-height'}`}>
-        <div className='w-[42%] flex items-center border bg-white justify-between p-2 rounded-md shadow-lg focus:bg-red-300 '>
+      <div className={`w-full flex items-center justify-center mt-2 ${!toy && 'calc-height'}`}>
+        <div className={`flex w-[42%]  items-center border  justify-between p-2 rounded-md shadow-lg`}>
           <input
             type='search'
             placeholder='Find Toy By Id...'
-            className='p-2 w-[90%]  outline-none'
+            className='p-2 outline-none w-full '
             onChange={(e) => setToyId(e.target.value)}
           />
           <button
@@ -58,7 +58,7 @@ const UpdateToy: React.FC = () => {
           </button>
         </div>
       </div>
-      {toy && <ToyForm title='Update Toy' toy={toy} setToy={setToy} />}
+        {toy && <ToyForm title='Update Toy' toy={toy} setToy={setToy} />}
     </Loading>
   );
 };

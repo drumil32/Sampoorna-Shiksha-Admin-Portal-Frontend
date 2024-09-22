@@ -36,7 +36,6 @@ function App() {
   // const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log(error);
     if (error) {
       console.log(error.message)
       toast.error(error.message);

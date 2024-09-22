@@ -5,16 +5,30 @@ import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { GET_VENDOR_ORDER_BY_ID, UPDATE_VENDOR_ORDER, STOCK, CHECK_AVAILABLE_STOCK } from "../../utils/restEndPoints";
-import { setError, setBackdrop } from "../../redux/slices/statusSlice";
+import {
+  GET_VENDOR_ORDER_BY_ID,
+  UPDATE_VENDOR_ORDER,
+  STOCK,
+  CHECK_AVAILABLE_STOCK,
+  GET_OTHER_PRODUCTS_BY_ORDER_ID,
+  ADD_OTHER_PRODUCT_BY_ORDER_ID,
+  DELETE_OTHER_PRODUCT_BY_ID,
+
+} from "../../utils/restEndPoints";
+import { IOtherProduct } from "../../types/VendorOrder";
+import { setError, setBackdrop, setLoading } from "../../redux/slices/statusSlice";
 import { useNavigate } from "react-router-dom";
 import _ from 'lodash';
+import { CiTrash } from "react-icons/ci";
+
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [orderDetails, setOrderDetails] = useState<VendorOrder | null>(null);
   const [newStatus, setNewStatus] = useState<VendorOrderStatusInfo>({ timestamps: '', personName: '', contactNumber: '', status: VendorOrderStatus.PENDING });
+  const [otherProducts, setOtherProducts] = useState<IOtherProduct[]>([]);
+  const [newOtherProduct, setNewOtherProduct] = useState<IOtherProduct>({ item: '', quantity: '', order: '' });
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const orderRef = useRef<VendorOrder | null>(null);
@@ -28,6 +42,94 @@ const OrderDetails: React.FC = () => {
     }
     fetchData();
   }, []);
+
+  // get others products
+  useEffect(() => {
+    const getOtherProducts = async () => {
+      try {
+        dispatch(setLoading(true));
+        const response = await axiosInstance.get(`${GET_OTHER_PRODUCTS_BY_ORDER_ID}/${id}`);
+        setOtherProducts(response.data.otherProducts);
+        console.log(response.data.otherProducts);
+      } catch (error: any) {
+        dispatch(setLoading(false));
+        if (error.response) {
+          dispatch(
+            setError({
+              statusCode: error.response.status,
+              message: error.response.data.error,
+            })
+          );
+          toast.error(error.response.data.error || "An error occurred."); // Use specific error message if available
+        } else {
+          toast.error("Server is Down.");
+        }
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+
+    getOtherProducts();
+  }, [id]);
+
+  //  add other product by id
+  const addOtherProduct = async () => {
+    if (!newOtherProduct.item || !newOtherProduct.quantity) {
+      toast.error("Name and quantity are required");
+      return;
+    }
+    try {
+      dispatch(setBackdrop(true));
+      const response = await axiosInstance.post(`${ADD_OTHER_PRODUCT_BY_ORDER_ID}/${id}`, { ...newOtherProduct, order: id });
+      setOtherProducts([...otherProducts, response.data.otherProduct]);
+      console.log(response.data.otherProduct);
+      setNewOtherProduct({ item: '', quantity: '', order: '' });
+      toast.success("Other product added successfully");
+    } catch (error: any) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+          })
+        );
+        toast.error(error.response.data.error || "An error occurred."); // Use specific error message if available
+      } else {
+        toast.error("Server is Down.");
+      }
+    } finally {
+      dispatch(setBackdrop(false));
+    }
+  };
+
+
+  // delete other product by id
+  const deleteOtherProduct = async (orderId?: string) => {
+    try {
+      dispatch(setBackdrop(true));
+      const res = await axiosInstance.delete(`${DELETE_OTHER_PRODUCT_BY_ID}/${orderId}`);
+      console.log(res)
+      setOtherProducts(prev => prev.filter(otherProduct => otherProduct.id !== orderId));
+      toast.success("Other product deleted successfully");
+    } catch (error: any) {
+      dispatch(setLoading(false));
+      if (error.response) {
+        dispatch(
+          setError({
+            statusCode: error.response.status,
+            message: error.response.data.error,
+          })
+        );
+        toast.error(error.response.data.error || "An error occurred."); // Use specific error message if available
+      } else {
+        toast.error("Server is Down.");
+      }
+    } finally {
+      dispatch(setBackdrop(false));
+    }
+  };
+
 
   const updateToy = async () => {
     try {
@@ -64,6 +166,10 @@ const OrderDetails: React.FC = () => {
 
   const addNewStatus = async () => {
     try {
+      if (newStatus.contactNumber == '' || newStatus.personName == '' || newStatus.timestamps == '') {
+        toast.error("All fields are required for adding new Status.");
+        return;
+      }
       dispatch(setBackdrop(true));
       const response = await axiosInstance.put(`${UPDATE_VENDOR_ORDER}/${id}`, {
         order: { ...orderDetails, status: [...(orderDetails?.status ?? []), newStatus] }
@@ -96,6 +202,7 @@ const OrderDetails: React.FC = () => {
         orderId: id
       });
       toast.success(response.data.message);
+      window.location.reload();
     } catch (error: any) {
       if (error.response) {
         dispatch(
@@ -141,83 +248,158 @@ const OrderDetails: React.FC = () => {
     <Loading>
       <div className='pb-10 mt-24'>
         <div className='toys-details-container grid grid-cols-1 mt-4 max-w-[90%] gap-4 m-auto pb-8'>
-          <div className=' shadow-lg rounded-md border p-8 bg-blue-50 max-w-xl'>
-            <div className='flex justify-between items-center'>
-              <h2 className='text-xl mb-3'>Order Details</h2>
-              {orderDetails?.isAddedOrRemovedFromTheStock == false && (
-                <button
-                  className='bg-green-500 text-xs rounded-md p-2 text-white font-medium mb-3'
-                  onClick={() =>
-                    editMode ? updateToy() : setEditMode(!editMode)
-                  }
-                >
-                  {editMode ? "Save Details" : "Update Details"}
-                </button>
-              )}
-            </div>
-
-            <div className='card grid grid-cols-2 bg-white border p-2'>
-              <p className='p-1 font-[300] flex flex-col'>
-                <strong>Brand </strong>
-                <span className='text-sm'>{orderDetails?.brand}</span>
-              </p>
-
-              <p className='p-1 font-[300] flex flex-col'>
-                <strong>subBrand </strong>
-                <span className='text-sm'>{orderDetails?.subBrand}</span>
-              </p>
-
-              <p className='p-1 font-[300] flex flex-col items-start'>
-                {orderDetails?.to == "ngo" && (
+          <div className='top-box-container flex w-full gap-2'>
+            <div className=' shadow-lg rounded-md border p-8 bg-blue-50 flex-1'>
+              <div className='flex justify-between items-center'>
+                <h2 className='text-xl mb-3'>Order Details</h2>
+                {orderDetails?.isAddedOrRemovedFromTheStock == false && (
                   <button
-                    onClick={() => addToStock()}
-                    className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
-                    disabled={orderDetails?.isAddedOrRemovedFromTheStock}
+                    className='bg-green-500 text-xs rounded-md p-2 text-white font-medium mb-3'
+                    onClick={() =>
+                      editMode ? updateToy() : setEditMode(!editMode)
+                    }
                   >
-                    {orderDetails?.isAddedOrRemovedFromTheStock
-                      ? "Added"
-                      : "Add To stock"}
+                    {editMode ? "Save Details" : "Update Details"}
                   </button>
                 )}
+              </div>
 
-                {orderDetails?.to == "school" && (
-                  <>
-                    <strong>School</strong>
+              <div className='card grid grid-cols-2 bg-white border p-2'>
+                <p className='p-1 font-[300] flex flex-col'>
+                  <strong>Brand </strong>
+                  <span className='text-sm'>{orderDetails?.brand}</span>
+                </p>
+
+                <p className='p-1 font-[300] flex flex-col'>
+                  <strong>subBrand </strong>
+                  <span className='text-sm'>{orderDetails?.subBrand}</span>
+                </p>
+
+                <p className='p-1 font-[300] flex flex-col items-start'>
+                  {orderDetails?.to == "ngo" && (
                     <button
-                      onClick={() =>
-                        navigate(`/school/${orderDetails?.school}`)
-                      }
+                      onClick={() => addToStock()}
                       className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
                       disabled={orderDetails?.isAddedOrRemovedFromTheStock}
                     >
-                      Visit to school
+                      {orderDetails?.isAddedOrRemovedFromTheStock
+                        ? "Added"
+                        : "Add To stock"}
                     </button>
-                  </>
-                )}
-              </p>
+                  )}
 
-              {orderDetails?.to == "school" && (
-                <p className='p-1 font-[300] flex flex-col'>
-                  <strong>School Id </strong>
-                  {!editMode ? (
-                    <span className='text-sm'>{orderDetails?.id}</span>
-                  ) : (
-                    <input
-                      type='text'
-                      placeholder='School id'
-                      name='id'
-                      className='border outline-none rounded-md text-sm p-2'
-                      onChange={(e) =>
-                        setOrderDetails((prev) =>
-                          prev ? { ...prev, id: e.target.value } : prev
-                        )
-                      }
-                    />
+                  {orderDetails?.to == "school" && (
+                    <>
+                      <strong>School</strong>
+                      <button
+                        onClick={() =>
+                          navigate(`/school/${orderDetails?.school}`)
+                        }
+                        className={`text-xs border bg-green-500 flex items-start t p-2 text-white rounded-md  }`}
+                        disabled={orderDetails?.isAddedOrRemovedFromTheStock}
+                      >
+                        Visit to school
+                      </button>
+                    </>
                   )}
                 </p>
-              )}
+
+                {orderDetails?.to == "school" && (
+                  <p className='p-1 font-[300] flex flex-col'>
+                    <strong>School Id </strong>
+                    {!editMode ? (
+                      <span className='text-sm'>{orderDetails?.id}</span>
+                    ) : (
+                      <input
+                        type='text'
+                        placeholder='School id'
+                        name='id'
+                        className='border outline-none rounded-md text-sm p-2'
+                        onChange={(e) =>
+                          setOrderDetails((prev) =>
+                            prev ? { ...prev, id: e.target.value } : prev
+                          )
+                        }
+                      />
+                    )}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* next element */}
+            <div className=' shadow-lg rounded-md border p-8 bg-blue-50 flex-1 h-[300px] overflow-x-hidden overflow-y-auto'>
+              <div className='justify-between items-center '>
+                <h2 className='text-xl mb-3'>Other Items</h2>
+                <div className='bg-white'>
+                  <table className='w-full border'>
+                    <thead>
+                      <tr className='text-md '>
+                        <th className='p-1 font-[400] border'>Item</th>
+                        <th className='p-1 font-[400] border'>Quantity</th>
+                        <th className='p-1 font-[400] border'>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className='text-center w-full'>
+                      {otherProducts?.map((otherProduct) => (
+                        <tr key={otherProduct.id} className='text-center text-sm'>
+                          <td className='border p-1'>{otherProduct.item}</td>
+                          <td className='border p-1'>{otherProduct.quantity}</td>
+                          <td className='border p-2 flex cursor-pointer items-center justify-center text-red-600 text-md' onClick={() => deleteOtherProduct(otherProduct?.id)}>
+                            <CiTrash />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td className="border p-1">
+                          <input
+                            className='border border-gray-300 w-full  rounded-md p-2 text-sm outline-none placeholder:font-semibold'
+                            type='text'
+                            placeholder='Item Name...'
+                            name='item'
+                            value={newOtherProduct?.item}
+                            onChange={(e) =>
+                              setNewOtherProduct((prev) => ({
+                                ...prev,
+                                item: e.target.value,
+                              }))
+                            }
+                          />
+                        </td>
+                        <td className="border p-1">
+                          <input
+                            className='border border-gray-300 w-full  rounded-md p-2  text-sm outline-none placeholder:font-semibold'
+                            type='text'
+                            placeholder='Quantity'
+                            name='quantity'
+                            value={newOtherProduct?.quantity}
+                            onChange={(e) => {
+                              setNewOtherProduct((prev) => ({
+                                ...prev,
+                                quantity: e.target.value,
+                              }));
+                            }}
+                          />
+                        </td>
+                        <td className='text-center'>
+                          <button
+                            className='bg-green-500 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3'
+                            onClick={addOtherProduct}
+                          >
+                            Add Item
+                          </button>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* next element */}
 
           <div className='status-container shadow-lg rounded-md border p-8 bg-blue-50 mt-4'>
             <h2 className='text-xl mb-3'>Order Status</h2>
@@ -239,7 +421,7 @@ const OrderDetails: React.FC = () => {
                     >
                       <td className='border p-2'>
                         {!editMode ? (
-                          <span>{item.timestamps || 'Not Provided'}</span>
+                          <span>{item.timestamps || "Not Provided"}</span>
                         ) : (
                           <input
                             type='datetime-local'
@@ -253,7 +435,7 @@ const OrderDetails: React.FC = () => {
 
                       <td className='border p-1'>
                         {!editMode ? (
-                          <span>{item.personName || 'Not Provided'}</span>
+                          <span>{item.personName || "Not Provided"}</span>
                         ) : (
                           <input
                             type='text'
@@ -267,7 +449,7 @@ const OrderDetails: React.FC = () => {
 
                       <td className='border p-1'>
                         {!editMode ? (
-                          <span>{item.contactNumber || 'Not Provided'}</span>
+                          <span>{item.contactNumber || "Not Provided"}</span>
                         ) : (
                           <input
                             type='text'
@@ -374,7 +556,7 @@ const OrderDetails: React.FC = () => {
                 <tr>
                   <td colSpan={4} className='text-center'>
                     <button
-                      className='bg-green-400 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3'
+                      className='bg-green-500 text-sm text-white rounded-md p-2 font-[300] hover:bg-green-700 ml-auto mt-3 mb-3'
                       onClick={addNewStatus}
                     >
                       Add Status
@@ -386,7 +568,7 @@ const OrderDetails: React.FC = () => {
           </div>
         </div>
 
-        <div className='table-container-details sm:max-w-8xl m-auto mt-1 w-[90%] shadow-lg rounded-md border bg-blue-50 p-8'>
+        <div className='table-container-details overflow-scroll overflow-y-hidden m-auto mt-1 w-[90%] shadow-lg rounded-md border bg-blue-50 sm:p-4 p-2'>
           <h2 className='text-xl mb-3'>Toys Details</h2>
           <table className='p-4 w-full text-sm bg-white'>
             <thead>
