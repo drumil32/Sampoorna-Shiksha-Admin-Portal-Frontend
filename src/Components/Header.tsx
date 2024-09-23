@@ -114,7 +114,7 @@ const Header = () => {
         </Link>
 
         <Link to={`${CART}`}>
-          <CiShoppingCart className='sm:text-4xl text-sm  relative' />
+          <CiShoppingCart className='sm:text-3xl text-sm  relative border border-gray-400 rounded-md' />
         </Link>
         {token && <button onClick={hadleCookie} className="text-xs border p-2 border-gray-400 font-semibold rounded-md">Logout</button>}
       </div>
