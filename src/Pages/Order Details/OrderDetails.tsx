@@ -378,7 +378,7 @@ const OrderDetails: React.FC = () => {
                             onChange={(e) => {
                               setNewOtherProduct((prev) => ({
                                 ...prev,
-                                quantity: e.target.value,
+                                quantity: e.target.value == '' ? 0 : parseInt(e.target.value),
                               }));
                             }}
                           />

@@ -95,7 +95,7 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
 
   function validateToyDetails(toy: IToy | undefined): boolean {
     if (!toy) {
-      toast.error("Toy details are undefined");
+      toast.error("Please Provide the details of toy.");
       return false;
     }
 

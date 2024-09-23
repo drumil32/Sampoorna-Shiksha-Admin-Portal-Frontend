@@ -59,6 +59,6 @@ export interface VendorOrder {
 export interface IOtherProduct {
   order: string;
   item: string;  
-  quantity: string;
+  quantity: number;
   id?:string;
 }
