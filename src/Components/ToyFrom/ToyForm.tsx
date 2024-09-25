@@ -49,7 +49,6 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
       if(!validateToyDetails(toy)) return;
       dispatch(setLoading(true));
       await axiosInstance.post(ADD_TOY, { toy });
-      toast.success("Toy added successfully!");
        setToy({
          name: "",
          brand: "",
@@ -65,6 +64,7 @@ const ToyForm: React.FC<ToyFormProps> = ({ title, toy, setToy }) => {
 
        // Also clear the input value for the learn field
        setInputValue("");
+      toast.success("Toy added successfully!");
 
     } catch (error: any) {
       if (error.response) {

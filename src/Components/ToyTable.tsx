@@ -36,6 +36,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
   const [levelValue, setLevelValue] = useState<string>("all");
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+  console.log(toys);
 
 
   useEffect(() => {
@@ -191,7 +192,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
                   onClick={(e) => showToyDetails(e, item.toy, item.quantity)}
                 >
                   <td className='border p-2'>{item.toy.id}</td>
-                  <td className='border p-2'>{item.toy.name}</td>
+                  <td className='border p-2'>{item?.toy?.name || "Not Provided"}</td>
                   <td className='border p-2'>{item.toy.codeName}</td>
                   <td className='border p-2'>{item.toy.brand}</td>
                   <td className='border p-2'>{item.toy.subBrand}</td>

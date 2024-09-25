@@ -57,7 +57,7 @@ const CartItems: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                   className={`border text-center text-xs cursor-pointer `}
                   onClick={(e) => showToyDetails(e, item.toy)}
                 >
-                  <td className='border p-2'>{item.toy.name}</td>
+                  <td className='border p-2'>{item.toy.name ? item.toy.name : "Not Provided"}</td>
                   <td className='border p-2'>{item.toy.brand}</td>
                   <td className='border p-2'>{item.toy.subBrand}</td>
                   <td className='border p-2'>{item.toy.price}</td>
