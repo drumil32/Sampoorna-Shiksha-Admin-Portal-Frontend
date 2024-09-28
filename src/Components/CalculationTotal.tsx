@@ -61,8 +61,8 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
         from,
         to
       });
-      toast.success(response.data.message);
 
+      toast.success(response.data.message);
       setTimeout(() => {
         if(currentCart == "Home"){
           dispatch(clearHomeCart([]));
@@ -107,7 +107,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                   index % 2 !== 0 ? "bg-gray-100" : ""
                 }`}
               >
-                <td className='border p-2'>{item.toy.name}</td>
+                <td className='border p-2'>{item.toy.name ? item.toy.name : "Not Provided"}</td>
                 <td className='border p-2'>{item.toy.price}</td>
                 <td className='border p-2'>
                   <input
@@ -154,7 +154,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
             <label htmlFor='' className='text-gray-600 font-bold'>
               From
             </label>
-            <span className='text-xs'>{from}</span>
+            <span className='text-md'>{from}</span>
           </div>
 
           <div className='flex gap-2 flex-col'>
@@ -165,7 +165,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
               <select
                 name='to'
                 id=''
-                className='border rounded-md shadow-sm block w-[100px] p-3 text-xs outline-none'
+                className='border rounded-md shadow-sm block w-[100px] p-3 text-md outline-none'
                 onChange={(e) => setTo(e.target.value)}
                 value={to}
               >
@@ -173,7 +173,7 @@ const Calculation: React.FC<{ currentCart: string }> = ({ currentCart }) => {
                 <option value='school'>school</option>
               </select>
             ) : (
-              to
+              to 
             )}
           </div>
         </div>

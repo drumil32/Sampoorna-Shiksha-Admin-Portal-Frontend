@@ -1,5 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation , useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import cookies from "js-cookie";
 import {
   HOME,
   ORDER_HISTORY,
@@ -21,6 +22,8 @@ import { CiBoxes } from "react-icons/ci";
 const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation(); // Get current location
+  const navigate = useNavigate();
+  const token = cookies.get("token");
 
   const handleActive = (path: string) => {
     return location.pathname == path ? "border-2 bg-gray-400 border-black-500 text-white font-bold" : ""; // Dynamically set active class
@@ -47,6 +50,10 @@ const Header = () => {
     }
   };
 
+  const hadleCookie = () => {
+    cookies.remove("token");
+       navigate("/");
+  };
 
   return (
     <div className='bg-white sticky w-[100%]  top-0 shadow-md p-2 font-[300] text-gray-600 flex gap-1  items-center justify-between'>
@@ -57,7 +64,8 @@ const Header = () => {
         Sampooran Shiksha
       </Link>
 
-      <div className='flex gap-2 items-center'>
+
+      <div className={`flex gap-2 items-center ${!token && "hidden"}`}> 
         <button
           onClick={addNewSchoolData}
           className={`border flex gap-2 border-gray-400  sm:p-2   sm:text-xs items-center rounded-md  text-gray-700 font-semibold }`}
@@ -106,8 +114,9 @@ const Header = () => {
         </Link>
 
         <Link to={`${CART}`}>
-          <CiShoppingCart className='sm:text-4xl text-sm  relative' />
+          <CiShoppingCart className='sm:text-3xl text-sm  relative border border-gray-400 rounded-md' />
         </Link>
+        {token && <button onClick={hadleCookie} className="text-xs border p-2 border-gray-400 font-semibold rounded-md">Logout</button>}
       </div>
     </div>
   );

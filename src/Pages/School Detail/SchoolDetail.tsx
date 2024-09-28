@@ -128,7 +128,7 @@ const SchoolDetail: React.FC = () => {
         <h2 className='text-2xl font-bold flex-col'>Orders</h2>
         {schoolOrders?.length > 0 && (
           <div className='w-30 h-10 p-2 shadow-sm items-center flex text-md font-semibold justify-center rounded-md'>
-            {schoolOrders?.length && schoolOrders.length} - {totalToysQuantity}
+             {totalToysQuantity}
           </div>
         )}
       </div>
