@@ -18,6 +18,8 @@ import { CiShoppingCart } from "react-icons/ci";
 import { LuSchool } from "react-icons/lu";
 import { MdOutlineEdit } from "react-icons/md";
 import { CiBoxes } from "react-icons/ci";
+import shikshaImg from '../Assests/Images/shiksha.png';
+import kitabImg from '../Assests/Images/KitabKhilona.png';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -62,7 +64,7 @@ const Header = () => {
         className={`font-semibold sm:text-md text-xs text-gray-700 p-1 py-2 border rounded-md  ${handleActive(HOME)}`}
       >
          Smapoorana shiksha
-        {/* <img src="../Assests/Images/shiksha.png" className="size-20" alt="sampoorna-logo" /> */}
+        <img src={shikshaImg} className="size-20" alt="sampoorna-logo" />
       </Link>
 
 
