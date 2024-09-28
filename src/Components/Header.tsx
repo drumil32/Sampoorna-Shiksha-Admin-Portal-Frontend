@@ -61,7 +61,8 @@ const Header = () => {
         to={HOME}
         className={`font-semibold sm:text-md text-xs text-gray-700 p-1 py-2 border rounded-md  ${handleActive(HOME)}`}
       >
-        Sampooran Shiksha
+         Smapoorana shiksha
+        {/* <img src="../Assests/Images/shiksha.png" className="size-20" alt="sampoorna-logo" /> */}
       </Link>
 
 

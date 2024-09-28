@@ -32,6 +32,7 @@ const OrderDetails: React.FC = () => {
   const navigate = useNavigate();
   const orderRef = useRef<VendorOrder | null>(null);
 
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await axiosInstance.get(`${GET_VENDOR_ORDER_BY_ID}/${id}`);
@@ -41,6 +42,8 @@ const OrderDetails: React.FC = () => {
     }
     fetchData();
   }, []);
+
+  console.log(orderDetails);
 
   // get others products
   useEffect(() => {
@@ -229,20 +232,10 @@ const OrderDetails: React.FC = () => {
             <div className=' shadow-lg rounded-md border p-8 bg-blue-50 flex-1'>
               <div className='flex justify-between items-center'>
                 <h2 className='text-xl mb-3'>Order Details</h2>
-                {orderDetails?.isAddedOrRemovedFromTheStock == false && (
-                  <button
-                    className='bg-green-500 text-xs rounded-md p-2 text-white font-medium mb-3'
-                    onClick={() =>
-                      editMode ? updateOrderStatus() : setEditMode(!editMode)
-                    }
-                  >
-                    {editMode ? "Save Details" : "Update Details"}
-                  </button>
-                )}
               </div>
 
               <div className='card grid grid-cols-2 bg-white border p-2'>
-                <p className='p-1 font-[300] flex flex-col'>
+                <p className='p-1 font-[300] flex flex-col m-1'>
                   <strong>Brand </strong>
                   <span className='text-sm'>{orderDetails?.brand}</span>
                 </p>
@@ -266,7 +259,14 @@ const OrderDetails: React.FC = () => {
                   )}
 
                   {orderDetails?.to == "school" && (
-                    <>
+                    <p className='p-1 font-[300] flex items-center gap-2'>
+                      <strong>School Id </strong>
+                      <span className='text-sm'>{orderDetails?.id}</span>
+                    </p>
+                  )}
+
+                  {orderDetails?.to == "school" && (
+                    <div className="flex gap-3 m-1">
                       <strong>School</strong>
                       <button
                         onClick={() =>
@@ -277,30 +277,15 @@ const OrderDetails: React.FC = () => {
                       >
                         Visit to school
                       </button>
-                    </>
+                    </div>
                   )}
                 </p>
 
-                {orderDetails?.to == "school" && (
-                  <p className='p-1 font-[300] flex flex-col'>
-                    <strong>School Id </strong>
-                    {!editMode ? (
-                      <span className='text-sm'>{orderDetails?.id}</span>
-                    ) : (
-                      <input
-                        type='text'
-                        placeholder='School id'
-                        name='id'
-                        className='border outline-none rounded-md text-sm p-2'
-                        onChange={(e) =>
-                          setOrderDetails((prev) =>
-                            prev ? { ...prev, id: e.target.value } : prev
-                          )
-                        }
-                      />
-                    )}
-                  </p>
-                )}
+                <p className='p-1 font-[300] flex gap-3 text-sm w-full '>
+                  <span className='font-semibold'>From</span>{" "}
+                  {orderDetails?.from} <span className='font-semibold'>To</span>{" "}
+                  {orderDetails?.to}
+                </p>
               </div>
             </div>
 
@@ -319,10 +304,18 @@ const OrderDetails: React.FC = () => {
                     </thead>
                     <tbody className='text-center w-full'>
                       {otherProducts?.map((otherProduct) => (
-                        <tr key={otherProduct.id} className='text-center text-sm'>
+                        <tr
+                          key={otherProduct.id}
+                          className='text-center text-sm'
+                        >
                           <td className='border p-1'>{otherProduct.item}</td>
-                          <td className='border p-1'>{otherProduct.quantity}</td>
-                          <td className='border p-2 flex cursor-pointer items-center justify-center text-red-600 text-md' onClick={() => deleteOtherProduct(otherProduct?.id)}>
+                          <td className='border p-1'>
+                            {otherProduct.quantity}
+                          </td>
+                          <td
+                            className='border p-2 flex cursor-pointer items-center justify-center text-red-600 text-md'
+                            onClick={() => deleteOtherProduct(otherProduct?.id)}
+                          >
                             <CiTrash />
                           </td>
                         </tr>
@@ -330,7 +323,7 @@ const OrderDetails: React.FC = () => {
                     </tbody>
                     <tfoot>
                       <tr>
-                        <td className="border p-1">
+                        <td className='border p-1'>
                           <input
                             className='border border-gray-300 w-full  rounded-md p-2 text-sm outline-none placeholder:font-semibold'
                             type='text'
@@ -345,7 +338,7 @@ const OrderDetails: React.FC = () => {
                             }
                           />
                         </td>
-                        <td className="border p-1">
+                        <td className='border p-1'>
                           <input
                             className='border border-gray-300 w-full  rounded-md p-2  text-sm outline-none placeholder:font-semibold'
                             type='number'
@@ -355,7 +348,10 @@ const OrderDetails: React.FC = () => {
                             onChange={(e) => {
                               setNewOtherProduct((prev) => ({
                                 ...prev,
-                                quantity: e.target.value == '' ? 0 : parseInt(e.target.value),
+                                quantity:
+                                  e.target.value == ""
+                                    ? 0
+                                    : parseInt(e.target.value),
                               }));
                             }}
                           />
@@ -379,7 +375,19 @@ const OrderDetails: React.FC = () => {
           {/* next element */}
 
           <div className='status-container shadow-lg rounded-md border p-8 bg-blue-50 mt-4'>
-            <h2 className='text-xl mb-3'>Order Status</h2>
+            <div className='w-full flex justify-between items-center'>
+              <h2 className='text-xl mb-3'>Order Status</h2>
+              {orderDetails?.isAddedOrRemovedFromTheStock == false && (
+                <button
+                  className='bg-green-500 text-xs rounded-md p-2 text-white font-medium mb-3'
+                  onClick={() =>
+                    editMode ? updateOrderStatus() : setEditMode(!editMode)
+                  }
+                >
+                  {editMode ? "Save Details" : "Update Details"}
+                </button>
+              )}
+            </div>
             <table className='p-4 w-full text-sm bg-white'>
               <thead>
                 <tr>
@@ -393,8 +401,9 @@ const OrderDetails: React.FC = () => {
                 {orderDetails?.status?.map((item, index: number) => {
                   return (
                     <tr
-                      className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
-                        } hover:bg-gray-200 cursor-pointer`}
+                      className={`border text-center text-sm ${
+                        index % 2 !== 0 ? "bg-gray-100" : ""
+                      } hover:bg-gray-200 cursor-pointer`}
                     >
                       <td className='border p-2'>
                         {!editMode ? (
@@ -516,7 +525,7 @@ const OrderDetails: React.FC = () => {
                           ...prev,
                           status:
                             VendorOrderStatus[
-                            e.target.value as keyof typeof VendorOrderStatus
+                              e.target.value as keyof typeof VendorOrderStatus
                             ],
                         }))
                       }
@@ -568,19 +577,16 @@ const OrderDetails: React.FC = () => {
                 return (
                   <tr
                     key={toy.id}
-                    className={`border text-center text-sm ${index % 2 !== 0 ? "bg-gray-100" : ""
-                      } hover:bg-gray-200 cursor-pointer`}
+                    className={`border text-center text-sm ${
+                      index % 2 !== 0 ? "bg-gray-100" : ""
+                    } hover:bg-gray-200 cursor-pointer`}
                   >
                     <td className='border p-1'>{toy.id}</td>
                     <td className='border p-1'>{toy.name}</td>
                     <td className='border p-1'>{toy.brand}</td>
                     <td className='border p-1'>{toy.subBrand}</td>
-                    <td className='border p-1'>
-                      {item.price}
-                    </td>
-                    <td className='border p-1'>
-                      {item.quantity}
-                    </td>
+                    <td className='border p-1'>{item.price}</td>
+                    <td className='border p-1'>{item.quantity}</td>
                     <td className='border p-2'>{toy.category}</td>
                     <td className='border p-2'>
                       {toy.level ? toy.level : "Not Provided"}

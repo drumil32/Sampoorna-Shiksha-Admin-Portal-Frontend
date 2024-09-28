@@ -134,7 +134,7 @@ const ToyTable: React.FC<MyComponentProps> = ({ toys, from, setToys, deleteToyFr
 
   return (
     <>
-      <div className='filters w-[90%] m-auto mt-4 border p-2 flex gap-2 items-center rounded-md '>
+      <div className='filters w-[90%] m-auto mt-4 border p-2 flex gap-2 items-center rounded-md table-toy '>
         <input
           type='text'
           className={`p-2 text-sm flex-1 outline-none placeholder:font-semibold`}
