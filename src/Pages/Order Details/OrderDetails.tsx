@@ -9,7 +9,6 @@ import {
   GET_VENDOR_ORDER_BY_ID,
   UPDATE_VENDOR_ORDER,
   STOCK,
-  CHECK_AVAILABLE_STOCK,
   GET_OTHER_PRODUCTS_BY_ORDER_ID,
   ADD_OTHER_PRODUCT_BY_ORDER_ID,
   DELETE_OTHER_PRODUCT_BY_ID,
@@ -130,15 +129,9 @@ const OrderDetails: React.FC = () => {
     }
   };
 
-
-  const updateToy = async () => {
+  const updateOrderStatus = async () => {
     try {
       dispatch(setBackdrop(true));
-      if (orderDetails?.from == 'ngo') {
-        await axiosInstance.post(CHECK_AVAILABLE_STOCK, {
-          cart: orderDetails.listOfToysSentLink.map(toy => ({ toyId: toy.toy.id, quantity: toy.quantity }))
-        });
-      }
       const response = await axiosInstance.put(`${UPDATE_VENDOR_ORDER}/${id}`, {
         order: orderDetails
       });
@@ -162,7 +155,6 @@ const OrderDetails: React.FC = () => {
       dispatch(setBackdrop(false));
     }
   };
-
 
   const addNewStatus = async () => {
     try {
@@ -229,21 +221,6 @@ const OrderDetails: React.FC = () => {
     });
   }
 
-  const handleToyArrayChanges = (index: number, value: number, fieldName: string) => {
-    setOrderDetails(prevValue => {
-      if (!prevValue) return prevValue;
-      const listOfToysSentLink = prevValue?.listOfToysSentLink ?? [];
-
-      if (fieldName == 'quantity') {
-        listOfToysSentLink[index].quantity = value;
-      } else {
-        listOfToysSentLink[index].price = value;
-      }
-
-      return { ...prevValue, listOfToysSentLink };
-    });
-  }
-
   return (
     <Loading>
       <div className='pb-10 mt-24'>
@@ -256,7 +233,7 @@ const OrderDetails: React.FC = () => {
                   <button
                     className='bg-green-500 text-xs rounded-md p-2 text-white font-medium mb-3'
                     onClick={() =>
-                      editMode ? updateToy() : setEditMode(!editMode)
+                      editMode ? updateOrderStatus() : setEditMode(!editMode)
                     }
                   >
                     {editMode ? "Save Details" : "Update Details"}
@@ -599,44 +576,10 @@ const OrderDetails: React.FC = () => {
                     <td className='border p-1'>{toy.brand}</td>
                     <td className='border p-1'>{toy.subBrand}</td>
                     <td className='border p-1'>
-                      {!editMode ? (
-                        item.price
-                      ) : (
-                        <input
-                          type='number'
-                          className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
-                          value={item.price}
-                          onChange={(e) =>
-                            handleToyArrayChanges(
-                              index,
-                              isNaN(parseInt(e.target.value))
-                                ? 0
-                                : parseInt(e.target.value),
-                              "price"
-                            )
-                          }
-                        />
-                      )}
+                      {item.price}
                     </td>
                     <td className='border p-1'>
-                      {!editMode ? (
-                        item.quantity
-                      ) : (
-                        <input
-                          type='number'
-                          className='border rounded-md shadow-md block w-full p-2 text-xs outline-none'
-                          value={item.quantity}
-                          onChange={(e) =>
-                            handleToyArrayChanges(
-                              index,
-                              isNaN(parseInt(e.target.value))
-                                ? 0
-                                : parseInt(e.target.value),
-                              "quantity"
-                            )
-                          }
-                        />
-                      )}
+                      {item.quantity}
                     </td>
                     <td className='border p-2'>{toy.category}</td>
                     <td className='border p-2'>
