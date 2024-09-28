@@ -19,7 +19,7 @@ import { LuSchool } from "react-icons/lu";
 import { MdOutlineEdit } from "react-icons/md";
 import { CiBoxes } from "react-icons/ci";
 import shikshaImg from '../Assests/Images/shiksha.png';
-import kitabImg from '../Assests/Images/KitabKhilona.png';
+// import kitabImg from '../Assests/Images/KitabKhilona.png';
 
 const Header = () => {
   const dispatch = useDispatch();
