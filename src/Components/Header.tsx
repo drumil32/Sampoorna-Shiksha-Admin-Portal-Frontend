@@ -19,7 +19,6 @@ import { LuSchool } from "react-icons/lu";
 import { MdOutlineEdit } from "react-icons/md";
 import { CiBoxes } from "react-icons/ci";
 import shikshaImg from '../Assests/Images/shiksha.png';
-// import kitabImg from '../Assests/Images/KitabKhilona.png';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -61,10 +60,9 @@ const Header = () => {
     <div className='bg-white sticky w-[100%]  top-0 shadow-md p-2 font-[300] text-gray-600 flex gap-1  items-center justify-between'>
       <Link
         to={HOME}
-        className={`font-semibold sm:text-md text-xs text-gray-700 p-1 py-2 border rounded-md  ${handleActive(HOME)}`}
+        className={`font-semibold sm:text-md text-xs`}
       >
-         Smapoorana shiksha
-        <img src={shikshaImg} className="size-20" alt="sampoorna-logo" />
+        <img src={shikshaImg} className="w-20 bg-cover h-13 object-contain" alt="sampoorna-logo" />
       </Link>
 
 

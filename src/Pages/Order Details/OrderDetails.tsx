@@ -253,7 +253,7 @@ const OrderDetails: React.FC = () => {
                       disabled={orderDetails?.isAddedOrRemovedFromTheStock}
                     >
                       {orderDetails?.isAddedOrRemovedFromTheStock
-                        ? "Added"
+                        ? "Added To Stock"
                         : "Add To stock"}
                     </button>
                   )}
@@ -377,7 +377,6 @@ const OrderDetails: React.FC = () => {
           <div className='status-container shadow-lg rounded-md border p-8 bg-blue-50 mt-4'>
             <div className='w-full flex justify-between items-center'>
               <h2 className='text-xl mb-3'>Order Status</h2>
-              {orderDetails?.isAddedOrRemovedFromTheStock == false && (
                 <button
                   className='bg-green-500 text-xs rounded-md p-2 text-white font-medium mb-3'
                   onClick={() =>
@@ -386,7 +385,6 @@ const OrderDetails: React.FC = () => {
                 >
                   {editMode ? "Save Details" : "Update Details"}
                 </button>
-              )}
             </div>
             <table className='p-4 w-full text-sm bg-white'>
               <thead>
@@ -582,12 +580,12 @@ const OrderDetails: React.FC = () => {
                     } hover:bg-gray-200 cursor-pointer`}
                   >
                     <td className='border p-1'>{toy.id}</td>
-                    <td className='border p-1'>{toy.name}</td>
-                    <td className='border p-1'>{toy.brand}</td>
-                    <td className='border p-1'>{toy.subBrand}</td>
-                    <td className='border p-1'>{item.price}</td>
-                    <td className='border p-1'>{item.quantity}</td>
-                    <td className='border p-2'>{toy.category}</td>
+                    <td className='border p-1'>{toy.name ? toy.name : "Not Provided"}</td>
+                    <td className='border p-1'>{toy.brand ? toy.brand : "Not Provided"}</td>
+                    <td className='border p-1'>{toy.subBrand ? toy.subBrand : "Not Provided"}</td>
+                    <td className='border p-1'>{item.price  ? item.price : "Not Provided"}</td>
+                    <td className='border p-1'>{item.quantity ? item.quantity : "Not Provided"}</td>
+                    <td className='border p-2'>{toy.category ? toy.category : "Not Provided"}</td>
                     <td className='border p-2'>
                       {toy.level ? toy.level : "Not Provided"}
                     </td>
