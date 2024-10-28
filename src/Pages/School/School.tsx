@@ -74,7 +74,6 @@ const School: React.FC = () => {
           <table className='p-4 w-full text-sm'>
             <thead>
               <tr className='border p-2 font-[400]'>
-                <th className='p-2 font-[600] border'>Code Name</th>
                 <th className='p-2 font-[600] border'>School Name</th>
                 <th className='p-2 font-[600] border'>Address</th>
               </tr>
@@ -87,7 +86,6 @@ const School: React.FC = () => {
                     className={`border text-center text-sm cursor-pointer $`}
                     onClick={() => navigate(`/school/${school._id}`)}
                   >
-                    <td className='border p-2'>{school.code}</td>
                     <td className='border p-2'>
                       {school.nameOfSchoolInstitution}
                     </td>
