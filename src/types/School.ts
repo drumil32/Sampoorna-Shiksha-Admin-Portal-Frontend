@@ -1,6 +1,5 @@
 export interface ISchoolDetails {
     boardAffiliatedAndMediumOfInstruction?: string;
-    code?: string;
     contactDetailsOfCoordinatorTeacher?: string; // done
     contactNumberOfPrincipalManagement?: string; // done
     createdAtIST?: string;
