@@ -15,7 +15,7 @@ import School from "./Pages/School/School";
 import Login from "./Pages/Login/Login";
 import SchoolDetail from "./Pages/School Detail/SchoolDetail";
 import ProtectedRoute from "./Components/ProtectedRouter";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import Home from "./Pages/Home/Home";
 import Cart from "./Pages/cart/Cart";
 import OrderHistory from "./Pages/Order History/OrderHistory";
@@ -119,16 +119,6 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <ToastContainer position="bottom-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored" />
       {backdrop && <Backdrop />}
     </>
   )
